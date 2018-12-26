@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="common_bg">#ff4cbd71</color>
+    <color name="green">#00ff00</color>
+    <color name="yellow">#ffff00</color>
+    <color name="gray_text">#adadad</color>
+    <color name="black_bg">#000000</color>
+    <color name="viewfinder_frame">#929292</color>
+    <color name="common_text">#333333</color>
+    <color name="dark_bg_70p">#bb000000</color>
+    <color name="common_sub_text">#888888</color>
+    <color name="source_detection_btn_color">#48a9fb</color>
+    <color name="event_message_from_tv">#818181</color>
+    <color name="event_message_play_btn">#eeeeee</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="message_button_text">#555</color>
+    <color name="quality_focused_color">#448cf3</color>
+    <color name="black_text">#333333</color>
+    <color name="application_bg">@color/common_bg</color>
+    <color name="red">#ff0000</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="white_svg">#FFffffff</color>
+    <color name="translucent">#00000000</color>
+    <color name="gray">#eeeeee</color>
+    <color name="gain_code">#ff9933</color>
+    <color name="mainblack">#333333</color>
+    <color name="baseCoulor">#3277B3</color>
+    <color name="baseCoulor_svg">#FF3277B3</color>
+    <color name="textStrongCoulor">#0D47A1</color>
+    <color name="baseGray">#f7f7f7</color>
+    <color name="hintColor">#c1c1c1</color>
+    <color name="no_back">#00000000</color>
+    <!-- common -->
+    <color name="c1">#f37f4c</color>
+    <color name="c2">#333</color>
+    <color name="c3">#666</color>
+    <color name="c4">#8d8d8d</color>
+    <color name="c5">#999</color>
+    <color name="c6">#b7b7b7</color>
+    <color name="c7">#cacaca</color>
+    <color name="c8">#e1e1e1</color>
+    <color name="c9">#f4f4f4</color>
+    <color name="c10">#ca511c</color>
+    <color name="c11">#f9f9f9</color>
+    <color name="ez_c1">#1E90FF</color>
+
+    <!--图标-->
+    <color name="darkblue">#42A5F5</color>
+    <color name="littleblue">#a4dcff</color>
+    <color name="darkyellow">#f0a235</color>
+    <color name="littleyellow">#f0cba3</color>
+
+    <!--选择框-->
+    <color name="selectTitle">#333333</color>
+    <color name="selectCancleBtn">#777777</color>
+    <color name="selectList">#575757</color>
+    <color name="selectConfirmBtn">#0D47A1</color>
+    <color name="selectDownline">#c1c1c1</color>
+
+    <!--标题栏-->
+    <color name="titleBG">#3277b3</color>
+
+    <!--重点能耗设备 -->
+    <color name="imTitle_select">#0D47A1</color>
+    <color name="imTitle">#f7f7f7</color> <!--下划线-->
+    <color name="imTitleText">#333333</color>
+
+
+    <!--登录-->
+    <color name="loginRemenber">#0d47a1</color>
+
+    <!--能源管理首页-->
+    <color name="enrMainLine">#c1c1c1</color>
+
+    <!--系统页-->
+    <color name="systemGray">#777777</color>
+    <color name="systemExitBut">#FF7043</color>
+    <color name="systemAbnomal">#d00707</color>
+    <color name="systemPswLine">#0d47a1</color>
+</resources>

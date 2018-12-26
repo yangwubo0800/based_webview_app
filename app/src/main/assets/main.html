@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+	//提供给Android调用的方法
+	var obj = {};
+    obj.funFromjs = function(result){
+        document.getElementById("scanResult").innerText= "扫码结果：" + result + loadAndroidMethod();
+    }
+
+    function loadAndroidMethod(){
+
+        var imei = window.functionTag.getDeviceId();
+        return imei
+
+    }
+
+    window.onload=function(){
+        //funFromjs("IMEI:")
+        //loadAndroidMethod()
+        var imei = window.functionTag.getDeviceId();
+        document.getElementById("scanResult").innerText="IMEI:" + imei;
+
+    }
+
+
+    </script>
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+	<section class="row">
+		<div onclick="window.functionTag.nativeTakePhoto()">
+			<img src="./images/photo.png">
+            <label>照相</label>
+		</div>
+        <div onclick="window.functionTag.nativeRecordVideo()">
+            <img src="./images/video.png">
+            <label>录像</label>
+        </div>
+        <div onclick="window.functionTag.scanQRCode()">
+            <img src="./images/qr.png">
+            <label>扫码</label>
+        </div>
+	</section>
+    <section class="row">
+        <div onclick="window.functionTag.livePlay('standard', 'http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8', '直播')">
+            <img src="./images/live.png">
+            <label>直播</label>
+        </div>
+        <div onclick="window.functionTag.CallNumber('400－0586－896')">
+            <img src="./images/player1.png">
+            <label>打电话(400－0586－896)</label>
+        </div>
+        <div onclick="window.functionTag.videoPlay('https://media.w3.org/2010/05/sintel/trailer.mp4', '网络视频')">
+            <img src="./images/player1.png">
+            <label>视频播放</label>
+        </div>
+    </section>
+    <section class="row">
+        <div onclick="window.functionTag.startMqttService()">
+            <img src="./images/clearup.png">
+            <label>启动消息订阅服务</label>
+        </div>
+        <div onclick="window.functionTag.cancelMonitorLocation()">
+            <img src="./images/send.png">
+            <label>取消定位</label>
+        </div>
+        <div onclick="window.functionTag.EZOpenVideoRequest('902000000064')">
+            <img src="./images/skip.png">
+            <label>萤石云</label>
+        </div>
+    </section>
+
+    <div id="tips" style="margin:10px;">扫码结果:</div>
+    <div id="scanResult" style="margin:10px;">scan result text</div>
+<!-- 
+
+<br/><br/><br/>
+&nbsp;<input type="button" onclick="window.functionTag.nativeTakePhoto()" value="照相" />&nbsp;|
+&nbsp;<input type="button" onclick="window.functionTag.nativeRecordVideo()" value="录像" />&nbsp;|
+&nbsp;<input type="button" onclick="window.functionTag.scanQRCode()" value="扫码" />&nbsp;|
+<div id="tips" style="margin:10px;">扫码结果:</div>
+<div id="scanResult" style="margin:10px;"></div>
+&nbsp;<input type="button" onclick="window.functionTag.livePlay()" value="直播" />&nbsp;|
+&nbsp;<input type="button" onclick="window.functionTag.MediaPlayVideo()" value="网络视频播放(MediaPlayer)" />&nbsp;|
+<br/><br/>
+&nbsp;<input type="button" onclick="window.functionTag.IjkPlayVideo()" value="网络视频播放(IjkPlayer)" />&nbsp;|
+<br/><br/>
+&nbsp;<a href="test1.html" >跳转测试页面1</a>
+<br/><br/>
+&nbsp;<input type="button" onclick="window.functionTag.CleanWebCache()" value="清理webview缓存数据" />&nbsp;|
+&nbsp;<input type="button" onclick="window.functionTag.SendNotification()" value="发送通知" />&nbsp;|
+
+<br/><br/><br/><br/><br/><br/>
+<div class="text" style="text-align:center">
+
+HNAC公司 2018<br/>
+地址：湖南长沙<br/>
+电话：111111传真：11111<br/>
+copyringht&copy;2018&nbsp;bennet&nbsp;right&nbsp;reserve
+</div>
+ -->
+</body>
+</html>

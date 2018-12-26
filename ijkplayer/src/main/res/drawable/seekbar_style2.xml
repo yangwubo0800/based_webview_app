@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+    由于本人比较懒，就直接用xml代替图片，如果伙伴们有兴趣可以自己做一个progress进度条图片
+    注意：叠放顺序依次为background，secondaryProgress，progress
+    cilp标签的作用就是跟随进度逐步显示图片，把图片分成N份逐个进度显示,避免在拖动过程中进度不走的情况
+    -->
+    <!--背景进度条-->
+    <item android:id="@android:id/background">
+        <shape android:shape="line">
+            <stroke android:width="3dp" android:color="#777777"/>
+            <corners android:radius="3dp"></corners>
+        </shape>
+    </item>
+    <!--第二进度条-->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape android:shape="line">
+                <stroke android:width="3dp" android:color="#4042a5f5"/>
+                <corners android:radius="3dp"></corners>
+            </shape>
+        </clip>
+    </item>
+    <!--第一进度条-->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="line">
+                <stroke android:width="3dp" android:color="#42a5f5"/>
+                <corners android:radius="3dp"></corners>
+            </shape>
+        </clip>
+    </item>
+</layer-list>

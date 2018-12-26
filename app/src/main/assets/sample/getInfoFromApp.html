@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+
+    //获取加密后的手机设备ID,给安卓调用
+    function getDeviceIdFromAndroid(imeiMd5){
+	    var deviceId = imeiMd5;
+	    document.getElementById("deviceId").innerText="手机设备串码：" + deviceId;
+	}
+
+    //获取加密后的手机设备ID
+	function getDeviceId(){
+	    //发起获取动作，有可能需要授权后异步返回
+	    window.functionTag.getDeviceId();
+	}
+
+	//获取手机App基本信息, appInfoJson={"appVersion":"3.0.0.0","appVersionCode":"3","packageName":"com.base.app.debug"}
+	function getAppInfo(){
+	    var appInfo = window.functionTag.getAppInfo();
+	    var obj = eval('(' + appInfo + ')');
+	    var appVersion = obj.appVersion;
+	    var appVersionCode = obj.appVersionCode;
+	    var packageName = obj.packageName;
+
+	    document.getElementById("appVersion").innerText="appVersion：" + appVersion;
+	    document.getElementById("appVersionCode").innerText="appVersionCode：" + appVersionCode;
+	    document.getElementById("packageName").innerText="packageName：" + packageName;
+	}
+
+	//拨打电话
+	function callNumber(){
+	    var number = "13888886666";
+	    window.functionTag.CallNumber(number);
+	}
+
+	//检测是否有新版本，一般在App登录之后调用
+	function checkAppUpdate(){
+	    var updateIPAddress = "175.6.40.68";
+	    window.functionTag.checkNewVersion(updateIPAddress);
+	}
+
+
+
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+
+	<section class="row">
+		<div onclick=getDeviceId()>
+			<img src="../images/live.png">
+			<label>获取加密后的手机串码</label>
+		</div>
+		<div onclick="getAppInfo()">
+			<img src="../images/player1.png">
+			<label>获取App基本信息</label>
+		</div>
+
+	</section>
+
+	<section class="row">
+
+		<div onclick="callNumber()">
+			<img src="../images/skip.png">
+			<label>拨打电话</label>
+		</div>
+
+		<div onclick="window.functionTag.CleanWebCache()">
+			<img src="../images/skip.png">
+			<label>清理缓存</label>
+		</div>
+
+		<div onclick="checkAppUpdate()">
+			<img src="../images/skip.png">
+			<label>检测版本更新</label>
+		</div>
+
+	</section>
+
+	<br/>
+   	<div id="deviceId" style="margin:10px;">
+	</div>
+	<div id="appVersion" style="margin:10px;">
+	</div>
+	<div id="appVersionCode" style="margin:10px;">
+	</div>
+	<div id="packageName" style="margin:10px;">
+	</div>
+
+   
+
+</body>
+</html>

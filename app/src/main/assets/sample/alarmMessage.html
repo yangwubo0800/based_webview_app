@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+
+    function strToJson(str){
+		var json = eval('(' + str + ')');
+		return json;
+	}
+    //启动告警服务,登录之后调用
+	function startPullMessageService(){
+	    //设置服务器地址
+	    var serverAddress = "175.6.40.68";
+	    window.functionTag.setServerAddress(serverAddress)
+	    //设置会话
+	    var session = "testSession";
+	    window.functionTag.setSession(session)
+		//设置站点
+		var stationId = "902000000064";
+        window.functionTag.setStationId(stationId)
+        //设置用户，user json格式示例：{"email":"","id":"baseApp","lastLonginTime":"2018-11-19 11:10:40","name":"baseApp","phone":"",
+        //"registTime":"2018-08-28 11:59:11","roleInfo":[{"ParentID":"","RoleField":"HZInfoV4","RoleID":
+        //"7A45C931-F469-F27D-7DC5-2C28FE72C056","RoleName":"演示用户"},{"ParentID":"FA090E35-87DC-BF2E-54A2-3A1534D0FBA4",
+        //"RoleField":"HZInfoV4StationGroup","RoleID":"3770093B-9138-E56F-C1B6-BD742D2D2100","RoleName":"演示站点组"}]}
+        //切记一定要有ID，否则告警信息无法分类放置
+		var user = '{id:"baseApp",name:"baseApp",phone:"1388888"}';
+        window.functionTag.setUser(user);
+
+        //启动告警服务
+        window.functionTag.startAlarmService();
+	}
+
+
+    //启动消息订阅服务,登录之后调用
+	function startPushMessageService(){
+	    //设置服务器地址
+	    var serverAddress = "175.6.40.68";
+	    window.functionTag.setServerAddress(serverAddress)
+	    //设置会话
+	    var session = "testSession";
+	    window.functionTag.setSession(session)
+		//设置站点
+		var stationId = "902000000064";
+        window.functionTag.setStationId(stationId)
+       // window.functionTag.setStationId(stationId)
+        //设置用户，user json格式示例：{"email":"","id":"baseApp","lastLonginTime":"2018-11-19 11:10:40","name":"baseApp","phone":"",
+        //"registTime":"2018-08-28 11:59:11","roleInfo":[{"ParentID":"","RoleField":"HZInfoV4","RoleID":
+        //"7A45C931-F469-F27D-7DC5-2C28FE72C056","RoleName":"演示用户"},{"ParentID":"FA090E35-87DC-BF2E-54A2-3A1534D0FBA4",
+        //"RoleField":"HZInfoV4StationGroup","RoleID":"3770093B-9138-E56F-C1B6-BD742D2D2100","RoleName":"演示站点组"}]}
+        //切记一定要有ID，否则告警信息无法分类放置
+		var user = '{id:"baseApp",name:"baseApp",phone:"1388888"}';
+        window.functionTag.setUser(user);
+
+        //启动订阅消息服务
+        window.functionTag.startMqttService()
+	}
+
+
+
+
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+
+	<section class="row">
+
+		<div onclick="startPullMessageService()">
+			<img src="../images/skip.png">
+			<label>启动pull方式的告警服务</label>
+		</div>
+
+		<div onclick="startPushMessageService()">
+			<img src="../images/skip.png">
+			<label>启动push方式订阅消息服务</label>
+		</div>
+
+
+	</section>
+
+
+   
+
+</body>
+</html>

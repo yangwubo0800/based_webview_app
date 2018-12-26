@@ -1,0 +1,6 @@
+<resources>
+
+    <!--选择框-->
+    <dimen name="ijkplayer_hnac_selectPading">16dp</dimen>
+
+</resources>

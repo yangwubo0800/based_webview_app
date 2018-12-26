@@ -1,0 +1,38 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="loading_text_size">15dp</dimen>
+    <dimen name="titleSize">16sp</dimen>
+    <dimen name="cntentSize">14sp</dimen>
+    <dimen name="baseLineHeight">50dp</dimen>
+
+    <!--选择框-->
+    <dimen name="selectTitle">17sp</dimen>
+    <dimen name="selectContent">16sp</dimen>
+    <dimen name="selectPading">16dp</dimen>
+    <dimen name="selectLineHeight">49dp</dimen>
+
+    <!--重点能耗设备-->
+    <dimen name="imLineHeight">40dp</dimen>
+    <dimen name="imLineTitleHeight">38dp</dimen>
+    <dimen name="imTitleSize">16sp</dimen>
+    <dimen name="imContentSize">14sp</dimen>
+    <dimen name="imSpaceLine">2dp</dimen>
+
+    <!--能源管理首页-->
+    <dimen name="enePicWidth">24dp</dimen>
+    <dimen name="eneTextsize">12sp</dimen>
+
+    <!--系统页-->
+    <dimen name="systemLine">49dp</dimen>
+    <dimen name="systemLLine">50dp</dimen>
+
+
+
+
+
+
+
+</resources>

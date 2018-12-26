@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+	//提供给Android调用的方法: 设置经纬度信息，json字符串格式:{"latitude":"28.229751","longitude":"112.864228"}
+	function getLocationInfoFromAndroid(locationInfoJson){
+		var obj = eval('(' + locationInfoJson + ')');
+        var latitude = obj.latitude
+		var longitude = obj.longitude
+		document.getElementById("location").innerText="定位信息："
+		document.getElementById("longitude").innerText="经度：" + longitude;
+		document.getElementById("latitude").innerText="纬度：" + latitude;
+    }
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+		<section class="row">
+		<div onclick="window.functionTag.getLocationInfo()">
+			<img src="../images/photo.png">
+            <label>获取定位信息</label>
+		</div>
+			<!--当不需要定位时，请使用取消定位来释放安卓底层监听定位资源，调用后在手机通知栏中应用使用定位的提示会消失-->
+        <div onclick="window.functionTag.cancelMonitorLocation()">
+            <img src="../images/video.png">
+            <label>取消定位</label>
+        </div>
+
+	</section>
+	
+	   <div id="location" style="margin:10px;">定位信息:</div>
+	   <div id="longitude" style="margin:10px;"></div>
+	   <div id="latitude" style="margin:10px;"></div>
+   
+
+</body>
+</html>

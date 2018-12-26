@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="progress1">#5FEC46</color>
+    <color name="progress2">#4AEA2F</color>
+    <color name="progress3">#31CE15</color>
+    <color name="transparent">#000000</color>
+
+    <color name="baseGray">#f7f7f7</color>
+    <color name="hintColor">#c1c1c1</color>
+
+    <color name="progressStart">#a4dcff</color>
+    <color name="progressCenter">#06e1cf</color>
+    <color name="progressEnd">#a4dcff</color>
+
+    <!--状态栏-->
+    <color name="statusBarColor">#3277b3</color>
+
+</resources>

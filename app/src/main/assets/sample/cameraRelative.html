@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+	//提供给Android调用的方法: 获取扫码信息
+	function getScanInfoFromAndroid(scanResult){
+		document.getElementById("scan").innerText="扫码信息："
+		document.getElementById("scanResult").innerText= scanResult;
+    }
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+
+	<section class="row">
+		<div onclick="window.functionTag.nativeTakePhoto()">
+			<img src="../images/photo.png">
+			<label>照相</label>
+		</div>
+		<div onclick="window.functionTag.nativeRecordVideo()">
+			<img src="../images/video.png">
+			<label>录像</label>
+		</div>
+		<div onclick="window.functionTag.scanQRCode()">
+			<img src="../images/qr.png">
+			<label>扫码</label>
+		</div>
+	</section>
+	
+	   <div id="scan" style="margin:10px;"></div>
+	   <div id="scanResult" style="margin:10px;"></div>
+   
+
+</body>
+</html>

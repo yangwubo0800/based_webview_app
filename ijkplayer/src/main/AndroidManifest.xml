@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cpe.ijkplayer" >
+    <application>
+        <activity android:name=".ui.IjkVideoPlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ui.LivePlayActivityNew"
+            ></activity>
+    </application>
+
+</manifest>

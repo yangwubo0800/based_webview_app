@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+	<title>主页</title>
+
+    <script type="text/javascript">
+	// 直播接口，根据项目提供接口中的三个参数
+	function livePlay(){
+	    var videoType = "standard";
+		var liveUrl = "http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
+		var liveTitle = "直播"
+		window.functionTag.livePlay(videoType, liveUrl, liveTitle)
+	}
+
+	// 视频播放接口，根据项目提供接口中的两个参数
+	function videoPlay(){
+		var videoUrl = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+		var videoTitle = "网络视频--小王子"
+		window.functionTag.videoPlay(videoUrl, videoTitle)
+	}
+
+	// 萤石云视频信息变量
+	var mVideoInfo
+	//萤石云视频获取
+	function EZOpenVideoPlayGet(){
+		//设置好服务器地址
+		var serverAddress = "175.6.40.68";
+		window.functionTag.setServerAddress(serverAddress);
+		//登录后的session,此处使用测试字符串
+		var session = "testSession";
+		window.functionTag.setSession(session);
+		//根据登录获取站点信息，此处设置的数据库中拷贝的值来测试
+        var stationId = "902000000064";
+		window.functionTag.EZOpenVideoRequest(stationId)
+	}
+
+	//给安卓调用，获取萤石云视频信息
+	function getEZOpenVideoFromAndroid(videoInfoJson){
+	    //记录播放信息内容
+	    mVideoInfo = videoInfoJson;
+	    //获取视频名称，然后设置
+		var obj = eval('(' + videoInfoJson + ')');
+		var videoName = obj.videoName;
+		document.getElementById("videoName").innerText="视频名称：【" + videoName + "】，点击进行播放";
+	}
+
+	//播放萤石云视频
+	function playEZOpenVideo(){
+	   window.functionTag.EZOpenPlay(mVideoInfo)
+	}
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+
+	<section class="row">
+		<div onclick=livePlay()>
+			<img src="../images/live.png">
+			<label>直播</label>
+		</div>
+		<div onclick="videoPlay()">
+			<img src="../images/player1.png">
+			<label>视频播放</label>
+		</div>
+
+		<div onclick="EZOpenVideoPlayGet()">
+			<img src="../images/skip.png">
+			<label>获取萤石云视频</label>
+		</div>
+	</section>
+
+	<br/>
+   <div id="videoName" style="margin:10px;"
+		onclick=playEZOpenVideo()>
+   </div>
+   
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appInfos>
+
+    <!-- 首页url地址 -->
+    <!-- sample地址，告警消息：file:///android_asset/sample/alarmMessage.html -->
+    <!-- sample地址，摄像头相关：file:///android_asset/sample/cameraRelative.html -->
+    <!-- sample地址，文件上传：file:///android_asset/sample/fileUpload.html -->
+    <!-- sample地址，定位功能：file:///android_asset/sample/location.html -->
+    <!-- sample地址，播放相关：file:///android_asset/sample/videoRelative.html -->
+    <!-- sample地址，获取App信息相关：file:///android_asset/sample/getInfoFromApp.html -->
+    <first_page_url url="http://www.baidu.com"/>
+
+
+    <!-- 按返回键需要退出程序的url界面 -->
+    <home_urls    url="http://XXXXX" />
+
+
+    <!-- 配置引导页界面的个数，范围目前限制在2到5页之间，各项目配置后一定要替换正确的对应图片 -->
+    <guide_page_count count="4" />
+
+    <!-- 配置是否需要引导页, 需要填1，不需要填0 -->
+    <need_guide_page need="0" />
+   
+
+</appInfos>

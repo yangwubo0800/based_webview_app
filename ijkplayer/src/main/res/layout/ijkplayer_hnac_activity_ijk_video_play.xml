@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.IjkVideoPlayActivity">
+
+    <com.cpe.ijkplayer.IjkVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+    </com.cpe.ijkplayer.IjkVideoView>
+
+    <SurfaceView
+        android:id="@+id/video_info_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00777777">
+    </SurfaceView>
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:background="#50000000">
+
+        <LinearLayout
+            android:id="@+id/video_play_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="left|center_vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/ijkplayer_hnac_selectPading"
+                android:src="@drawable/ic_return" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/video_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:text="视频标题"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/video_play_progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:orientation="vertical" >
+
+        <ProgressBar
+            android:id="@+id/video_play_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="#42a5f5">
+        </ProgressBar>
+
+        <TextView
+            android:id="@+id/video_play_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频正在加载中...."
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_load_fail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频加载失败,请检查网络状况"
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/videoinfo_playbtn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_video_play_l"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/videoinfo_fullscreen"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="79dp"
+        android:layout_marginRight="12dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_video_full"
+        android:visibility="invisible"/>
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="79dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+
+
+        <LinearLayout
+            android:id="@+id/seek_bar_panel"
+            android:layout_width="fill_parent"
+            android:layout_height="26dp"
+            android:layout_marginTop="9dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp">
+
+            <SeekBar
+                android:id="@+id/video_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:progressDrawable="@drawable/seekbar_style2"
+                android:thumb="@drawable/thumb_vedio"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:id="@+id/tv_currentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text=""
+                android:textColor="#ffffff"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/tv_allTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text=""
+                android:textColor="#ffffff"
+                android:textSize="14dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

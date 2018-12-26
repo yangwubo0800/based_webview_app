@@ -1,0 +1,309 @@
+commit 6f50b95fadd400be4e2c574f20c1efd22226290b
+Author: willow <869770373@qq.com>
+Date:   Tue Nov 6 10:29:33 2018 +0800
+
+    规避安卓5.0版本webview在无网络下不提示出错问题
+
+commit c3334dff39218dd745975006319aaddabbb94e44
+Author: willow <869770373@qq.com>
+Date:   Mon Nov 5 18:54:54 2018 +0800
+
+    1、在无网络的情况下增加默认出错html页面打包显示处理；
+    2、欢迎页面图片增加；
+
+commit eb1159c39728761e4cc02b6ab5a4c15c00a746e0
+Author: willow <869770373@qq.com>
+Date:   Mon Nov 5 11:44:01 2018 +0800
+
+    1、优化gradle编译
+    2、引导页界面个数实现配置化；
+
+commit 82f62471520b8e7e2de48b4beaa58c9be9275609
+Author: willow <869770373@qq.com>
+Date:   Fri Nov 2 10:17:21 2018 +0800
+
+    1、修改引导页错误逻辑；
+    2、调整进度条颜色和宽度；
+    3、返回键以及出错、本地js加载需要做事项标注；
+    4、release版本key配置
+
+commit 2d2b94ce302564668c71178487f9dadcf9ebd689
+Author: willow <869770373@qq.com>
+Date:   Wed Oct 31 18:33:26 2018 +0800
+
+    修改扫码界面风格
+
+commit 1cb933bb4344dcf32797acf8b4cbed77c6f74d4d
+Author: willow <869770373@qq.com>
+Date:   Tue Oct 30 16:46:34 2018 +0800
+
+    优化GPS定位功能，同时使用GPS和network两种定位。
+
+commit 5245c945163b458ca663be80431f781021927db8
+Author: willow <869770373@qq.com>
+Date:   Tue Oct 30 11:16:01 2018 +0800
+
+    1、修改引导页中记录变量问题；
+    2、增加配置化首页和返回键页面功能；
+
+commit df4291edcbcace9c451b9cee2cc2ba0b54a942c1
+Author: willow <869770373@qq.com>
+Date:   Mon Oct 29 17:23:07 2018 +0800
+
+    1、修改默认出错页面处理，改为html；
+    2、增加处理js使用本地库白名单处理代码；
+    3、返回键处理：主页面弹toast，然后退出程序到后台；
+
+commit afeda1a6d2008906b8893d0983856615e93732a1
+Author: willow <869770373@qq.com>
+Date:   Mon Oct 29 15:42:08 2018 +0800
+
+    添加引导页和欢迎页功能
+
+commit 2073037513f053685ccc764aa30d9f33ad62641d
+Author: willow <869770373@qq.com>
+Date:   Mon Oct 29 13:58:28 2018 +0800
+
+    增加设置站点ID、用户、获取IMEI码接口处理。
+
+commit a5076051af9f2d7a608b5bc25e2cdd06eecbf401
+Author: willow <869770373@qq.com>
+Date:   Tue Oct 16 14:59:18 2018 +0800
+
+    将萤石云视频播放信息json化，以String方式提供给前端播放使用。
+
+commit 1be5ccdd24b484749c9631f3fbfb89c2f4739c6a
+Author: willow <869770373@qq.com>
+Date:   Wed Oct 10 14:50:49 2018 +0800
+
+    提供萤石云播放接口
+
+commit 569ffa25a42c08e9fc727d0a23a7a928b6a0b189
+Author: willow <869770373@qq.com>
+Date:   Wed Oct 10 09:52:21 2018 +0800
+
+    修改app中provider对于authority的应用方式，使用applicationId。
+
+commit 328c469ae813f6fb92add9ce940de5908f9b3cdc
+Author: willow <869770373@qq.com>
+Date:   Tue Oct 9 16:33:52 2018 +0800
+
+    集成萤石云播放功能，单独成库。
+
+commit 9f82dd3f946667dfbe273f4fe87ac412c356c3d2
+Author: willow <869770373@qq.com>
+Date:   Sun Sep 30 16:12:25 2018 +0800
+
+    将告警服务service改为前台服务，减少被后台杀死的概率。
+
+commit cb6bd154de4904dd23eb2ce837c6d318b529ef86
+Author: willow <869770373@qq.com>
+Date:   Fri Sep 28 10:05:48 2018 +0800
+
+    修改直播和视频播放接口，适配新的ijkplayer以及预留萤石云接口。
+
+commit 7f22b952dbd798de126e69ebf66c48743a8544ca
+Author: willow <869770373@qq.com>
+Date:   Fri Sep 28 09:57:11 2018 +0800
+
+    使用界面优化后的ijkplayer模块
+
+commit 0759b457a2f0db7ddc3118b5d5021aed2468da0d
+Author: willow <869770373@qq.com>
+Date:   Thu Sep 27 16:08:15 2018 +0800
+
+    代码整理，将JS接口移出去单独放置。
+
+commit 1a264f6be3442b6eaa9866c73a89b0c682b70456
+Author: willow <869770373@qq.com>
+Date:   Thu Sep 27 08:39:51 2018 +0800
+
+    集成告警service到框架App
+
+commit c68542a4c72d6fce1a63daa1e97ceb0c921abdb0
+Author: willow <869770373@qq.com>
+Date:   Wed Sep 26 11:47:02 2018 +0800
+
+    将更新库集成到app, 解决三个问题：
+    1、检测更新下载库在Android8.0上面兼容问题
+    2、webview  Activity 进程和 下载service进程不在同一个，导致的强转问题
+    3、将service 和 webview 另外放入一个进程，对于下载完成之后的发送安装Intent 跳转界面有影响--暂时都放在一个进程中。
+
+commit f0fc8414083eeba88ecb1077f18e8a18babb3640
+Author: willow <869770373@qq.com>
+Date:   Wed Sep 26 11:30:41 2018 +0800
+
+    添加检测更新下载安装模块源码。
+
+commit c975775f8589307b2b1bc69801ef72eb147c6f13
+Author: willow <869770373@qq.com>
+Date:   Fri Sep 21 14:12:53 2018 +0800
+
+    集成GPS定位接口功能
+
+commit 99a143d6fdd9e5d7eb26a1192ff300f107785ace
+Author: willow <yangwubo0800@gmail.com>
+Date:   Thu Jul 12 18:47:03 2018 +0800
+
+    1、将摄像头相关接口移植到工具类中；
+    2、替换华自云APP图标
+
+commit 686aa94b9b19f114484f2c03195185f7f4e02744
+Author: willow <yangwubo0800@gmail.com>
+Date:   Thu Jul 12 17:01:55 2018 +0800
+
+    解决没有动态申请存储控件读写权限导致无法拍照和录像的问题。
+
+commit 7b82dfbe1b0d2011b82e8ad0272da90c706e1b36
+Author: willow <yangwubo0800@gmail.com>
+Date:   Thu Jul 12 11:53:11 2018 +0800
+
+    1、增加针对input标签实现拍照或者录像后马上选择该文件准备上传的功能。
+
+commit e90128ca365b3e3aee895972c98d7684144ad240
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jul 11 17:19:19 2018 +0800
+
+    1、增加文件管理类和通过uri获取路径类；
+    2、修改fileProvider访问路径，不需要增加更目录/
+    3、修改摄像头初始化失败提示语；
+    4、增加webview对于input标签的响应上传文件；
+
+commit 0a5046bdb17c7a17d143e9425dc99cf91b2c1469
+Author: willow <yangwubo0800@gmail.com>
+Date:   Tue Jul 10 11:40:55 2018 +0800
+
+    增加接口描述
+
+commit 4702e8039eb76f8fbc43416f8ef543b6a73d4cd3
+Author: willow <yangwubo0800@gmail.com>
+Date:   Tue Jul 10 10:09:27 2018 +0800
+
+    更换主webview文件名，同时将运行时权限申请进行更加合理地处理，只在调用相关接口时才去获取权限。
+
+commit 5ba246ceb7c6876b5203cec4ccca82c9de32426f
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jul 9 15:00:53 2018 +0800
+
+    增加webview加载失败默认出错界面
+
+commit 5625571d66e09a5ebfdf32d7ca6fa736daad32ea
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jul 9 11:58:11 2018 +0800
+
+    资源整理和方法接口说明
+
+commit db4cfbed239268237acf92f07aaf1d9d3f418377
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jul 9 10:14:37 2018 +0800
+
+    将ijkplayer 和 zxing 功能完全模块化
+
+commit ef438b92c9c5c2c124743ef68778ebcc8acc1ce7
+Author: willow <yangwubo0800@gmail.com>
+Date:   Fri Jul 6 09:19:34 2018 +0800
+
+    zxing 和 ijkplayer 模块化
+
+commit ac0d49cf47cd28a8475f8814403923117b18c00e
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jul 2 14:13:42 2018 +0800
+
+    修改应用名称为BaseWebview
+
+commit c80ea75f0e1682dfc970f193189030fbdbfabd16
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 27 15:26:23 2018 +0800
+
+    测试网页界面优化处理
+    视频源和baseApp官网手机版放置到20014服务器
+
+commit 03bdf481fada7b9d00287ec76168899d0e79dbe9
+Author: willow <yangwubo0800@gmail.com>
+Date:   Tue Jun 26 16:41:06 2018 +0800
+
+    增加Android7.0版本对于文件访问需要使用FileProvider方式处理，同时增加了权限申请处理；
+    解决系统通知8.0的问题：
+    https://blog.pusher.com/upgrade-app-android-oreo-avoid-factory-reset/
+
+commit e74cfe7e3088461b66fcbb6ff3b9a2fe2bd1d394
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jun 25 17:23:49 2018 +0800
+
+    添加本地视频播放源；
+    配置签名和混淆
+
+commit f5ccf0d0350c65e4fd26c6f596a70ef8866575ba
+Author: willow <yangwubo0800@gmail.com>
+Date:   Mon Jun 25 15:36:28 2018 +0800
+
+    增加无网络和服务器不可用的情况下，加载页面失败的默认自定义页面显示；
+    返回键监听返回最初网页提示退出程序功能。
+
+commit 08a2086c00b7399d59e38b8bd8373caccf542f9d
+Author: willow <yangwubo0800@gmail.com>
+Date:   Thu Jun 21 11:28:42 2018 +0800
+
+    增加本地网页页面调用native功能，优化资源文件：
+    使用https://tinypng.com/压缩图片；
+    替换图标，去除无用菜单。
+
+commit 99e0f3cedf879053730d0f6447db6e18aab53f60
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 20 16:53:21 2018 +0800
+
+    增加通知功能
+
+commit ad816e3cd84b805460dbe1ecca5b0043a4d5c9d2
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 20 11:00:20 2018 +0800
+
+    去除IJKPlayer中无需使用的类代码，增加使用服务器网页展示功能，并且增加缓存清理功能。
+
+commit 7670c4ec39dd7211412246b759f89e809de92aaf
+Author: willow <yangwubo0800@gmail.com>
+Date:   Tue Jun 19 16:10:27 2018 +0800
+
+    分别使用surfaceView+MediaPlayer  和 ijkPlayer 方式实现视频播放功能。
+
+commit 8dce5dc78cc973d06f3d2cc5f55b5ddd3edb3467
+Author: willow <yangwubo0800@gmail.com>
+Date:   Fri Jun 15 11:19:54 2018 +0800
+
+    实现直播功能
+
+commit a4875ee4a967356d4cc94caaff5cb33ed4240a55
+Author: willow <yangwubo0800@gmail.com>
+Date:   Thu Jun 14 09:19:55 2018 +0800
+
+    增加视频播放功能
+
+commit 09e3a10bfb1faf0bee3f26bb10ddf37f5e95789c
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 13 16:06:28 2018 +0800
+
+    增加扫码功能
+
+commit 23856ff5654020cfbe8a46c47be62e126cf0d85b
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 13 14:50:10 2018 +0800
+
+    增加本地html显示，并且调用照相和录像功能
+
+commit 1f9629f6a745de75ccf3d61e1115d0d6b2ca80c3
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 13 10:50:37 2018 +0800
+
+    解决第一次安卓后，从系统安装中直接打开APP,进入应用后，按HOME键退出到后台，重新再次从桌面进入，应用重启问题
+
+commit 586e4c71d0dd2be6d6ebb3fa2866fbf976cef923
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 13 10:30:14 2018 +0800
+
+    增加网页加载进度条显示功能
+
+commit d10d526bfe393089713e2bc5c3bf7d7798ccd894
+Author: willow <yangwubo0800@gmail.com>
+Date:   Wed Jun 13 10:21:35 2018 +0800
+
+    初始化仓库，带有webview加载显示官网内容功能。

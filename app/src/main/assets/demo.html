@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="./js/android.js" type="text/javascript"></script>
+	<title>主页</title>
+
+    <script type="text/javascript">
+       Android.on("locationRs", function(res){
+            console.log(res)
+            document.getElementById("longitude").innerText="经度：" + res.longitude;
+            document.getElementById("latitude").innerText="纬度：" + res.latitude;
+            document.getElementById("address").innerText="地址：" + res.address;
+            document.getElementById("name").innerText="名称：" + res.name;
+       })
+	   
+	   
+	    Android.on("qrCodeRs", function(res){
+            console.log(res)
+            document.getElementById("scanResult").innerText="扫码结果：" + res.scanResult;
+            document.getElementById("scanName").innerText="名称：" + res.name;
+       })
+	   
+	  Android.on("deviceIdRs", function(res){
+            console.log(res)
+            document.getElementById("deviceId").innerText="串码：" + res.deviceId;
+
+       })
+    </script>
+	
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+	<header>BaseWebview APP</header>
+
+		<section class="row">
+		<div onclick="Android.location('test1')">
+			<img src="../images/photo.png">
+            <label>获取定位信息</label>
+		</div>
+        <div onclick="Android.location('test2')">
+            <img src="../images/photo.png">
+            <label>获取定位信息</label>
+        </div>
+		<div onclick="Android.scanQRCode('scantest2')">
+            <img src="../images/photo.png">
+            <label>获取扫码信息</label>
+        </div>
+		
+		<div onclick="Android.deviceId()">
+            <img src="../images/photo.png">
+            <label>获取串码</label>
+        </div>
+	</section>
+	
+	   <div id="location" style="margin:10px;">定位信息:</div>
+	   <div id="longitude" style="margin:10px;"></div>
+	   <div id="latitude" style="margin:10px;"></div>
+       <div id="address" style="margin:10px;"></div>
+       <div id="name" style="margin:10px;"></div>
+	   <div id="scanResult" style="margin:10px;"></div>
+	   <div id="scanName" style="margin:10px;"></div>
+	   <div id="deviceId" style="margin:10px;"></div>
+
+</body>
+</html>

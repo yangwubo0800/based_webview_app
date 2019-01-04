@@ -16,7 +16,7 @@ public class AFLog {
 
     static {
         // TODO 发布的时候改成asset
-        setLogType(LogType.verbose);
+        setLogType(LogType.debug);
     }
 
     private AFLog() {

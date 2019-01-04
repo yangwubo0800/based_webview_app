@@ -53,7 +53,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class WebViewActivity extends AppCompatActivity {
@@ -843,15 +844,41 @@ public class WebViewActivity extends AppCompatActivity {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                // TODO: JS引用白名单处理
+                AFLog.v(TAG,"version lower than L shouldInterceptRequest url=" + url);
                 //加载指定.js时 引导服务端加载本地js
-                if(url.contains("xxxx.js")){
-                    try {
-                        return new WebResourceResponse("application/x-javascript","utf-8",
-                                getBaseContext().getAssets().open("xxx/xxx.js"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try{
+                    if (!TextUtils.isEmpty(url)){
+                        int urlLen = url.length();
+                        int lastSlashIndex = url.lastIndexOf("/");
+                        String lastPartUrl = "";
+                        if (lastSlashIndex != -1  && urlLen > 0){
+                            lastPartUrl =  url.substring(lastSlashIndex+1, urlLen);
+                            AFLog.v(TAG,"version lower than L lastPartUrl=" + lastPartUrl);
+                        }
+                        //匹配url中最后部分是否符合vendor.d76e879c7a94a196e743.js 这种格式。
+//                        String pattern = "vendor\\.[A-Za-z0-9]+\\.js";
+//                        Pattern r = Pattern.compile(pattern);
+//                        Matcher m = r.matcher(lastPartUrl);
+//
+//                        if ( m.matches()){
+//                            return new WebResourceResponse("application/x-javascript","utf-8",
+//                                    getBaseContext().getAssets().open("js/vendor.js"));
+//                        }
+                        // 前端将js版本号去除了，所以进行等于匹配查找
+                        if (!TextUtils.isEmpty(lastPartUrl)){
+                            for (int i=0; i<ParseConfig.sLocalJsFiles.size(); i++){
+                                if (lastPartUrl.equals(ParseConfig.sLocalJsFiles.get(i))){
+                                    AFLog.d(TAG,"version lower than L use local js file name:" + lastPartUrl);
+                                    return new WebResourceResponse("application/x-javascript","utf-8",
+                                            getBaseContext().getAssets().open("js/"+lastPartUrl));
+                                }
+                            }
+                        }
                     }
+                }catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
                 return super.shouldInterceptRequest(view, url);
             }
@@ -859,12 +886,42 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    //加载指定.js时 引导服务端加载本地js
-                    if(request.getUrl().toString().contains("xxxx.js")){
-                        try {
-                            return new WebResourceResponse("application/x-javascript","utf-8",
-                                    getBaseContext().getAssets().open("xxxx/xxxx.js"));
-                        } catch (IOException e) {
+                    if (null != request && null != request.getUrl()){
+                        String url = request.getUrl().toString();
+                        AFLog.v(TAG,"version higher than L shouldInterceptRequest url=" + url);
+                        try{
+                            if (!TextUtils.isEmpty(url)){
+                                int urlLen = url.length();
+                                int lastSlashIndex = url.lastIndexOf("/");
+                                String lastPartUrl = "";
+                                if (lastSlashIndex != -1  && urlLen > 0){
+                                    lastPartUrl =  url.substring(lastSlashIndex+1, urlLen);
+                                    AFLog.v(TAG,"version higher than L lastPartUrl=" + lastPartUrl);
+                                }
+                                //匹配url中最后部分是否符合vendor.d76e879c7a94a196e743.js 这种格式。
+//                                String pattern = "vendor\\.[A-Za-z0-9]+\\.js";
+//                                Pattern r = Pattern.compile(pattern);
+//                                Matcher m = r.matcher(lastPartUrl);
+//
+//                                if ( m.matches()){
+//                                    AFLog.d(TAG,"version higher than L url match vendor.js");
+//                                    return new WebResourceResponse("application/x-javascript","utf-8",
+//                                            getBaseContext().getAssets().open("js/vendor.js"));
+//                                }
+                                // 前端将js版本号去除了，所以进行等于匹配查找
+                                if (!TextUtils.isEmpty(lastPartUrl)){
+                                    for (int i=0; i<ParseConfig.sLocalJsFiles.size(); i++){
+                                        if (lastPartUrl.equals(ParseConfig.sLocalJsFiles.get(i))){
+                                            AFLog.d(TAG,"version higher than L use local js file name:" + lastPartUrl);
+                                            return new WebResourceResponse("application/x-javascript","utf-8",
+                                                    getBaseContext().getAssets().open("js/"+lastPartUrl));
+                                        }
+                                    }
+                                }
+                            }
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (Exception e){
                             e.printStackTrace();
                         }
                     }

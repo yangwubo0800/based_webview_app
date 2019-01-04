@@ -29,6 +29,10 @@ public class Constants {
     public static final String COUNT_KEY = "count";
     //配置是否使用引导页界面的属性
     public static final String NEED_KEY = "need";
+    //需要打包本地js的文件
+    public static final String LOCAL_JS_FILE = "local_js_file";
+    //配置js文件名称属性
+    public static final String JS_NAME_KEY = "jsName";
     //XML文件名
     public static final String APP_XML_FILE_NAME = "app_config.xml";
     //放入data目录下的备份XML文件名

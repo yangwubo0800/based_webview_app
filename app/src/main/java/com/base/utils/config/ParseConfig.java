@@ -30,6 +30,8 @@ public class ParseConfig {
     public static int sBootPageCount = 2;
     //是否需要引导页功能
     public static boolean sNeedGuidePage = true;
+    //解析后的需要引用本地Js的文件名称
+    public static ArrayList<String> sLocalJsFiles;
 
 
     /**
@@ -123,14 +125,22 @@ public class ParseConfig {
      * @param fromAsset
      */
     public static void loadProcess(Context context, boolean fromAsset) {
+        //每次初始化解析时判断变量是否干净
         if (sHomeUrls == null) {
             sHomeUrls = new ArrayList<String>();
-            loadAppConfig(context, fromAsset);
         } else {
-            Log.w(TAG, "initConfig sHomeUrls not null");
+            Log.w(TAG, "initConfig sHomeUrls  not null");
             sHomeUrls.clear();
-            loadAppConfig(context, fromAsset);
         }
+
+        if (sLocalJsFiles == null) {
+            sLocalJsFiles = new ArrayList<String>();
+        } else {
+            Log.w(TAG, "initConfig sLocalJsFiles  not null");
+            sLocalJsFiles.clear();
+        }
+
+        loadAppConfig(context, fromAsset);
     }
 
     /**
@@ -183,6 +193,12 @@ public class ParseConfig {
                             String needGuidePage = parser.getAttributeValue(null, Constants.NEED_KEY);
                             Log.d(TAG, "loadAppConfig needGuidePage=" + needGuidePage);
                             sNeedGuidePage = Integer.parseInt(needGuidePage) == 0 ? false : true;
+                        }else if (Constants.LOCAL_JS_FILE.equals(parser.getName())) {
+                            String jsName = parser.getAttributeValue(null, Constants.JS_NAME_KEY);
+                            if (!TextUtils.isEmpty(jsName)) {
+                                Log.d(TAG, "loadAppConfig jsName=" + jsName);
+                                sLocalJsFiles.add(jsName);
+                            }
                         }
                         break;
                     case XmlPullParser.END_TAG:

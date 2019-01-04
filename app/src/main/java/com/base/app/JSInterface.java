@@ -86,6 +86,24 @@ public class JSInterface {
     private List<Video> list = new ArrayList<>();
     //用来记录调用定位请求的对象
     private String mLocationCallName;
+    //GPS定位异常处理
+    private Handler GpsTimeoutHandler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            //以json格式返回经纬度信息
+            LocationInfo locationInfo = new LocationInfo("", "", "", mLocationCallName, "timeout");
+            String locationJson = GsonHelper.toJson(locationInfo);
+            AFLog.d(TAG," GPS timeout name=" + mLocationCallName);
+            //发消息到主线程
+            Message msg = new Message();
+            msg.what = Constants.MSG_FOR_LOCATION;
+            msg.obj = locationJson;
+            mHandler.sendMessage(msg);
+            //超时后停止定位获取
+            cancelMonitorLocation();
+        }
+    };
 
     /**
      *
@@ -107,6 +125,9 @@ public class JSInterface {
                 String latitude = location.getLatitude() + "";
                 String longitude = location.getLongitude() + "";
                 String locationAddress = "";
+                //移除超时返回处理，不管是谁请求的，都移除
+                GpsTimeoutHandler.removeCallbacks(runnable);
+                AFLog.d(TAG,"onLocationChanged GpsTimeoutHandler removeCallbacks");
 
                 //选择GPS和network中更好的定位
                 boolean flag = isBetterLocation(location, mCurrentLocation);
@@ -156,7 +177,7 @@ public class JSInterface {
 
 
                 //以json格式返回经纬度信息
-                LocationInfo locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName);
+                LocationInfo locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
                 String locationJson = GsonHelper.toJson(locationInfo);
                 AFLog.d(TAG," onLocationChanged latitude=" + latitude + " longitude=" + longitude + " name=" + mLocationCallName);
                 //发消息到主线程
@@ -618,8 +639,21 @@ public class JSInterface {
      */
     @SuppressLint("MissingPermission")
     public void requestLocation(){
+        AFLog.d(TAG,"requestLocation GpsTimeoutHandler postDelayed");
+        GpsTimeoutHandler.postDelayed(runnable, 10000);
         //先检测GPS是否打开，不管结果如何，都去请求位置信息。
         if(!BaseAppUtil.isGPSOpen(mContext)){
+            //返回给前端，GPS关闭信息
+            LocationInfo locationInfo = new LocationInfo("", "", "", mLocationCallName, "gpsClosed");
+            String locationJson = GsonHelper.toJson(locationInfo);
+            AFLog.d(TAG," GPS closed name=" + mLocationCallName);
+            //发消息到主线程
+            Message msg = new Message();
+            msg.what = Constants.MSG_FOR_LOCATION;
+            msg.obj = locationJson;
+            mHandler.sendMessage(msg);
+
+            //跳转GPS设置界面
             ToastUtil.makeText(mContext, "请打开GPS定位");
             BaseAppUtil.openGPS(mContext);
         }

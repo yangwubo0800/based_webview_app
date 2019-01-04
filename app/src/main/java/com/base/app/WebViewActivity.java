@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -45,6 +46,7 @@ import com.base.utils.UriUtils;
 import com.base.utils.config.ParseConfig;
 import com.base.utils.log.AFLog;
 import com.base.utils.log.LogSaveUtils;
+import com.base.utils.log.LogScreenShowUtil;
 import com.base.zxing.CaptureActivity;
 
 import java.io.File;
@@ -72,6 +74,33 @@ public class WebViewActivity extends AppCompatActivity {
     //记录加载的URL
     private String mDefaultErrorUrl = "file:///android_asset/get_data_fail.html";
     private String mLoadUrl = ParseConfig.sFirstLoadPage;
+
+    //用来在屏幕输出log的服务,停用
+//    private LogService mLogService;
+//    ServiceConnection conn = new ServiceConnection() {
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            AFLog.d(TAG,"onServiceDisconnected");
+//        }
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            //返回一个MsgService对象
+//            AFLog.d(TAG,"onServiceConnected");
+//            mLogService = ((LogService.MsgBinder)service).getService();
+//        }
+//    };
+    private boolean mIsDebugVersion;
+    //使用对象方式来显示Log
+    private LogScreenShowUtil mLogShow;
+    //发送log信息给服务
+    private void sendLogMsg(String logLine){
+        if (mIsDebugVersion){
+            Message msg = new Message();
+            msg.obj = logLine;
+            LogScreenShowUtil.getInstance(WebViewActivity.this).handler.sendMessage(msg);
+        }
+    }
 
     //消息处理, 用来处理需要在主线程中调用的方法
     // (All WebView methods must be called on the same thread)
@@ -148,6 +177,19 @@ public class WebViewActivity extends AppCompatActivity {
 
         mWebviewPage = findViewById(R.id.webview_function_page);
         mProgressBar = findViewById(R.id.progressBar);
+        //debug版本启动log输出到屏幕服务
+        mIsDebugVersion = isDebugVersion(mContext);
+        AFLog.d(TAG,"onCreate isDebugVersion=" + mIsDebugVersion);
+        if (mIsDebugVersion){
+            if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+            }
+
+            if (Build.VERSION.SDK_INT > 19) {
+                //设置debug版本的webview可以通过 chrome://inspect/#devices 调试
+                WebView.setWebContentsDebuggingEnabled(true);
+            }
+        }
 
         WebSettings webSettings = mWebviewPage.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -174,10 +216,37 @@ public class WebViewActivity extends AppCompatActivity {
         mWebviewPage.addJavascriptInterface(new JSInterface(mContext, WebViewActivity.this, mHandler), "functionTag");
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AFLog.d(TAG,"onResume mIsDebugVersion=" + mIsDebugVersion);
+        if (mIsDebugVersion){
+            if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+            }
+        }
+    }
+
+
+    private static boolean isDebugVersion(Context context) {
+        try {
+            ApplicationInfo info = context.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     protected void onDestroy() {
         super.onDestroy();
         AFLog.d(TAG,"webview onDestroy");
-
+        if (mIsDebugVersion){
+            if (LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                LogScreenShowUtil.getInstance(WebViewActivity.this).removeFloatWindow();
+            }
+        }
         // TODO: 清理缓存, 删除相关缓存目录下的文件
 //        BaseAppUtil.clearCacheFile(this);
 //
@@ -678,6 +747,8 @@ public class WebViewActivity extends AppCompatActivity {
                 //记录当前URL，判断是否在主业面，处理返回键
                 mLoadUrl = url;
                 super.onPageFinished(view, url);
+                String logLine = "I " + " url=" + url;
+                sendLogMsg(logLine);
             }
 
             @Override
@@ -722,6 +793,8 @@ public class WebViewActivity extends AppCompatActivity {
                 //记录到文件日志中
                 LogSaveUtils.e(" before M version onReceivedError description=" + description
                         +" errorCode=" + errorCode);
+                String logLine = "E " + " description=" + description +" errorCode=" + errorCode;
+                sendLogMsg(logLine);
                 // 在这里显示自定义错误页,只处理没有连接网络的情况
                 if (errorCode == -2){
                     showErrorPage();//显示错误页面
@@ -741,6 +814,8 @@ public class WebViewActivity extends AppCompatActivity {
                     //记录到文件日志中
                     LogSaveUtils.e(" after M version onReceivedError errDes=" + errDes
                             + " errorCode=" + errorCode);
+                    String logLine = "E " + " errDes=" + errDes +" errorCode=" + errorCode;
+                    sendLogMsg(logLine);
                     // 在这里显示自定义错误页,只处理没有连接网络的情况
                     if (errorCode == -2){
                         showErrorPage();//显示错误页面
@@ -762,6 +837,8 @@ public class WebViewActivity extends AppCompatActivity {
                 //记录到文件日志中
                 LogSaveUtils.e(" onReceivedHttpError statusCode=" + statusCode
                         + " reason=" + reason);
+                String logLine = "E " + " HttpError statusCode=" + statusCode +" reason=" + reason;
+                sendLogMsg(logLine);
             }
 
             @Override

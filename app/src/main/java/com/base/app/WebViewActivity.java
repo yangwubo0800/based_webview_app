@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -92,14 +93,19 @@ public class WebViewActivity extends AppCompatActivity {
 //        }
 //    };
     private boolean mIsDebugVersion;
+    private boolean mFirstRun = true;
     //使用对象方式来显示Log
     private LogScreenShowUtil mLogShow;
     //发送log信息给服务
     private void sendLogMsg(String logLine){
-        if (mIsDebugVersion){
+        if (mIsDebugVersion  && BaseAppUtil.checkAlertWindowsPermission(mContext)){
             Message msg = new Message();
             msg.obj = logLine;
-            LogScreenShowUtil.getInstance(WebViewActivity.this).handler.sendMessage(msg);
+            // 注意权限没有获取的时候很多空指针
+            if (null != LogScreenShowUtil.getInstance(WebViewActivity.this) &&
+                    LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow ){
+                LogScreenShowUtil.getInstance(WebViewActivity.this).handler.sendMessage(msg);
+            }
         }
     }
 
@@ -182,8 +188,17 @@ public class WebViewActivity extends AppCompatActivity {
         mIsDebugVersion = isDebugVersion(mContext);
         AFLog.d(TAG,"onCreate isDebugVersion=" + mIsDebugVersion);
         if (mIsDebugVersion){
-            if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
-                LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!BaseAppUtil.checkAlertWindowsPermission(mContext) && mFirstRun) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:" + getPackageName()));
+                    startActivityForResult(intent,Constants.OPEN_ALERT_WINDOW_PERMISSION);
+                    mFirstRun = false;
+                } else {
+                    if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                        LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+                    }
+                }
             }
 
             if (Build.VERSION.SDK_INT > 19) {
@@ -222,8 +237,14 @@ public class WebViewActivity extends AppCompatActivity {
         super.onResume();
         AFLog.d(TAG,"onResume mIsDebugVersion=" + mIsDebugVersion);
         if (mIsDebugVersion){
-            if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
-                LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!BaseAppUtil.checkAlertWindowsPermission(mContext)) {
+                    AFLog.d(TAG, "onResume no alert window permission");
+                } else {
+                    if (!LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                        LogScreenShowUtil.getInstance(WebViewActivity.this).createFloatView();
+                    }
+                }
             }
         }
     }
@@ -244,8 +265,14 @@ public class WebViewActivity extends AppCompatActivity {
         super.onDestroy();
         AFLog.d(TAG,"webview onDestroy");
         if (mIsDebugVersion){
-            if (LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
-                LogScreenShowUtil.getInstance(WebViewActivity.this).removeFloatWindow();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!BaseAppUtil.checkAlertWindowsPermission(mContext)) {
+                    AFLog.d(TAG, "onDestroy no permission alert window.");
+                } else {
+                    if (LogScreenShowUtil.getInstance(WebViewActivity.this).mFloatShow){
+                        LogScreenShowUtil.getInstance(WebViewActivity.this).removeFloatWindow();
+                    }
+                }
             }
         }
         // TODO: 清理缓存, 删除相关缓存目录下的文件

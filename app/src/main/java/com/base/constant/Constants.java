@@ -53,6 +53,7 @@ public class Constants {
     public static final int SCAN_QRCODE_REQUEST = 4;
     public static final int TAKE_PHOTO_AND_UPLOAD_REQUEST = 5;
     public static final int RECORD_VIDEO_AND_UPLOAD_REQUEST = 6;
+    public static final int OPEN_ALERT_WINDOW_PERMISSION = 7;
     //请求权限
     public static final int PERMISSION_REQUEST_CAMERA_FOR_PHOTO = 10;
     public static final int PERMISSION_REQUEST_CAMERA_FOR_VIDEO = 11;

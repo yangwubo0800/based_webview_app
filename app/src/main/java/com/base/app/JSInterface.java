@@ -22,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
+import com.base.utils.SpUtils;
 import com.example.ezrealplayer.ui.EZRealPlayActivity;
 import com.example.ezrealplayer.util.EZUtils;
 import com.base.bean.AppInfo;
@@ -1098,5 +1099,38 @@ public class JSInterface {
         AFLog.d(TAG, "stopMqttService " );
         Intent intent = new Intent(mActivity, MqttService.class);
         mContext.stopService(intent);
+    }
+
+
+    /**
+     * 功能：提供通过key value操作文件存储数据接口给前端。
+     * 参数：无
+     * 返回值：无
+     * 使用方式：window.functionTag.setKeyValue(key， value)
+     */
+    @JavascriptInterface
+    public void setKeyValue(String key, String value){
+        if (!TextUtils.isEmpty(key)){
+            SpUtils.setSpFileName(Constants.PREF_NAME_USERINFO);
+            SpUtils.putString(mContext, key, value);
+            AFLog.d(TAG,"setKeyValue key="+ key + " value=" + value);
+        }
+    }
+
+    /**
+     * 功能：提供通过key value操作文件读取数据接口给前端。
+     * 参数：无
+     * 返回值：value
+     * 使用方式：window.functionTag.getValueByKey(key)
+     */
+    @JavascriptInterface
+    public String getValueByKey(String key){
+        String value = null;
+        if (!TextUtils.isEmpty(key)){
+            SpUtils.setSpFileName(Constants.PREF_NAME_USERINFO);
+            value = SpUtils.getString(mContext, key);
+            AFLog.d(TAG,"getValueByKey key="+ key + " value=" + value);
+        }
+        return value;
     }
 }

@@ -48,6 +48,7 @@ import com.base.utils.http.OkHttpUtil;
 import com.base.utils.http.Param;
 import com.base.utils.log.AFLog;
 import com.base.utils.log.LogSaveUtils;
+import com.base.app.ui.guide.PicassoPhotoViewActivity;
 import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
 import com.vector.update_app.UpdateCallback;
@@ -60,7 +61,6 @@ import com.videogo.openapi.bean.EZDeviceInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1132,5 +1132,18 @@ public class JSInterface {
             AFLog.d(TAG,"getValueByKey key="+ key + " value=" + value);
         }
         return value;
+    }
+
+    /**
+     * 功能：预览图片
+     * 参数：无
+     * 返回值：value
+     * 使用方式：window.functionTag.previewPhoto(url)
+     */
+    @JavascriptInterface
+    public void previewPhoto(String url){
+        Intent it = new Intent(mContext, PicassoPhotoViewActivity.class);
+        it.putExtra("url", url);
+        mContext.startActivity(it);
     }
 }

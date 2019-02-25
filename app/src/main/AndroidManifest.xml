@@ -60,6 +60,8 @@
 		<activity android:name=".PicassoPhotoViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
+        <activity android:name=".example.FileUploadDemoActivity"></activity>
+        <activity android:name=".ModeChooseActivity"></activity>
         <service
             android:name="com.base.service.AlarmNotifyService"
             android:enabled="true" />

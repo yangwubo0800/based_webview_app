@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.base.app.ModeChooseActivity;
 import com.base.constant.Constants;
 import com.base.app.R;
 import com.base.app.WebViewActivity;
@@ -43,7 +44,7 @@ public class SplashActivity extends Activity {
     }
 
     private void enterHomeActivity() {
-        Intent intent = new Intent(this, WebViewActivity.class);
+        Intent intent = new Intent(this, ModeChooseActivity.class);
         startActivity(intent);
         finish();
     }

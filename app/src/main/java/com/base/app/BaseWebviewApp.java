@@ -7,6 +7,7 @@ import com.base.utils.log.AFLog;
 import com.base.bean.User;
 import com.base.receiver.MyNetworkReceiver;
 import com.base.utils.config.ParseConfig;
+import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
 
 public class BaseWebviewApp extends Application {
     private String TAG = "BaseWebviewApp";
@@ -55,6 +56,9 @@ public class BaseWebviewApp extends Application {
         ParseConfig.initAppConfig(mContext);
         //动态注册网络监听
         MyNetworkReceiver.registerReceiver(mContext);
+        //将手机连接PC的热点，查看log中的如下信息,可以获取PC端查看数据库db的地址信息
+        // I/SQLiteOnWeb: SQLiteOnWeb running on: http://192.168.137.224:9000
+        SQLiteOnWeb.init(this).start();
 
     }
 

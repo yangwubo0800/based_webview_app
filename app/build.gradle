@@ -50,11 +50,14 @@ dependencies {
     //配合更新库使用的okgo
     implementation 'com.lzy.net:okgo:3.0.4'
     //告警service需要访问后台，使用okhttp
-    implementation files('libs/okhttp-2.7.0.jar')
+    //implementation files('libs/okhttp-2.7.0.jar')
+    implementation 'com.squareup.okhttp3:okhttp:3.3.0'
     implementation 'com.google.code.gson:gson:2.2.4'
     //消息推送集成mqtt
     implementation 'org.eclipse.paho:mqtt-client:0.4.0'
     //图片预览框架photoview
    // implementation  'com.github.chrisbanes:PhotoView:2.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
+    //在web查看手机端sqlite 数据库框架
+    implementation 'io.github.skyhacker2:sqliteonweb:1.0.2'
 }

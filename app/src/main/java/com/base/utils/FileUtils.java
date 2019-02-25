@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.base.utils.log.AFLog;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 
 public class FileUtils {
     public static final String TAG = FileUtils.class.getSimpleName();
@@ -573,6 +576,42 @@ public class FileUtils {
             }
         }
         return sb.toString();
+    }
+
+
+    /**
+     * 获取某一个路径目录下的所有文件路径
+     * @param directoryPath
+     * @return
+     */
+    public static ArrayList<String> getAllFilePathForDirectory(String directoryPath){
+        ArrayList<String>  filePaths = new ArrayList<String>();
+
+        File directory = new File(directoryPath);
+        if (null != directory){
+            if (directory.isDirectory()){
+                File[] files = directory.listFiles();
+                for (File file : files){
+                    String filePath = file.getAbsolutePath();
+                    if (file.isDirectory()){
+                        ArrayList<String> child = getAllFilePathForDirectory(filePath);
+                        filePaths.addAll(child);
+                    } else {
+                        filePaths.add(filePath);
+                    }
+                }
+            } else {
+                AFLog.w(TAG,"NOT a directory, please be cautions !");
+                String filePath = directory.getAbsolutePath();
+                filePaths.add(filePath);
+            }
+        }
+
+        for (String s : filePaths){
+            AFLog.d(TAG,"=====file path=" + s);
+        }
+
+        return filePaths;
     }
 
 }

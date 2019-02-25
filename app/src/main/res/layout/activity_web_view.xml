@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".WebViewActivity">
 
-    <WebView
+    <wendu.dsbridge.DWebView
         android:id="@+id/webview_function_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </WebView>
+    </wendu.dsbridge.DWebView>
 
     <LinearLayout
         android:id="@+id/webview_progress_layout"

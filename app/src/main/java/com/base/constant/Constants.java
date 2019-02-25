@@ -13,6 +13,10 @@ public class Constants {
     /** 服务器地址信息*/
     public static final String SERVER_ADDRESS = "server_address";
 
+    /** 用户是否进入离线模式*/
+    public static final String OFFLINE_MODE = "offline_mode";
+
+
     /** 解析应用配置文件xml*/
     public static final String APP_XML_ROOT = "appInfos";
     //首页url标签

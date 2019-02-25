@@ -23,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -42,13 +43,17 @@ import com.base.utils.CameraFunctionUtil;
 import com.base.utils.GsonHelper;
 import com.base.utils.BaseAppUtil;
 
+import com.base.utils.SpUtils;
 import com.base.utils.ToastUtil;
 import com.base.utils.UriUtils;
 import com.base.utils.config.ParseConfig;
+import com.base.utils.http.AjaxHandler;
 import com.base.utils.log.AFLog;
 import com.base.utils.log.LogSaveUtils;
 import com.base.utils.log.LogScreenShowUtil;
 import com.base.zxing.CaptureActivity;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,11 +62,14 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import wendu.dsbridge.CompletionHandler;
+import wendu.dsbridge.DWebView;
+
 
 public class WebViewActivity extends AppCompatActivity {
 
     private String  TAG = "WebViewActivity";
-    private WebView mWebviewPage;
+    private DWebView mWebviewPage;
     private View mErrorView;
     private Context mContext;
     private ProgressBar mProgressBar;
@@ -230,6 +238,24 @@ public class WebViewActivity extends AppCompatActivity {
         AFLog.i(TAG,"webview load url:" + mLoadUrl);
         //注册JS调用的natvie接口
         mWebviewPage.addJavascriptInterface(new JSInterface(mContext, WebViewActivity.this, mHandler), "functionTag");
+        mWebviewPage.addJavascriptObject(new Object(){
+
+            /**
+             * Note: This method is for Fly.js
+             * In browser, Ajax requests are sent by browser, but Fly can
+             * redirect requests to native, more about Fly see  https://github.com/wendux/fly
+             * @param requestData passed by fly.js, more detail reference https://wendux.github.io/dist/#/doc/flyio-en/native
+             * @param handler
+             */
+            @JavascriptInterface
+            public void onAjaxRequest(Object requestData, CompletionHandler handler){
+                // Handle ajax request redirected by Fly
+                AjaxHandler.onAjaxRequest((JSONObject)requestData,
+                        handler,
+                        mContext);
+            }
+
+        },null);
     }
 
     @Override
@@ -705,7 +731,11 @@ public class WebViewActivity extends AppCompatActivity {
 //        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewPager.LayoutParams.FILL_PARENT, ViewPager.LayoutParams.FILL_PARENT);
 //        webParentView.addView(mErrorView, 0, lp);
         // TODO: 需要添加h5页面来显示默认出错异常页面
-        mWebviewPage.loadUrl(mDefaultErrorUrl);
+        SpUtils.setSpFileName(Constants.PREF_NAME_SETTING);
+        boolean offlineMode = SpUtils.getBoolean(mContext, Constants.OFFLINE_MODE, false);
+        if (!offlineMode){
+            mWebviewPage.loadUrl(mDefaultErrorUrl);
+        }
     }
     /****
      * 把系统自身请求失败时的网页隐藏
@@ -777,6 +807,15 @@ public class WebViewActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 String logLine = "I " + " url=" + url;
                 sendLogMsg(logLine);
+                // TODO: set orientation
+                // 根据url 强制设置横竖屏模式
+//                if (url.contains("XXXXX")){
+//                    //设置横屏显示
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                } else {
+//                    //设置竖屏显示
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                }
             }
 
             @Override

@@ -106,6 +106,9 @@ public class JSInterface {
         }
     };
 
+    //用来记录每次定位请求是否返回过给前端
+    private boolean mHasPostLocation;
+
     /**
      *
      * @param context
@@ -177,15 +180,21 @@ public class JSInterface {
 
 
 
-                //以json格式返回经纬度信息
-                LocationInfo locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
-                String locationJson = GsonHelper.toJson(locationInfo);
-                AFLog.d(TAG," onLocationChanged latitude=" + latitude + " longitude=" + longitude + " name=" + mLocationCallName);
-                //发消息到主线程
-                Message msg = new Message();
-                msg.what = Constants.MSG_FOR_LOCATION;
-                msg.obj = locationJson;
-                mHandler.sendMessage(msg);
+                //如果还没有返回过定位信息，则返回，确保两个设备只返回一次。
+                if (!mHasPostLocation) {
+                    String provider =location.getProvider();
+                    AFLog.d(TAG,"onLocationChanged provider=" + provider);
+                    //以json格式返回经纬度信息
+                    LocationInfo locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
+                    String locationJson = GsonHelper.toJson(locationInfo);
+                    AFLog.d(TAG," onLocationChanged latitude=" + latitude + " longitude=" + longitude + " name=" + mLocationCallName);
+                    //发消息到主线程
+                    Message msg = new Message();
+                    msg.what = Constants.MSG_FOR_LOCATION;
+                    msg.obj = locationJson;
+                    mHandler.sendMessage(msg);
+                    mHasPostLocation = true;
+                }
             }
 
             /* 当状态发生改变的时候调用*/
@@ -642,6 +651,7 @@ public class JSInterface {
     public void requestLocation(){
         AFLog.d(TAG,"requestLocation GpsTimeoutHandler postDelayed");
         GpsTimeoutHandler.postDelayed(runnable, 10000);
+        mHasPostLocation = false;
         //先检测GPS是否打开，不管结果如何，都去请求位置信息。
         if(!BaseAppUtil.isGPSOpen(mContext)){
             //返回给前端，GPS关闭信息
@@ -660,8 +670,8 @@ public class JSInterface {
         }
 
         //获取时时更新，第一个是Provider,第二个参数是更新时间1000ms，第三个参数是更新半径，第四个是监听器
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, mLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, mLocationListener);
     }
 
     /**

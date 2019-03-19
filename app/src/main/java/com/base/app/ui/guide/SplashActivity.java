@@ -44,7 +44,7 @@ public class SplashActivity extends Activity {
     }
 
     private void enterHomeActivity() {
-        Intent intent = new Intent(this, ModeChooseActivity.class);
+        Intent intent = new Intent(this, WebViewActivity.class);
         startActivity(intent);
         finish();
     }

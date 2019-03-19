@@ -85,8 +85,9 @@ public class JSInterface {
     private String EZAppKey;
     private String EZAppSecret;
     private List<Video> list = new ArrayList<>();
-    //用来记录调用定位请求的对象
-    private String mLocationCallName;
+    //用来记录调用定位请求的对象, 前端需要根据调用者名称来处理界面，当授权点击时，此处是new的对象没有传值，
+    // 需要将此改为静态变量
+    private static String mLocationCallName;
     //GPS定位异常处理
     private Handler GpsTimeoutHandler = new Handler();
     Runnable runnable = new Runnable() {
@@ -144,13 +145,15 @@ public class JSInterface {
                     longitude = mCurrentLocation.getLongitude() + "";
                 }
 
-
+                AFLog.d(TAG, "onLocationChanged latitude=" + latitude + " longitude=" + longitude);
                 Geocoder gc = new Geocoder(mContext);
                 List<Address> addresses = null;
                 try {
                     addresses = gc.getFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 1);
+                    AFLog.d(TAG, "Geocoder get addresses size=" + (addresses==null? null: addresses.size()));
                     if (addresses != null && addresses.size() > 0) {
                         Address address = addresses.get(0);
+                        AFLog.d(TAG, "address0 =" + (address == null ? null : address.toString()));
                         // TODO: 区分安卓版本处理
                         // 7.0版本作为分界点
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
@@ -166,6 +169,8 @@ public class JSInterface {
                                 for (int i=0; i<=1; i++){
                                     locationAddress = locationAddress + address.getAddressLine(i);
                                 }
+                            } else {
+                                locationAddress =  address.getAddressLine(0);
                             }
                         }
 
@@ -185,7 +190,14 @@ public class JSInterface {
                     String provider =location.getProvider();
                     AFLog.d(TAG,"onLocationChanged provider=" + provider);
                     //以json格式返回经纬度信息
-                    LocationInfo locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
+                    LocationInfo locationInfo = null;
+                    // 当address 解析为空时，也返回超时timeout
+                    if (TextUtils.isEmpty(locationAddress)){
+                        locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "timeout");
+                    } else {
+                        locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
+                    }
+
                     String locationJson = GsonHelper.toJson(locationInfo);
                     AFLog.d(TAG," onLocationChanged latitude=" + latitude + " longitude=" + longitude + " name=" + mLocationCallName);
                     //发消息到主线程
@@ -671,7 +683,8 @@ public class JSInterface {
 
         //获取时时更新，第一个是Provider,第二个参数是更新时间1000ms，第三个参数是更新半径，第四个是监听器
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, mLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, mLocationListener);
+        // 只使用GPS定位来返回结果
+        //mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, mLocationListener);
     }
 
     /**

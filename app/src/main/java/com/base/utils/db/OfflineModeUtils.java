@@ -21,6 +21,20 @@ public class OfflineModeUtils {
     private String TAG = "OfflineModeUtils";
     private Context mContext;
     private static OfflineModeUtils mInstance;
+    public static String[] mNeedBlockLastPartUrls = {
+            "addInspectionProblem",
+            "getInspectionTaskViewList",
+            "modifyInspectionTask",
+            "getInspectionTaskView",
+            "fileUpload",
+            "getInspectionDictView",
+            "insertInspectionEvent",
+            "insertInspectionEventAttachmentBatch",
+            "insertInspectionEventRecord",
+            "selectInspectionEventView",
+            "getInspectionEventViewList",
+            "insertInspectionProblemAttachmentBatch"
+    };
 
     public OfflineModeUtils(Context context) {
         mContext = context;

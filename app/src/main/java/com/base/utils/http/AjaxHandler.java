@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import com.base.constant.Constants;
+import com.base.utils.BaseAppUtil;
 import com.base.utils.SpUtils;
 import com.base.utils.db.OfflineModeUtils;
 import com.base.utils.log.AFLog;
@@ -23,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -47,7 +51,10 @@ import wendu.dsbridge.CompletionHandler;
 
 public class AjaxHandler {
     private static String TAG = "AjaxHandler";
-
+    // cookie 管理
+    private static final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+    // 前端选择上传的文件真实路径集合
+    public static ArrayList<String> mFilePaths = new ArrayList<String>();
 
     public static void onAjaxRequest(final JSONObject requestData,
                                      final CompletionHandler handler,
@@ -68,6 +75,19 @@ public class AjaxHandler {
             final OkHttpClient okHttpClient = new OkHttpClient
                     .Builder()
                     .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                    // 设置cookie管理
+                    .cookieJar(new CookieJar() {
+                        @Override
+                        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                            cookieStore.put(url.host(), cookies);
+                        }
+
+                        @Override
+                        public List<Cookie> loadForRequest(HttpUrl url) {
+                            List<Cookie> cookies = cookieStore.get(url.host());
+                            return cookies != null ? cookies : new ArrayList<Cookie>();
+                        }
+                    })
                     .build();
 
             // Determine whether you need to encode the response result.
@@ -110,22 +130,22 @@ public class AjaxHandler {
                 mPostData = requestData.getString("body");
                 AFLog.d(TAG,"=====onAjaxRequest mPostData="+ mPostData);
                 if (!TextUtils.isEmpty(mPostData)){
-                    ArrayList<String> filePaths = new ArrayList<String>();
+//                    ArrayList<String> filePaths = new ArrayList<String>();
                     // notice: 这里的解析方式为接收encodeUrl 编码方式的参数
                     if (mPostData.contains("fileProcess")){
-                        String[]  fileProcessParams = mPostData.split("&");
-                        for(int i=0; i< fileProcessParams.length; i++){
-                            if (fileProcessParams[i].contains("filePath")){
-                                int equalIndex = fileProcessParams[i].indexOf("=");
-                                String filePath = fileProcessParams[i].substring(equalIndex+1, fileProcessParams[i].length());
-                                AFLog.d(TAG,"=====filePath=" + filePath);
-                                filePaths.add(filePath);
-                            }
-                        }
+//                        String[]  fileProcessParams = mPostData.split("&");
+//                        for(int i=0; i< fileProcessParams.length; i++){
+//                            if (fileProcessParams[i].contains("filePath")){
+//                                int equalIndex = fileProcessParams[i].indexOf("=");
+//                                String filePath = fileProcessParams[i].substring(equalIndex+1, fileProcessParams[i].length());
+//                                AFLog.d(TAG,"=====filePath=" + filePath);
+//                                filePaths.add(filePath);
+//                            }
+//                        }
 
                         // 拼接文件上传参数
                         MultipartBody.Builder fileUploadBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                        for (String filePath : filePaths){
+                        for (String filePath : mFilePaths){
                             String decodePath = URLDecoder.decode(filePath);
                             AFLog.d(TAG,"#########filePath="+ filePath + "\n"
                             +" decodePath=" + decodePath);
@@ -149,7 +169,15 @@ public class AjaxHandler {
             SpUtils.setSpFileName(Constants.PREF_NAME_SETTING);
             boolean offlineMode = SpUtils.getBoolean(context, Constants.OFFLINE_MODE, false);
             AFLog.d(TAG,"############offlineMode=" + offlineMode);
-            if (offlineMode) {
+            int questionMarkIndex = mUrl.indexOf("?");
+            String lastPartUrl = "";
+            if (questionMarkIndex != -1 ){
+                lastPartUrl = mUrl.substring(mUrl.lastIndexOf("/")+1, questionMarkIndex);
+            } else {
+                lastPartUrl = mUrl.substring(mUrl.lastIndexOf("/")+1, mUrl.length());
+            }
+            AFLog.d(TAG,"lastPartUrl=" + lastPartUrl);
+            if (offlineMode && BaseAppUtil.strArrayContains(OfflineModeUtils.mNeedBlockLastPartUrls, lastPartUrl)) {
                 String localResponse = OfflineModeUtils.getInstance(context).urlMapToLocalApi(mUrl, mPostData, mContentType);
                 responseData.put("responseText",localResponse);
                 responseData.put("statusCode",200);

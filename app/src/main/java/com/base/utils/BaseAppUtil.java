@@ -270,4 +270,25 @@ public class BaseAppUtil {
     }
 
 
+    /**
+     * 判断某个字符串是否包含在字符数组中
+     * @param strArray
+     * @param str
+     * @return
+     */
+    public static boolean strArrayContains(String[] strArray, String str) {
+        boolean result = false;
+        if ((null != strArray) && (null != str)) {
+            for(int i=0; i<strArray.length; i++) {
+                if (str.equals(strArray[i])) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
 }

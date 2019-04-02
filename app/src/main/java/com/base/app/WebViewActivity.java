@@ -530,6 +530,11 @@ public class WebViewActivity extends AppCompatActivity {
             }
             if (mFilePathCallbacks != null) {
                 Uri uri = Uri.fromFile(new File(pathParam));
+                //将文件路径直接传给拦截接口使用；
+                if (null != AjaxHandler.mFilePaths){
+                    AjaxHandler.mFilePaths.clear();
+                    AjaxHandler.mFilePaths.add(pathParam);
+                }
                 mFilePathCallbacks.onReceiveValue(new Uri[] { uri });
             }
         } else if (null != uriParam) { //其次使用uri
@@ -540,6 +545,11 @@ public class WebViewActivity extends AppCompatActivity {
             }
             if (mFilePathCallbacks != null) {
                 String path = UriUtils.getPath(getApplicationContext(), uriParam);
+                //将文件路径直接传给拦截接口使用；
+                if (null != AjaxHandler.mFilePaths){
+                    AjaxHandler.mFilePaths.clear();
+                    AjaxHandler.mFilePaths.add(path);
+                }
                 Uri uri = Uri.fromFile(new File(path));
                 mFilePathCallbacks.onReceiveValue(new Uri[] { uri });
             }

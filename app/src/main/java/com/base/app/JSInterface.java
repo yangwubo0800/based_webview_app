@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -1168,5 +1169,22 @@ public class JSInterface {
         Intent it = new Intent(mContext, PicassoPhotoViewActivity.class);
         it.putExtra("url", url);
         mContext.startActivity(it);
+    }
+
+    @JavascriptInterface
+    public void setOrientation(String orientation){
+        AFLog.d(TAG, "#####setOrientation orientation=" + orientation);
+        if (!TextUtils.isEmpty(orientation)){
+            //和前端约定：0 随屏幕旋转，1 横屏， 2 竖屏
+            if ("0".equals(orientation)){
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            } else if("1".equals(orientation)){
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else if("2".equals(orientation)){
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            } else {
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
+        }
     }
 }

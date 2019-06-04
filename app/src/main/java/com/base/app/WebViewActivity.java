@@ -232,11 +232,6 @@ public class WebViewActivity extends AppCompatActivity {
 
         initWebview();
 
-        // TODO: 从通知栏跳转过来的告警列表页面显示处理；
-        Intent intent = getIntent();
-        if (null != intent && !TextUtils.isEmpty(intent.getStringExtra("url"))) {
-            mLoadUrl = intent.getStringExtra("url");
-        }
 
         mWebviewPage.loadUrl(mLoadUrl);
         AFLog.i(TAG,"webview load url:" + mLoadUrl);
@@ -261,6 +256,26 @@ public class WebViewActivity extends AppCompatActivity {
 
         },null);
     }
+
+    // TODO: 从通知栏跳转过来的告警列表页面显示处理；
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        AFLog.d(TAG, "#####onNewIntent intent="+ ((null == intent)? null: intent.toString()));
+        if (null != intent) {
+            Bundle data = intent.getExtras();
+            AFLog.d(TAG, "#####data = "+ (null ==data ? null : data.toString()));
+            if (null != data){
+                String url  = data.getString("url");
+                AFLog.d(TAG, "#####url = "+ url);
+                if (!TextUtils.isEmpty(url)){
+                    mLoadUrl = url;
+                    mWebviewPage.loadUrl(mLoadUrl);
+                }
+            }
+        }
+    }
+
 
     @Override
     protected void onResume() {

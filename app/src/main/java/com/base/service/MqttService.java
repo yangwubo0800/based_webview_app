@@ -2,15 +2,19 @@ package com.base.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.base.app.BaseWebviewApp;
+import com.base.app.WebViewActivity;
+import com.base.bean.MqttAlarm;
 import com.base.receiver.MyNetworkReceiver;
 import com.base.receiver.NetStateChangeObserver;
 import com.base.receiver.NetworkType;
+import com.base.utils.GsonHelper;
 import com.base.utils.NotificationUtils;
 import com.base.utils.log.AFLog;
 
@@ -177,11 +181,23 @@ public class MqttService extends Service implements MqttCallback, NetStateChange
         if ((null != message) && (message.getPayload() != null)){
             msgPayLoad = new String(message.getPayload(), "UTF-8");
         }
-        AFLog.d(TAG,"messageArrived UTF-8 msgPayLoad:" + msgPayLoad);
-        // TODO: 发送消息通知，记录soeId, 跳转界面到历史未读信息列表，由webview加载html实现
+        AFLog.d(TAG,"messageArred UTF-8 msgPayLoad:" + msgPayLoad);
+        String content = "";
+        try {
+            MqttAlarm mqttAlarm = GsonHelper.toType(msgPayLoad, MqttAlarm.class);
+            content = mqttAlarm.getContent();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        Intent intent = new Intent(this, WebViewActivity.class);
+        Bundle bundle = new Bundle();
+        // TODO: 历史告警页面的url需要前端设置路径，存储到sharePreference中，此处去取
+        //bundle.putString("url","http://www.baidu.com");
+        intent.putExtras(bundle);
         NotificationUtils.getInstance(this).setNotificationTitle("推送消息");
-        NotificationUtils.getInstance(this).setNotificationContent(msgPayLoad);
-        NotificationUtils.getInstance(this).sendNotification(null, 2018);
+        NotificationUtils.getInstance(this).setNotificationContent(content);
+        NotificationUtils.getInstance(this).sendNotification(intent, 2018);
     }
 
     @Override

@@ -1171,6 +1171,12 @@ public class JSInterface {
         mContext.startActivity(it);
     }
 
+    /**
+     * 功能：设置横竖屏显示功能
+     * 参数：orientation
+     * 返回值：无
+     * 使用方式：window.functionTag.setOrientation(orientation)
+     */
     @JavascriptInterface
     public void setOrientation(String orientation){
         AFLog.d(TAG, "#####setOrientation orientation=" + orientation);
@@ -1186,5 +1192,19 @@ public class JSInterface {
                 mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
         }
+    }
+
+
+    /**
+     * 功能：进入实时画面显示
+     * 参数：url
+     * 返回值：无
+     * 使用方式：window.functionTag.startRealHtmlActivity(url)
+     */
+    @JavascriptInterface
+    public  void startRealHtmlActivity(String url){
+        Intent it = new Intent(mContext, RealHtmlActivity.class);
+        it.putExtra("url", url);
+        mContext.startActivity(it);
     }
 }

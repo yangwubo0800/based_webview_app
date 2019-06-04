@@ -126,7 +126,8 @@ public class AjaxHandler {
             // Create request body
             if(requestData.getString("method").equals("POST")){
                 RequestBody requestBody;
-                // TODO: 对于文件上传和下载需要区分处理, 使用不同的request body
+                //  对于文件上传和下载需要区分处理, 使用不同的request body
+                // TODO: fly.js 中只对urlEncode 方式进行编码处理，所以只有这种格式需要解码，请在解码的时候注意，尤其是百分号等非安全字符
                 mPostData = requestData.getString("body");
                 AFLog.d(TAG,"=====onAjaxRequest mPostData="+ mPostData);
                 if (!TextUtils.isEmpty(mPostData)){
@@ -146,7 +147,13 @@ public class AjaxHandler {
                         // 拼接文件上传参数
                         MultipartBody.Builder fileUploadBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                         for (String filePath : mFilePaths){
-                            String decodePath = URLDecoder.decode(filePath);
+                            // fly.js 中只对urlEncode 方式进行编码，所以只有这种格式需要解码
+                            String decodePath = "";
+                            if("application/x-www-form-urlencoded".equals(mContentType)){
+                                decodePath = URLDecoder.decode(filePath);
+                            } else {
+                                decodePath = filePath;
+                            }
                             AFLog.d(TAG,"#########filePath="+ filePath + "\n"
                             +" decodePath=" + decodePath);
                             File uploadFile = new File(decodePath);

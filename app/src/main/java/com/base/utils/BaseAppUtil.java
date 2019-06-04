@@ -15,9 +15,12 @@ import android.os.Binder;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.content.PermissionChecker;
+
+import com.base.app.BaseWebviewApp;
 import com.base.utils.log.AFLog;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -290,5 +293,49 @@ public class BaseAppUtil {
         return result;
     }
 
+    /**
+     * 获取设备信息以及软件版本信息
+     * @return
+     */
+    public static String collectDeviceInfo(){
+        String deviceInfo = "";
+        //获得包管理器
+        try {
+            Context context = BaseWebviewApp.getInstance().getApplicationContext();
+            PackageManager pm = context.getPackageManager();
+            //得到该应用的信息
+            PackageInfo pi = pm.getPackageInfo(context.getPackageName(),PackageManager.GET_ACTIVITIES);
+            if(pi != null)
+            {
+                String versionName = pi.versionName == null ? "null" : pi.versionName;
+                String versionCode = pi.versionCode + "";
+                String packageName = pi.packageName;
+
+                deviceInfo = "phone_brand:" + android.os.Build.BRAND + " \n"
+                        + "phone_version:" + android.os.Build.VERSION.RELEASE + "\n"
+                        + "packageName:" + packageName + "\n"
+                        + "versionName:" + versionName + "\n"
+                        + "versionCode:" + versionCode + "\n"
+                ;
+
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            AFLog.d(TAG,"获取信息失败");
+        }
+        //反射机制
+        Field[] fields = Build.class.getDeclaredFields();
+        for(Field field : fields)
+        {
+            try {
+                field.setAccessible(true);
+                deviceInfo = deviceInfo + field.getName() + ":" + field.get("").toString() + "\n";
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return deviceInfo;
+    }
 
 }

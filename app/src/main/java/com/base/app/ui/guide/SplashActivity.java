@@ -9,14 +9,22 @@ import com.base.app.ModeChooseActivity;
 import com.base.constant.Constants;
 import com.base.app.R;
 import com.base.app.WebViewActivity;
+import com.base.service.UploadErrorInfoService;
 import com.base.utils.SpUtils;
 import com.base.utils.config.ParseConfig;
+import com.base.utils.log.AFLog;
+import com.base.utils.log.LogSaveUtils;
+
+import java.io.File;
 
 /**
  * @desc 启动屏
  * Created by devilwwj on 16/1/23.
  */
 public class SplashActivity extends Activity {
+
+    private String TAG = "SplashActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,15 @@ public class SplashActivity extends Activity {
                 enterHomeActivity();
             }
         }, 2000);
+
+        // TODO: 检测是否有错误日志文件，如果有，启动上传服务；
+        String errorFilePath = LogSaveUtils.PATH_LOG_INFO  + LogSaveUtils.ERROR_LOG_FILE_NAME;
+        File file = new File(errorFilePath);
+        if (file.exists()){
+            AFLog.d(TAG," start service upload error");
+            startService(new Intent(this, UploadErrorInfoService.class));
+        }
+
     }
 
     private void enterHomeActivity() {

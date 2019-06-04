@@ -68,6 +68,9 @@
         <service
             android:name="com.base.service.AlarmNotifyService"
             android:enabled="true" />
+        <service
+            android:name="com.base.service.UploadErrorInfoService"
+            android:enabled="true" />
         <!-- 此广播接受器提供给android5.0版本使用，规避webview无网络下不回调出错问题 -->
         <receiver
             android:name="com.base.receiver.MyNetworkReceiver">

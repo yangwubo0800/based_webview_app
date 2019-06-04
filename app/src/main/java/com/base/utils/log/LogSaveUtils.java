@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.base.utils.BaseAppUtil;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +29,8 @@ public class LogSaveUtils {
     private static final boolean isSaveLog = true; // 是否把保存日志到SD卡中
     public static final String ROOT = Environment.getExternalStorageDirectory().getPath()
             + File.separator + "baseApp" ; // SD卡中的根目录
-    private static final String PATH_LOG_INFO = ROOT  + File.separator + "log" + File.separator;;
+    public static final String PATH_LOG_INFO = ROOT  + File.separator + "log" + File.separator;;
+    public static String ERROR_LOG_FILE_NAME = "errorInfo.txt";
 
     private LogSaveUtils() {
     }
@@ -126,6 +129,7 @@ public class LogSaveUtils {
         }
         if (isSaveLog) {
             point(PATH_LOG_INFO, tag, content);
+            saveErrorInfoToFile(PATH_LOG_INFO, tag, content);
         }
     }
 
@@ -142,6 +146,7 @@ public class LogSaveUtils {
         }
         if (isSaveLog) {
             point(PATH_LOG_INFO, tag, tr.getMessage());
+            saveErrorInfoToFile(PATH_LOG_INFO, tag, tr.getMessage());
         }
     }
 
@@ -279,6 +284,65 @@ public class LogSaveUtils {
 
     private static StackTraceElement getCallerStackTraceElement() {
         return Thread.currentThread().getStackTrace()[4];
+    }
+
+
+    /**
+     * 保存错误信息到文件
+     * @param path
+     * @param tag
+     * @param msg
+     */
+    private static void saveErrorInfoToFile(String path, String tag, String msg){
+        String fileName = ERROR_LOG_FILE_NAME;
+        String filePath = path  + fileName;
+        AFLog.d("LogSave","saveErrorInfoToFile filePath=" + filePath);
+        File file = new File(filePath);
+        if (!file.exists()){
+            //创建文件
+            createDipPath(filePath);
+            // 写入设备以及应用信息放在头部
+            String deviceInfo = BaseAppUtil.collectDeviceInfo();
+            BufferedWriter out = null;
+            try {
+                out = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(file, true)));
+                out.write(deviceInfo + "\r\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("",
+                    Locale.SIMPLIFIED_CHINESE);
+            dateFormat.applyPattern("[yyyy-MM-dd HH:mm:ss]");
+            String time = dateFormat.format(date);
+            BufferedWriter out = null;
+            try {
+                out = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(file, true)));
+                out.write(time + " " + tag + " " + msg + "\r\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     public static void point(String path, String tag, String msg) {

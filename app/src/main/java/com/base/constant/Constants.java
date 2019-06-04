@@ -69,6 +69,7 @@ public class Constants {
     public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_STORAGE = 17;
     public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO = 18;
     public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO = 19;
+    public static final int PERMISSION_REQUEST_FOR_SAVE_LOG = 20;
 
     //更新位置信息消息
     public static final int MSG_FOR_LOCATION = 10001;

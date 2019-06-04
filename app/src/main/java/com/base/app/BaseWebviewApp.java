@@ -59,6 +59,8 @@ public class BaseWebviewApp extends Application {
         //将手机连接PC的热点，查看log中的如下信息,可以获取PC端查看数据库db的地址信息
         // I/SQLiteOnWeb: SQLiteOnWeb running on: http://192.168.137.224:9000
         SQLiteOnWeb.init(this).start();
+        //处理未捕获异常
+        new MyCrashHandler(this);
 
     }
 

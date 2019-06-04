@@ -1,11 +1,13 @@
 package com.base.app;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -172,6 +174,8 @@ public class WebViewActivity extends AppCompatActivity {
     public static boolean mNoNetwork;
     //用来记录前端调用扫码的接口名字
     public static String mQrScanCallName;
+    //记录获取存储权限的弹框，每次进入去检测一次
+    private boolean mStorageForSaveLog = true;
 
 
 
@@ -273,6 +277,25 @@ public class WebViewActivity extends AppCompatActivity {
                 }
             }
         }
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // TODO: 为了存储错误日志信息，需要请求存储权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if ( (Build.VERSION.SDK_INT >= 23) &&
+                            (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) &&
+                            mStorageForSaveLog) {
+                        AFLog.d(TAG,"requestPermissions storage");
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQUEST_FOR_SAVE_LOG);
+                        //防止反复弹框
+                        mStorageForSaveLog = false;
+                    }
+                }
+
+            }
+        }, 500);
+
     }
 
 

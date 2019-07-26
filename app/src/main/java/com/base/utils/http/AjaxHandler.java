@@ -56,6 +56,32 @@ public class AjaxHandler {
     // 前端选择上传的文件真实路径集合
     public static ArrayList<String> mFilePaths = new ArrayList<String>();
 
+    // 将OKhttpClient对象改为静态对象，设置连接超时时间为10秒，避免频繁操作时创建多个对象
+    // 导致底层返回连接超时的问题导致底层返回连接超时的问题
+    public static  OkHttpClient okHttpClient = new OkHttpClient
+            .Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            // 设置cookie管理
+            .cookieJar(new CookieJar() {
+                @Override
+                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    cookieStore.put(url.host(), cookies);
+                    AFLog.e(TAG,"saveFromResponse：url = "  + url + " ; cookies:"+ (cookies==null?"":cookies.toString()));
+                }
+
+                @Override
+                public List<Cookie> loadForRequest(HttpUrl url) {
+                    //登录时cookie错乱了，此处增加清理
+                    if(url.toString().contains("/vue/login")){
+                        cookieStore.clear();
+                    }
+                    List<Cookie> cookies = cookieStore.get(url.host());
+                    AFLog.e(TAG,"loadForRequest：url = "  + url + " ; cookies:"+ (cookies==null?"":cookies.toString()));
+                    return cookies != null ? cookies : new ArrayList<Cookie>();
+                }
+            })
+            .build();
+
     public static void onAjaxRequest(final JSONObject requestData,
                                      final CompletionHandler handler,
                                      Context context){
@@ -70,25 +96,25 @@ public class AjaxHandler {
         responseData.put("statusCode",0);
 
         try {
-            int timeout =requestData.getInt("timeout");
-            // Create a okhttp instance and set timeout
-            final OkHttpClient okHttpClient = new OkHttpClient
-                    .Builder()
-                    .connectTimeout(timeout, TimeUnit.MILLISECONDS)
-                    // 设置cookie管理
-                    .cookieJar(new CookieJar() {
-                        @Override
-                        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                            cookieStore.put(url.host(), cookies);
-                        }
-
-                        @Override
-                        public List<Cookie> loadForRequest(HttpUrl url) {
-                            List<Cookie> cookies = cookieStore.get(url.host());
-                            return cookies != null ? cookies : new ArrayList<Cookie>();
-                        }
-                    })
-                    .build();
+//            int timeout =requestData.getInt("timeout");
+//            // Create a okhttp instance and set timeout
+//            final OkHttpClient okHttpClient = new OkHttpClient
+//                    .Builder()
+//                    .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+//                    // 设置cookie管理
+//                    .cookieJar(new CookieJar() {
+//                        @Override
+//                        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+//                            cookieStore.put(url.host(), cookies);
+//                        }
+//
+//                        @Override
+//                        public List<Cookie> loadForRequest(HttpUrl url) {
+//                            List<Cookie> cookies = cookieStore.get(url.host());
+//                            return cookies != null ? cookies : new ArrayList<Cookie>();
+//                        }
+//                    })
+//                    .build();
 
             // Determine whether you need to encode the response result.
             // And encode when responseType is stream.

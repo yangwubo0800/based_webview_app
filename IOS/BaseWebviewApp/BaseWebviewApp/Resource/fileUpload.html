@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+<title>主页</title>
+
+<script type="text/javascript">
+//提供给Android调用的方法
+var obj = {};
+obj.funFromjs = function(result){
+document.getElementById("scanResult").innerText= "扫码结果：" + result + loadAndroidMethod();
+}
+
+function loadAndroidMethod(){
+
+var imei = window.functionTag.getDeviceId();
+return imei
+
+}
+
+window.onload=function(){
+//funFromjs("IMEI:")
+//loadAndroidMethod()
+var imei = window.functionTag.getDeviceId();
+document.getElementById("scanResult").innerText="IMEI:" + imei;
+
+}
+
+
+</script>
+<style type="text/css">
+body{
+margin: 0;
+background-color: #fff;
+}
+header{
+background-color: #F7F7F7;
+font-size: 40px;
+color: #34C0F5;
+text-align: center;
+line-height: 100px
+}
+
+.row{
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.row >div{
+flex: 1;
+padding: 15px 0;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+}
+.row >div:active{
+background: #e4e4e4;
+}
+
+.row img{
+margin-bottom: 5px;
+}
+footer{
+position: absolute;
+bottom: 10px;
+font-size: 14px;
+text-align: center;
+width: 100%;
+color: #666;
+}
+</style>
+</head>
+<body>
+<header>HZNet APP</header>
+
+<p> 如下为五种关于文件操作的场景：</p>
+<!-- 选择文件，不区分图片视频等，手机端会跳转到文件管理中 -->
+<p>选择文件: <input type="file" accept="*/*" /> </p>
+<!-- 选择图片文件，手机端会跳转图片文件管理中 -->
+<p>选择图片: <input type="file" accept="image/*" /> </p>
+<!-- 选择视频文件，手机端会跳转视频文件管理中 -->
+<p>选择视频: <input type="file" accept="video/*" /> </p>
+<!-- 点击此按钮，会先调用摄像头拍照，然后将拍摄的照片文件内容放入到input标签中 -->
+<p>拍照然后选择该文件:  <input type="file" accept="image/example" /> </p>
+<!-- 点击此按钮，会先调用摄像头录像，然后将拍摄的视频文件内容放入到input标签中 -->
+<p>录像然后选择该文件:<input type="file" accept="video/example" /> </p>
+<br/>
+<p> 如下为文件上传部分的前端适配，请在本地先部署好servlet工程，配置好对应的IP地址：</p>
+<form method="post" action="http://192.168.65.41:8150/FileUploadSampleForApp/UploadFile" enctype="multipart/form-data">
+选择一个文件:
+<input type="file" accept="*/*"  name="uploadFile" />
+<br/>
+<input type="submit" value="上传" />
+</form>
+
+
+</body>
+</html>

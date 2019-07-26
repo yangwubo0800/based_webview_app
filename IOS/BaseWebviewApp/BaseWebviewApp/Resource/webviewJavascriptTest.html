@@ -1,0 +1,255 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <style type='text/css'>
+            html { font-family:Helvetica; color:#222; }
+            h1 { color:steelblue; font-size:24px; margin-top:24px; }
+            button { margin:0 3px 10px; font-size:12px; }
+            .logLine { border-bottom:1px solid #ccc; padding:4px 2px; font-family:courier; font-size:11px; }
+            </style>
+        <title>Base Webview Test</title>
+</head>
+
+<body>
+    <h1>WebViewJavascriptBridge Demo </h1>
+    <script>
+        
+        // the bridge is so important.
+        var uniqueId = 1
+        function log(message, data) {
+            var log = document.getElementById('log')
+            var el = document.createElement('div')
+            el.className = 'logLine'
+            if(data == null || data  == "undefined"){
+                el.innerHTML = uniqueId++ + '. ' + message + ':<br/>'
+            }else{
+                el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+            }
+
+            if (log.children.length){
+                log.insertBefore(el, log.children[0])
+                
+            }else{ log.appendChild(el)
+                
+            }
+        }
+    
+        window.onerror = function(err) {
+            log('window.onerror: ' + err)
+        }
+    
+
+    function test(){
+        alert('skdfjlsjdk');
+    }
+  
+  //OC调用JS改变背景色
+  function changeColor11()
+  {
+      log('changeColor has been called"');
+      document.body.style.backgroundColor = randomColor();
+  }
+    
+    //随机生成颜色
+    function randomColor()
+    {
+        var r=Math.floor(Math.random()*256);
+        var g=Math.floor(Math.random()*256);
+        var b=Math.floor(Math.random()*256);
+        return "rgb("+r+','+g+','+b+")";//所有方法的拼接都可以用ES6新特性`其他字符串{$变量名}`替换
+    }
+    
+    function setupWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+        if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+        window.WVJBCallbacks = [callback];
+        var WVJBIframe = document.createElement('iframe');
+        WVJBIframe.style.display = 'none';
+        WVJBIframe.src = 'https://__bridge_loaded__';
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+    }
+    
+    setupWebViewJavascriptBridge(function(bridge) {
+
+                                 
+                                 // register the method that you need to
+                                 bridge.registerHandler('testJavascriptHandler',
+                                                        function(data, responseCallback) {
+                                                        log('ObjC called testJavascriptHandler with', data)
+                                                        var responseData = { 'Javascript Says':'Right back atcha!' }
+                                                        log('JS responding with', responseData)
+                                                        responseCallback(responseData)
+                                                        })
+                                 
+                                 
+                                 bridge.registerHandler('changeColor',
+                                                        function(data, responseCallback) {
+                                                        log('ObjC called changeColor with', data)
+                                                        var responseData = { 'Javascript Says':'color has changed!' }
+                                                        log('JS responding with', responseData)
+                                                        log('how to call js function here');
+                                                        // to do something you want
+                                                        test();
+                                                        changeColor11();
+                                                        responseCallback(responseData)
+                                                        })
+                                 
+                                 // 提供方法给OC回传扫码结果
+                                 bridge.registerHandler('feedBackScanResult',
+                                                        function(data, responseCallback) {
+                                                        log('ObjC called feedBackScanResult with', data)
+                                                        //回调中处理，将结果显示在标签上
+                                                        var scanTag = document.getElementById('scanResult')
+                                                        scanTag.innerHTML = data
+                                                        var responseData = { 'Javascript Says':'received result' }
+                                                        responseCallback(responseData)
+                                                        })
+                                 
+                                 // 提供方法给OC回传定位结果
+                                 bridge.registerHandler('feedBackLocateResult',
+                                                        function(data, responseCallback) {
+                                                        log('ObjC called feedBackLocateResult with', data)
+                                                        //回调中处理，将结果显示在标签上
+                                                        var locateTag = document.getElementById('locateResult')
+                                                        locateTag.innerHTML = data
+                                                        var responseData = { 'Javascript Says':'received result' }
+                                                        responseCallback(responseData)
+                                                        })
+                                 
+                                 document.body.appendChild(document.createElement('br'))
+                                 
+                                 })
+                                 
+                                 
+         function jsToOcFunction1()
+         {
+             log('JS calling handler "jsCallWithOutData"')
+             WebViewJavascriptBridge.callHandler('jsCallWithOutData')
+             log('JS called handler "jsCallWithOutData"')
+             
+         }
+    
+        function jsToOcFunction2()
+        {
+            log('JS calling handler "jsCallWithData"')
+            WebViewJavascriptBridge.callHandler('jsCallWithData', {'foo': 'bar'}, function(response) {
+                               log('JS got response', response)
+                               })
+        }
+    
+        function jsToOcFunction3()
+        {
+            log('JS calling handler "jsCallGetUUID"')
+            WebViewJavascriptBridge.callHandler('jsCallGetUUID', 'I need uuid', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction4()
+        {
+            log('JS calling handler "jsCallTakePhoto"')
+            WebViewJavascriptBridge.callHandler('jsCallTakePhoto', 'please take photo', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction5()
+        {
+            log('JS calling handler "jsCallRecordVideo"')
+            WebViewJavascriptBridge.callHandler('jsCallRecordVideo', 'please record video', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction6()
+        {
+            log('JS calling handler "jsCallScanQRCode"')
+            WebViewJavascriptBridge.callHandler('jsCallScanQRCode', 'please scan qrcode', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+    
+        function jsToOcFunction7()
+        {
+            log('JS calling handler "jsCallLocate"')
+            WebViewJavascriptBridge.callHandler('jsCallLocate', 'please locate', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction8()
+        {
+            log('JS calling handler "jsSetJPushTag"')
+            WebViewJavascriptBridge.callHandler('jsSetJPushTag', 'stationId001,stationId002', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction9()
+        {
+            log('JS calling handler "jsCallLivePlay"')
+            WebViewJavascriptBridge.callHandler('jsCallLivePlay', 'url is ...', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+
+        function jsToOcFunction10()
+        {
+            log('JS calling handler "jsCallVideoPlay"')
+            WebViewJavascriptBridge.callHandler('jsCallVideoPlay', 'url is ...', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction11()
+        {
+            log('JS calling handler "jsCallGet"')
+            WebViewJavascriptBridge.callHandler('jsCallGet', 'get data is ...', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction12()
+        {
+            log('JS calling handler "jsCallPost"')
+            WebViewJavascriptBridge.callHandler('jsCallPost', 'post data is ...', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        </script>
+    
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "jsToOcFunction1()" > JS调用OC：不带参数  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn2" type = "button" onclick = "jsToOcFunction2()"> JS调用OC：带参数  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn3" type = "button" onclick = "jsToOcFunction3()"> JS调用OC：UUID  </button> </p>
+     
+    <p style="text-align:center"> <button id="btn4" type = "button" onclick = "jsToOcFunction4()"> JS调用OC：Take photo  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn5" type = "button" onclick = "jsToOcFunction5()"> JS调用OC：Take video  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn6" type = "button" onclick = "jsToOcFunction6()"> JS调用OC：Scan QRCode  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn7" type = "button" onclick = "jsToOcFunction7()"> JS调用OC：Locate  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn8" type = "button" onclick = "jsToOcFunction8()"> JS调用OC：SetJPushTags  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn9" type = "button" onclick = "jsToOcFunction9()"> JS调用OC：ijk live play  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn10" type = "button" onclick = "jsToOcFunction10()"> JS调用OC：ijk video play  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn11" type = "button" onclick = "jsToOcFunction11()"> JS调用OC：afn get  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn12" type = "button" onclick = "jsToOcFunction12()"> JS调用OC：afn post  </button> </p>
+    
+    <div id='buttons'></div>
+    <div id='log'></div>
+    <div id='scanResult'></div>
+    <div id='locateResult'></div>
+</body>
+</html>

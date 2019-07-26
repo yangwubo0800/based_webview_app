@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VideoPlayViewController">
+            <connections>
+                <outlet property="mediaControl" destination="t0B-7X-bdb" id="zRJ-Xk-vHe"/>
+                <outlet property="view" destination="LcC-vu-6aY" id="noo-XS-m7B"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="t0B-7X-bdb" customClass="IJKMediaControl">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" id="IA2-co-A8J" userLabel="Overlay" customClass="UIControl">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" id="GvJ-Y6-HAw" userLabel="Panel: Bottom">
+                            <rect key="frame" x="40" y="200" width="400" height="100"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <subviews>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="player_bottom_control_bg.png" id="UUD-KJ-wgx" userLabel="View: Background">
+                                    <rect key="frame" x="0.0" y="0.0" width="400" height="100"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                </imageView>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6dH-QN-ebw" userLabel="Button: Play">
+                                    <rect key="frame" x="170" y="2" width="60" height="50"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                    <state key="normal" image="btn_player_play.png">
+                                        <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="onClickPlay:" destination="-1" eventType="touchUpInside" id="HWp-nF-ePw"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="h3l-kF-AHb" userLabel="Button: Pause">
+                                    <rect key="frame" x="170" y="2" width="60" height="50"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                    <state key="normal" image="btn_player_pause.png">
+                                        <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <state key="highlighted">
+                                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="onClickPause:" destination="-1" eventType="touchUpInside" id="xkf-kP-93G"/>
+                                    </connections>
+                                </button>
+                                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" id="EeK-FV-AIq" userLabel="Slider: Video Progress">
+                                    <rect key="frame" x="68" y="55" width="264" height="29"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                    <connections>
+                                        <action selector="didSliderTouchCancel" destination="-1" eventType="touchCancel" id="BIj-Kz-9wv"/>
+                                        <action selector="didSliderTouchDown" destination="-1" eventType="touchDown" id="Cxo-WR-6Qh"/>
+                                        <action selector="didSliderTouchUpInside" destination="-1" eventType="touchUpInside" id="aIE-mg-7Qw"/>
+                                        <action selector="didSliderTouchUpOutside" destination="-1" eventType="touchUpOutside" id="ONw-2a-X9w"/>
+                                        <action selector="didSliderValueChanged" destination="-1" eventType="valueChanged" id="ryP-4K-9iv"/>
+                                    </connections>
+                                </slider>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="10:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AGz-yc-jXZ" userLabel="Label: Current Time">
+                                    <rect key="frame" x="20" y="61" width="50" height="21"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="20:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SEI-Or-Idx" userLabel="Label: Total Duration">
+                                    <rect key="frame" x="330" y="61" width="50" height="21"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                        </view>
+                        <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="hli-Pt-qlQ">
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <items>
+                                <barButtonItem title="返回" id="7LH-0d-ut3">
+                                    <connections>
+                                        <action selector="onClickDone:" destination="-1" id="zOW-pa-ff5"/>
+                                    </connections>
+                                </barButtonItem>
+                                <barButtonItem systemItem="flexibleSpace" id="f4c-jr-bP1"/>
+                            </items>
+                        </toolbar>
+                    </subviews>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                    <connections>
+                        <action selector="onClickOverlay:" destination="-1" eventType="touchDown" id="4AX-bp-spN"/>
+                    </connections>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <action selector="onClickMediaControl:" destination="-1" eventType="touchDown" id="TLP-Z9-8pL"/>
+                <outlet property="bottomPanel" destination="GvJ-Y6-HAw" id="WG2-I0-3mB"/>
+                <outlet property="currentTimeLabel" destination="AGz-yc-jXZ" id="YyP-ta-k5m"/>
+                <outlet property="mediaProgressSlider" destination="EeK-FV-AIq" id="1eJ-Sg-g5C"/>
+                <outlet property="overlayPanel" destination="IA2-co-A8J" id="U5q-M8-WqO"/>
+                <outlet property="pauseButton" destination="h3l-kF-AHb" id="dI3-K5-Wjp"/>
+                <outlet property="playButton" destination="6dH-QN-ebw" id="fiz-zU-jks"/>
+                <outlet property="topPanel" destination="hli-Pt-qlQ" id="d6d-hJ-dhM"/>
+                <outlet property="totalDurationLabel" destination="SEI-Or-Idx" id="2wh-FR-fBW"/>
+            </connections>
+            <point key="canvasLocation" x="903" y="289"/>
+        </view>
+        <view contentMode="scaleToFill" id="LcC-vu-6aY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="37.681159420289859" y="34.821428571428569"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="btn_player_pause.png" width="16" height="16"/>
+        <image name="btn_player_play.png" width="16" height="16"/>
+        <image name="player_bottom_control_bg.png" width="16" height="16"/>
+    </resources>
+</document>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+<script type="text/javascript">
+function display_alert()
+  {
+  alert("I am an alert box!!")
+  }
+
+
+function jsToOcFunction1()
+{
+    window.webkit.messageHandlers.jsToOcNoPrams.postMessage({});
+}
+
+function jsToOcFunction2()
+{
+    window.webkit.messageHandlers.jsToOcWithPrams.postMessage({"params":"我是参数"});
+}
+
+//OC调用JS改变背景色
+function changeColor()
+{
+    document.body.style.backgroundColor = randomColor();
+}
+
+//随机生成颜色
+function randomColor()
+{
+    var r=Math.floor(Math.random()*256);
+    var g=Math.floor(Math.random()*256);
+    var b=Math.floor(Math.random()*256);
+    return "rgb("+r+','+g+','+b+")";//所有方法的拼接都可以用ES6新特性`其他字符串{$变量名}`替换
+}
+
+function jsToOcCallCamera()
+{
+    window.webkit.messageHandlers.jsToOcCallCamera.postMessage({});
+}
+
+function jsToOcCallLocation()
+{
+    window.webkit.messageHandlers.jsToOcCallLocation.postMessage({});
+}
+
+function jsToOcPrompt()
+{
+    var ocToJsStr = window.prompt("text", "defaultText");
+    alert(ocToJsStr);
+}
+
+
+</script>
+</head>
+<body>
+    <h1>我的第一个标题</h1>
+    <p>我的第一个段落。</p>
+    
+	<input type="button" onclick="display_alert()"
+value="Display alert box" />
+
+
+<p style="text-align:center"> <button id="btn1" type = "button" onclick = "jsToOcFunction1()" > JS调用OC：不带参数  </button> </p>
+
+<p style="text-align:center"> <button id="btn2" type = "button" onclick = "jsToOcFunction2()"> JS调用OC：带参数  </button> </p>
+
+<p style="text-align:center"> <button id="btn3" type = "button" onclick = "jsToOcCallCamera()"> JS调用OC：摄像头  </button> </p>
+
+<p style="text-align:center"> <button id="btn4" type = "button" onclick = "jsToOcCallLocation()"> JS调用OC：定位  </button> </p>
+
+<p style="text-align:center"> <button id="btn5" type = "button" onclick = "jsToOcPrompt()"> JS调用OC：prompt  </button> </p>
+
+
+</body>
+
+</html>

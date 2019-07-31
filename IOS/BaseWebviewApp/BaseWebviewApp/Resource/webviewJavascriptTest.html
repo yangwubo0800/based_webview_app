@@ -192,7 +192,7 @@
         function jsToOcFunction9()
         {
             log('JS calling handler "jsCallLivePlay"')
-            WebViewJavascriptBridge.callHandler('jsCallLivePlay', 'url is ...', function(response) {
+            WebViewJavascriptBridge.callHandler('jsCallLivePlay', 'http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8', function(response) {
                                                 log('JS got response', response)
                                                 })
         }
@@ -200,7 +200,7 @@
         function jsToOcFunction10()
         {
             log('JS calling handler "jsCallVideoPlay"')
-            WebViewJavascriptBridge.callHandler('jsCallVideoPlay', 'url is ...', function(response) {
+            WebViewJavascriptBridge.callHandler('jsCallVideoPlay', 'https://media.w3.org/2010/05/sintel/trailer.mp4', function(response) {
                                                 log('JS got response', response)
                                                 })
         }
@@ -218,6 +218,30 @@
             log('JS calling handler "jsCallPost"')
             WebViewJavascriptBridge.callHandler('jsCallPost', 'post data is ...', function(response) {
                                                 log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction13()
+        {
+            log('JS calling handler "jsCallPhoneNumber"')
+            WebViewJavascriptBridge.callHandler('jsCallPhoneNumber', '13888888888', function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction14()
+        {
+            log('JS calling handler "jsCallSetValue"')
+            WebViewJavascriptBridge.callHandler('jsCallSetValue', {'foo': 'bar', 'key2':'value2'}, function(response) {
+                                                log('JS got response', response)
+                                                })
+        }
+    
+        function jsToOcFunction15()
+        {
+            log('JS calling handler "jsCallGetValue"')
+            WebViewJavascriptBridge.callHandler('jsCallGetValue', 'foo', function(response) {
+                                                log('JS got response: ', response)
                                                 })
         }
     
@@ -246,6 +270,12 @@
     <p style="text-align:center"> <button id="btn11" type = "button" onclick = "jsToOcFunction11()"> JS调用OC：afn get  </button> </p>
     
     <p style="text-align:center"> <button id="btn12" type = "button" onclick = "jsToOcFunction12()"> JS调用OC：afn post  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn13" type = "button" onclick = "jsToOcFunction13()"> JS调用OC：call phone number  </button> </p>
+    
+    <p style="text-align:center"> <button id="btn14" type = "button" onclick = "jsToOcFunction14()"> JS调用OC：set value </button> </p>
+    
+    <p style="text-align:center"> <button id="btn15" type = "button" onclick = "jsToOcFunction15()"> JS调用OC：get value </button> </p>
     
     <div id='buttons'></div>
     <div id='log'></div>

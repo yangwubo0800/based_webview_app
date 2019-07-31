@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 //JPush param
-static NSString *appKey = @"xxxxxxxxxxxxxxxxx";
+static NSString *appKey = @"xxxxxxxxxxxxxxxxxxx";
 static NSString *channel = @"Publish channel";
 static BOOL isProduction = FALSE;
 

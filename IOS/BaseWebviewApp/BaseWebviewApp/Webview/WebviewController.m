@@ -418,7 +418,7 @@ static WebviewController *instance = nil;
         //使用ijkplayer播放器直播
         [_bridge registerHandler:@"jsCallLivePlay" handler:^(id data, WVJBResponseCallback responseCallback){
             NSLog(@" jsCallLivePlay called: %@", data);
-            [self ijkLivePlay:nil];
+            [self ijkLivePlay:data];
             responseCallback(@"call live play started");
         }];
         
@@ -426,7 +426,7 @@ static WebviewController *instance = nil;
         //使用ijkplayer播放器录播
         [_bridge registerHandler:@"jsCallVideoPlay" handler:^(id data, WVJBResponseCallback responseCallback){
             NSLog(@" jsCallVideoPlay called: %@", data);
-            [self ijkVideoPlay:nil];
+            [self ijkVideoPlay:data];
             responseCallback(@"call video play started");
         }];
         
@@ -444,6 +444,40 @@ static WebviewController *instance = nil;
             responseCallback(@"afn post started");
         }];
 
+        
+        //拨打电话功能
+        [_bridge registerHandler:@"jsCallPhoneNumber" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallPhoneNumber called: %@", data);
+            NSMutableString *str=[[NSMutableString alloc]initWithFormat:@"tel:%@",data];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
+            responseCallback(@" Call Phone Number started");
+        }];
+
+        //根据key设置value, js传递过来的参数以json格式{key:xxx, value:xxx}
+        [_bridge registerHandler:@"jsCallSetValue" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallSetValue called: %@", data);
+            NSError *error;
+//            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+            NSDictionary *dict = data;
+            NSLog(@"=====dict=%@", dict);
+            NSArray *keys = [dict allKeys];
+            for(int i=0; i<keys.count; i++){
+                NSString *key = keys[i];
+                NSString *value = [dict valueForKey:key];
+                NSLog(@"key is %@, value is %@", key, value);
+                [[NSUserDefaults standardUserDefaults] setObject:value  forKey:key];
+            }
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            responseCallback(@" set value started");
+        }];
+        
+        //根据key获取value, data 为 key
+        [_bridge registerHandler:@"jsCallGetValue" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallGetValue called: %@", data);
+            NSString *value = [[NSUserDefaults standardUserDefaults] objectForKey:data];
+            responseCallback(value);
+        }];
+        
 
         // 使用宏来控制是加载本地页面还是网络请求
         if (LOAD_LOCAL_HTML) {

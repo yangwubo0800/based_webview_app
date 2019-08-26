@@ -1207,4 +1207,61 @@ public class JSInterface {
         it.putExtra("url", url);
         mContext.startActivity(it);
     }
+
+    /**
+     * 功能：设置消息订阅的主题
+     * 参数：topics，订阅的主题，可以设置多个，多个主题之间以逗号分隔，例如"HZNet/ST/0001,HZNet/ST/0002"
+     * 返回值：无
+     * 使用方式：window.functionTag.setTopics(topics)
+     */
+    @JavascriptInterface
+    public  void setTopics(String topics){
+        AFLog.d(TAG, "topics is "+ topics);
+        if (!TextUtils.isEmpty(topics)){
+            String[] topic = topics.split(",");
+//            for (int i=0; i<topic.length; i++) {
+//                AFLog.d(TAG, "topic split by comma is " + topic[i]);
+//            }
+            BaseWebviewApp.getInstance().setTopic(topic);
+        }
+    }
+
+    /**
+     * 功能：获取设置的消息订阅的主题
+     * 参数：无
+     * 返回值：topic, 主题，如果是多个，则主题以逗号分隔
+     * 使用方式：window.functionTag.getTopics()
+     */
+    @JavascriptInterface
+    public  String  getTopics(){
+        String [] topics = BaseWebviewApp.getInstance().getTopics();
+        String topic = "";
+        if (null != topics){
+            for (int i=0; i<topics.length; i++){
+                topic = topic +  topics[i] + ",";
+            }
+
+            if (!TextUtils.isEmpty(topic)){
+                //remove the last comma
+                topic = topic.substring(0, topic.length() -1);
+            }
+        }
+        return topic;
+    }
+
+    /**
+     * 功能：设置消息订阅的客户ID
+     * 参数：clientId，客户ID，由账号名+端标识+系统编号 例如"admin_app03"
+     * 返回值：无
+     * 使用方式：window.functionTag.setClientId(clientId)
+     */
+    @JavascriptInterface
+    public  void setClientId(String clientId){
+        AFLog.d(TAG, "clientId is "+ clientId);
+        if (!TextUtils.isEmpty(clientId)){
+            BaseWebviewApp.getInstance().setClientId(clientId);
+        }else {
+            AFLog.e(TAG,"wrong clientId");
+        }
+    }
 }

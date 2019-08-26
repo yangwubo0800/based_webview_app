@@ -34,6 +34,8 @@
 
     //window
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    //设置窗体底色，可以用来调整状态栏颜色
+    [self.window setBackgroundColor:[UIColor whiteColor]];
     
     // controller
     WebviewController *vc = [WebviewController shareInstance] ;
@@ -48,6 +50,7 @@
     // add user guide view
     [self addUserGuideView];
     
+    // TODO:根据项目是否需要极光消息推送增删此段代码，初始化必须放置在这里，不能由前端灵活调用，前端只能设置tag来过滤消息
     //极光消息推送初始化
     [self initJPush:launchOptions];
     
@@ -84,7 +87,7 @@
     }
     
     // 这里判断是否第一次
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
+    if (/*[[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]*/false) {
         
         UserGuideView *hvc = [[UserGuideView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
         [self.window.rootViewController.view addSubview:hvc];
@@ -370,5 +373,20 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+
+//在AppDelegate.m中添加转屏的代理方法
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(nullable UIWindow *)window{
+    
+    if (self.allowRotation == YES) {
+        //横屏
+        return UIInterfaceOrientationMaskLandscape;
+        
+    }else{
+        //竖屏
+        return UIInterfaceOrientationMaskPortrait;
+        
+    }
+    
+}
 
 @end

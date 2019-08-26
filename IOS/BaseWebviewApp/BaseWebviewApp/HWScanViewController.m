@@ -252,9 +252,12 @@
                 }
             }
         }];
-        
+        // TODO: 待使用真机测试
+        extern NSString *scanCallerName;
+        NSDictionary *dict = @{@"callerName":scanCallerName, @"scanResult":scanResult};
+        NSLog(@"scan resut is %@",dict);
         // TODO: 将扫码结果通过bridge调用JS回传给前端
-        [[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:scanResult];
+        [[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
 
     }
 }

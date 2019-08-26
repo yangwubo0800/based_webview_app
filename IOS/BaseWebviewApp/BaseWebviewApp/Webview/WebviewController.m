@@ -23,6 +23,9 @@
 #import "../IJKPlayer/IJKMoviePlayerViewController.h"
 #import "../IJKPlayer/VideoPlayViewController.h"
 #import "../Utils/AFNetWorkingDemo.h"
+#import "RealHtmlController.h"
+#import "../AppDelegate.h"
+#import "../Utils/UIDevice+TFDevice.h"
 
 
 //竖屏幕宽高
@@ -35,11 +38,22 @@
 //通常 状态栏+导航栏=20+44=64
 //iPhone X 状态栏+导航栏=44+44=88
 #define StatusBarAndNavigationBarHeight (iPhoneX ? 88.f : 64.f)
+#define STATUSBARHEIGHT     ([[UIApplication sharedApplication] statusBarFrame].size.height)
+#define NAVIGATIONBARHEIGHT (self.navigationController.navigationBar.frame.size.height)
 
 #define LOAD_LOCAL_HTML YES
 
 //单例模式
 static WebviewController *instance = nil;
+
+// static变量类内部使用，首页url path配置
+static NSString *firstPagePath = @"http://www.baidu.com";
+
+//为了增加技能多样，先暂且用 extern 方式来从外部类获取变量，切忌名称重复，也可以使用property,使用单例获取，
+//记录扫码调用者名称
+NSString *scanCallerName;
+//记录定位调用者名称
+NSString *locateCallerName;
 
 
 #pragma mark 此部分为使用系统自带的执行js方法需要实现的delegate，目前在代码中已经不用。
@@ -126,6 +140,19 @@ static WebviewController *instance = nil;
     }
 }
 
+//设置隐藏导航栏
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -137,10 +164,10 @@ static WebviewController *instance = nil;
     // 纯网页显示测试用
     //[self loadBasicWebview];
     
-    //添加webview 和 进度条显示
+    //添加webview 和 进度条显示，注意先后顺序，进度条覆盖在webview之上
     [self.view addSubview:self.webView];
     [self.view addSubview:self.progressView];
-    
+
     //添加监测网页加载进度的观察者
     [self.webView addObserver:self
                    forKeyPath:NSStringFromSelector(@selector(estimatedProgress))
@@ -284,9 +311,14 @@ static WebviewController *instance = nil;
 
 - (UIProgressView *)progressView
 {
+    NSLog(@"#####webview controller self is %p",self);
     if (!_progressView){
-        //设置进度条位置和大小
-        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, StatusBarAndNavigationBarHeight + 1, self.view.frame.size.width, 2)];
+        CGFloat navHeight = self.navigationController.navigationBar.frame.size.height;
+        NSLog(@"导航栏高度：%f",navHeight);
+        CGFloat statusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+        NSLog(@"状态栏高度: %f",statusHeight);
+        //设置进度条位置和大小,考虑状态的位置
+        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, 2)];
         //颜色与安卓平台保持一致
         _progressView.tintColor = [UIColor blueColor];
         _progressView.trackTintColor = [UIColor clearColor];
@@ -340,8 +372,8 @@ static WebviewController *instance = nil;
 //        //用于进行JavaScript注入
 //        WKUserScript *wkUScript = [[WKUserScript alloc] initWithSource:jSString injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
 //        [config.userContentController addUserScript:wkUScript];
-
-        _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) configuration:config];
+        //显示状态栏 隐藏导航栏，导航功能由前端界面实现
+        _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT) configuration:config];
         // UI代理
         _webView.UIDelegate = self;
         // 导航代理
@@ -376,7 +408,8 @@ static WebviewController *instance = nil;
             NSLog(@" jsCallGetUUID called: %@", data);
             NSString *deviceId = [LZKeychain getDeviceIDInKeychain];
             NSLog(@"device id is %@", deviceId);
-            responseCallback(deviceId);
+            NSDictionary *dict = @{@"deviceId":deviceId};
+            responseCallback(dict);
         }];
         
         //拍照
@@ -397,6 +430,7 @@ static WebviewController *instance = nil;
         //扫码
         [_bridge registerHandler:@"jsCallScanQRCode" handler:^(id data, WVJBResponseCallback responseCallback){
             NSLog(@" jsCallScanQRCode called: %@", data);
+            scanCallerName = data;
             [[CameraController shareInstance] scanQRCode:self];
             responseCallback(@"scan qr code started");
         }];
@@ -478,6 +512,45 @@ static WebviewController *instance = nil;
             responseCallback(value);
         }];
         
+        //提供接口给前端检测是否联网，否则js接口请求后台数据无网络时无反应
+        [_bridge registerHandler:@"jsCallCheckNetwork" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallCheckNetwork called: %@", data);
+            BOOL networkAvailable = [checkNetwork checkNetworkCanUse];
+            responseCallback((networkAvailable == YES) ? @"YES": @"NO");
+        }];
+        
+        //提供接口给前端进入横屏界面，例如实时画面,data中至少要包含url
+        [_bridge registerHandler:@"jsCallStartRealHtml" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallStartRealHtml called: %@", data);
+            NSString *path = data;
+            //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
+            NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:urlStr];
+            RealHtmlController *vc = [[RealHtmlController alloc] initWithUrl:url];
+            UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
+            //默认为英文back，此处修改返回标题为中文
+            backBtn.title = @"返回";
+            self.navigationItem.backBarButtonItem = backBtn;
+            //使用push方式来显示横屏界面，其有导航栏，再其返回时会将屏幕设置回竖屏
+            [self.navigationController pushViewController:vc animated:YES];
+        }];
+        
+        //获取应用基本信息
+        [_bridge registerHandler:@"jsCallGetAppInfo" handler:^(id data, WVJBResponseCallback responseCallback){
+            NSLog(@" jsCallGetAppInfo called: %@", data);
+            NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+            NSString *name = [infoDictionary objectForKey:@"CFBundleName"];
+            NSString *version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+            NSString *build = [infoDictionary objectForKey:@"CFBundleVersion"];
+            NSLog(@"name is %@, version is %@, build is %@", name, version, build);
+            
+            NSDictionary *dict = @{@"name":name,
+                                   @"version":version,
+                                   @"build":build
+                                   };
+            responseCallback(dict);
+        }];
+
 
         // 使用宏来控制是加载本地页面还是网络请求
         if (LOAD_LOCAL_HTML) {
@@ -499,8 +572,10 @@ static WebviewController *instance = nil;
             }
         } else {
             // 2.创建URL
-            NSString *path = @"http://www.baidu.com";
-            NSURL *url = [NSURL URLWithString:path];
+            NSString *path = firstPagePath;
+            //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
+            NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:urlStr];
             if (url != nil) {
                 self.currentUrl = url;
                 NSLog(@" first time create webview current url is %@", self.currentUrl);
@@ -546,7 +621,7 @@ static WebviewController *instance = nil;
 
 - (void)ijkVideoPlay:(NSString*)videoPath {
     //萤石云
-    //NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
+    NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
     //CCTV1
     //NSString *path = @"http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
     // https

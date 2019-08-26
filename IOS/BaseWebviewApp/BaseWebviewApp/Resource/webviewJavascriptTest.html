@@ -167,7 +167,7 @@
         function jsToOcFunction6()
         {
             log('JS calling handler "jsCallScanQRCode"')
-            WebViewJavascriptBridge.callHandler('jsCallScanQRCode', 'please scan qrcode', function(response) {
+            WebViewJavascriptBridge.callHandler('jsCallScanQRCode', 'callerName1', function(response) {
                                                 log('JS got response', response)
                                                 })
         }
@@ -245,6 +245,29 @@
                                                 })
         }
     
+        function jsToOcFunction16()
+        {
+            log('JS calling handler "jsCallCheckNetwork"')
+            WebViewJavascriptBridge.callHandler('jsCallCheckNetwork', 'foo', function(response) {
+                                                log('JS got response: ', response)
+                                                })
+        }
+    
+        function jsToOcFunction17()
+        {
+            log('JS calling handler "jsCallStartRealHtml"')
+            WebViewJavascriptBridge.callHandler('jsCallStartRealHtml', 'http://www.baidu.com', function(response) {
+                                                log('JS got response: ', response)
+                                                })
+        }
+    
+        function jsToOcFunction18()
+        {
+            log('JS calling handler "jsCallGetAppInfo"')
+            WebViewJavascriptBridge.callHandler('jsCallGetAppInfo', 'get app info', function(response) {
+                                                log('JS got response: ', response)
+                                                })
+        }
         </script>
     
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "jsToOcFunction1()" > JS调用OC：不带参数  </button> </p>
@@ -276,6 +299,13 @@
     <p style="text-align:center"> <button id="btn14" type = "button" onclick = "jsToOcFunction14()"> JS调用OC：set value </button> </p>
     
     <p style="text-align:center"> <button id="btn15" type = "button" onclick = "jsToOcFunction15()"> JS调用OC：get value </button> </p>
+    
+   <p style="text-align:center"> <button id="btn16" type = "button" onclick = "jsToOcFunction16()"> JS调用OC：check network </button> </p>
+   
+   
+   <p style="text-align:center"> <button id="btn17" type = "button" onclick = "jsToOcFunction17()"> JS调用OC：start real html </button> </p>
+   
+  <p style="text-align:center"> <button id="btn17" type = "button" onclick = "jsToOcFunction18()"> JS调用OC：get app info </button> </p>
     
     <div id='buttons'></div>
     <div id='log'></div>

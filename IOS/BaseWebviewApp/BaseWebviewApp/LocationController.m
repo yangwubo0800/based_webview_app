@@ -123,7 +123,13 @@ static LocationController *instance;
             // 显示定位结果信息
             //[self showLocate:self.uiViewController];
             // TODO: 调用JS方法将定位信息回传给前端
-            [[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:wholeAddress];
+            extern NSString* locateCallerName;
+            NSDictionary *dict = @{@"callerName":locateCallerName,
+                                   @"address":self.address,
+                                   @"latitude":self.latitude,
+                                   @"longitude":self.longitude
+                                   };
+            [[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:dict];
             
             NSString *city = placeMark.locality;
             if (!city) {

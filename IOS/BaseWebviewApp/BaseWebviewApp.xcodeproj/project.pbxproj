@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FE074C4B22ADED2200737889 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = FE074C4A22ADED2100737889 /* Resource */; };
-		FE074C5022AE557100737889 /* webRefreshButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE074C4D22AE557100737889 /* webRefreshButton@2x.png */; };
-		FE074C5122AE557100737889 /* webRefreshButton@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE074C4E22AE557100737889 /* webRefreshButton@3x.png */; };
-		FE074C5222AE557100737889 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = FE074C4F22AE557100737889 /* test.html */; };
 		FE074C9322B07FCB00737889 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE074C9222B07FCB00737889 /* CameraController.m */; };
 		FE074C9622B1D53200737889 /* HWScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE074C9522B1D53200737889 /* HWScanViewController.m */; };
 		FE131CA922DC9E1000F10673 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE131CA822DC9E1000F10673 /* AudioToolbox.framework */; };
@@ -67,6 +64,8 @@
 		FE42905422DDB64100F4526C /* VideoPlayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE42904E22DDB64100F4526C /* VideoPlayViewController.xib */; };
 		FE42905522DDB64100F4526C /* VideoPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE42905022DDB64100F4526C /* VideoPlayViewController.m */; };
 		FE42905622DDB64100F4526C /* IJKMoviePlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */; };
+		FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A64230CCB1C000D6613 /* RealHtmlController.m */; };
+		FE870A68230D3EEB000D6613 /* UIDevice+TFDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */; };
 		FEAB230922C99062007A5B30 /* RefreshNoNetworkView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEAB230822C99062007A5B30 /* RefreshNoNetworkView.m */; };
 		FEB4BFD322C2131B00787958 /* checkNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = FEB4BFD222C2131B00787958 /* checkNetwork.m */; };
 		FEB4BFD822C30F6F00787958 /* UserGuideView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEB4BFD722C30F6F00787958 /* UserGuideView.m */; };
@@ -94,9 +93,6 @@
 
 /* Begin PBXFileReference section */
 		FE074C4A22ADED2100737889 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
-		FE074C4D22AE557100737889 /* webRefreshButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "webRefreshButton@2x.png"; sourceTree = "<group>"; };
-		FE074C4E22AE557100737889 /* webRefreshButton@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "webRefreshButton@3x.png"; sourceTree = "<group>"; };
-		FE074C4F22AE557100737889 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		FE074C9122B07FCB00737889 /* CameraController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		FE074C9222B07FCB00737889 /* CameraController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
 		FE074C9422B1D53200737889 /* HWScanViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HWScanViewController.h; sourceTree = "<group>"; };
@@ -187,6 +183,10 @@
 		FE42904F22DDB64100F4526C /* IJKMediaControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKMediaControl.h; sourceTree = "<group>"; };
 		FE42905022DDB64100F4526C /* VideoPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayViewController.m; sourceTree = "<group>"; };
 		FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IJKMoviePlayerViewController.xib; sourceTree = "<group>"; };
+		FE870A63230CCB1C000D6613 /* RealHtmlController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RealHtmlController.h; sourceTree = "<group>"; };
+		FE870A64230CCB1C000D6613 /* RealHtmlController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RealHtmlController.m; sourceTree = "<group>"; };
+		FE870A66230D3EEB000D6613 /* UIDevice+TFDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+TFDevice.h"; sourceTree = "<group>"; };
+		FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+TFDevice.m"; sourceTree = "<group>"; };
 		FEAB230722C99062007A5B30 /* RefreshNoNetworkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefreshNoNetworkView.h; sourceTree = "<group>"; };
 		FEAB230822C99062007A5B30 /* RefreshNoNetworkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RefreshNoNetworkView.m; sourceTree = "<group>"; };
 		FEB4BFD122C2131B00787958 /* checkNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checkNetwork.h; sourceTree = "<group>"; };
@@ -252,16 +252,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		FE074C4C22AE557100737889 /* Resource_ref */ = {
-			isa = PBXGroup;
-			children = (
-				FE074C4D22AE557100737889 /* webRefreshButton@2x.png */,
-				FE074C4E22AE557100737889 /* webRefreshButton@3x.png */,
-				FE074C4F22AE557100737889 /* test.html */,
-			);
-			path = Resource_ref;
-			sourceTree = "<group>";
-		};
 		FE161D1622A0CB0300A32148 = {
 			isa = PBXGroup;
 			children = (
@@ -293,7 +283,6 @@
 				FEB4BFD522C30F4B00787958 /* UserGuide */,
 				FEB4BFD022C212F000787958 /* Utils */,
 				FE1D44D522B3830A00B4F1BA /* WebViewJavascriptBridge */,
-				FE074C4C22AE557100737889 /* Resource_ref */,
 				FE074C4A22ADED2100737889 /* Resource */,
 				FE19061122A8FC9A00216179 /* Webview */,
 				FE161D2222A0CB0300A32148 /* AppDelegate.h */,
@@ -340,6 +329,8 @@
 			children = (
 				FE19061522A8FD3700216179 /* WebviewController.h */,
 				FE19061622A8FD3700216179 /* WebviewController.m */,
+				FE870A63230CCB1C000D6613 /* RealHtmlController.h */,
+				FE870A64230CCB1C000D6613 /* RealHtmlController.m */,
 			);
 			path = Webview;
 			sourceTree = "<group>";
@@ -451,6 +442,8 @@
 				FE41B00622D5755D006C36A3 /* JPushUtils.m */,
 				FE302B3622E95CA20082EB45 /* AFNetWorkingDemo.h */,
 				FE302B3722E95CA20082EB45 /* AFNetWorkingDemo.m */,
+				FE870A66230D3EEB000D6613 /* UIDevice+TFDevice.h */,
+				FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -580,12 +573,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE42905422DDB64100F4526C /* VideoPlayViewController.xib in Resources */,
-				FE074C5222AE557100737889 /* test.html in Resources */,
-				FE074C5022AE557100737889 /* webRefreshButton@2x.png in Resources */,
 				FE074C4B22ADED2200737889 /* Resource in Resources */,
 				FE161D2F22A0CB0400A32148 /* LaunchScreen.storyboard in Resources */,
 				FE161D2C22A0CB0400A32148 /* Assets.xcassets in Resources */,
-				FE074C5122AE557100737889 /* webRefreshButton@3x.png in Resources */,
 				FE161D2A22A0CB0300A32148 /* Main.storyboard in Resources */,
 				FE42905622DDB64100F4526C /* IJKMoviePlayerViewController.xib in Resources */,
 			);
@@ -630,6 +620,7 @@
 				FE41B00722D5755D006C36A3 /* JPushUtils.m in Sources */,
 				FE161D3222A0CB0400A32148 /* main.m in Sources */,
 				FE1D44E122B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m in Sources */,
+				FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */,
 				FE302B3122E95AF50082EB45 /* AFHTTPSessionManager.m in Sources */,
 				FEB4BFDE22C4685500787958 /* NoNetworkView.m in Sources */,
 				FE161D2422A0CB0300A32148 /* AppDelegate.m in Sources */,
@@ -641,6 +632,7 @@
 				FEB4BFE922C4C28200787958 /* Reachability.m in Sources */,
 				FE42905222DDB64100F4526C /* IJKMediaControl.m in Sources */,
 				FE302B3022E95AF50082EB45 /* AFURLResponseSerialization.m in Sources */,
+				FE870A68230D3EEB000D6613 /* UIDevice+TFDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,6 +810,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseWebviewApp/Lib",
@@ -848,6 +841,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseWebviewApp/Lib",
@@ -866,6 +860,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Release;
 		};

@@ -1,0 +1,10 @@
+<appInfos>
+    <!-- 注意如果url中含有 & 符号，请将 "&"转义字符&amp;代替 -->
+    <first_page_url>https://www.baidu.com</first_page_url>
+    <!-- 配置是否需要引导页, 需要填YES，不需要填NO -->
+    <need_guide_page>YES</need_guide_page>
+    
+    <!-- 配置引导页界面的个数，范围目前限制在2到4页之间，各项目配置后一定要替换正确的对应图片 -->
+    <guide_page_count>5</guide_page_count>
+
+</appInfos>

@@ -23,6 +23,8 @@ static BOOL isProduction = FALSE;
  */
 @property(nonatomic,assign)BOOL allowRotation;
 
+//解析引导页个数配置
+@property(nonatomic, assign)NSInteger pageCount;
 
 @end
 

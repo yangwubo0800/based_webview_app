@@ -18,9 +18,17 @@
 #define MainScreen_width  [UIScreen mainScreen].bounds.size.width//宽
 #define MainScreen_height [UIScreen mainScreen].bounds.size.height//高
 
-@interface AppDelegate () <JPUSHRegisterDelegate>
+@interface AppDelegate () <JPUSHRegisterDelegate, NSXMLParserDelegate>
 
 @property (nonatomic, strong) Reachability *reachability;
+    
+//start tag
+@property (nonatomic, strong) NSString *startTag;
+
+//解析存储是否需要引导页
+@property (nonatomic, strong) NSString *needGuild;
+
+    
 
 @end
 
@@ -47,8 +55,13 @@
     self.window.rootViewController = nc;
     [self.window makeKeyAndVisible];
     
+    // 解析配置首页地址等信息
+    [self initXmlParse];
+    
     // add user guide view
-    [self addUserGuideView];
+    if ([self.needGuild isEqualToString:@"YES"]) {
+        [self addUserGuideView];
+    }
     
     // TODO:根据项目是否需要极光消息推送增删此段代码，初始化必须放置在这里，不能由前端灵活调用，前端只能设置tag来过滤消息
     //极光消息推送初始化
@@ -328,6 +341,90 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     return str;
 }
 
+    
+    // 初始化xml解析器
+-(void) initXmlParse{
+    NSString *configPath = [[NSBundle mainBundle] pathForResource:@"app_config.xml" ofType:nil inDirectory:@"Resource"];
+    NSLog(@"initXmlParse configPath=%@", configPath);
+    NSData *data = [[NSData alloc] initWithContentsOfFile:configPath];
+    NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
+    NSLog(@"#####initXmlParse parser is %p",parser);
+    parser.delegate = self;
+    [parser parse];
+}
+
+/**
+ 开始解析
+ */
+- (void)parserDidStartDocument:(NSXMLParser *)parser{
+    //这里只是开始,貌似不用做什么
+    NSLog(@"#####parserDidStartDocument");
+}
+    
+    /**
+     开始一个新标签,这个时候应该创建对应的模型对象或者准备为模型的属性赋值.
+     @param parser 解析器
+     @param elementName 标签元素名字
+     @param attributeDict 标签的属性
+     */
+- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(nullable NSString *)namespaceURI qualifiedName:(nullable NSString *)qName attributes:(NSDictionary<NSString *, NSString *> *)attributeDict{
+    self.startTag = elementName;
+    NSLog(@"#####didStartElement self.startTag is %@", self.startTag);
+}
+    
+    
+    
+    /**
+     解析到标签中间的文字 标签中的文字不是一次性能读完的,可能会分几次调用这个方法,所以创建一个可变字符串保存起来.
+     
+     @param parser 解析器
+     @param string 文字
+     */
+- (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string{
+    NSLog(@"#####foundCharacters string is %@", string);
+    if([self.startTag isEqualToString:@"first_page_url"]){
+        // controller
+        WebviewController *vc = [WebviewController shareInstance] ;
+        vc.parsedFirstPageUrl = string;
+    }
+    
+    if([self.startTag isEqualToString:@"need_guide_page"]){
+        self.needGuild = string;
+    }
+    
+    if([self.startTag isEqualToString:@"guide_page_count"]){
+        NSString *pageCount = string;
+        self.pageCount = [pageCount intValue];
+        //限制引导页在2和4之间
+        if (self.pageCount < 2) {
+            self.pageCount = 2;
+        } else if (self.pageCount > 4){
+            self.pageCount = 4;
+        }
+    }
+}
+    
+    
+    
+    /**
+     解析到一个元素结束的地方.
+     
+     @param parser 解析器
+     @param elementName 元素名字
+     */
+- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(nullable NSString *)namespaceURI qualifiedName:(nullable NSString *)qName{
+    self.startTag = nil;
+    NSLog(@"didEndElement");
+}
+    
+    
+    /**
+     结束解析
+     */
+- (void)parserDidEndDocument:(NSXMLParser *)parser{
+    //所有标签解析完毕,打印数组看看是否转换成功.
+    NSLog(@"parserDidEndDocument");
+}
 
 
 

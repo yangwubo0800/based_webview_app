@@ -573,6 +573,10 @@ NSString *locateCallerName;
         } else {
             // 2.创建URL
             NSString *path = firstPagePath;
+            //正常解析到配置，使用解析的结果作为首页地址
+            if (self.parsedFirstPageUrl) {
+                path = self.parsedFirstPageUrl;
+            }
             //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
             NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSURL *url = [NSURL URLWithString:urlStr];

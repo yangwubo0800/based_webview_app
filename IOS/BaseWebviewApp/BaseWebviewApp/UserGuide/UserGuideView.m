@@ -10,6 +10,7 @@
 #define MainScreen_height [UIScreen mainScreen].bounds.size.height//高
 
 #import "UserGuideView.h"
+#import "../AppDelegate.h"
 
 @interface UserGuideView ()<UIScrollViewDelegate>
 {
@@ -26,7 +27,16 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _imageArray = [@[@"闪屏1.png",@"闪屏2.png", @"闪屏3.png",@"闪屏4.png"]mutableCopy];
+        //通过获取配置参数来决定显示几页引导页面
+        _imageArray = [[NSMutableArray alloc] init];
+        NSArray *images = @[@"闪屏1.png",@"闪屏2.png", @"闪屏3.png",@"闪屏4.png"];
+        AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        NSInteger pageCount = appDelegate.pageCount;
+        for (NSInteger i=0; i<pageCount; i++) {
+            [_imageArray addObject:images[i]];
+        }
+        NSLog(@"-----_imageArray is %@", _imageArray);
+        //_imageArray = [@[@"闪屏1.png",@"闪屏2.png", @"闪屏3.png",@"闪屏4.png"]mutableCopy];
         
         //        _imageArray = [NSMutableArray arrayWithObjects:@"闪屏1.png",@"闪屏2.png", @"闪屏3.png",@"闪屏4.png", nil];
         

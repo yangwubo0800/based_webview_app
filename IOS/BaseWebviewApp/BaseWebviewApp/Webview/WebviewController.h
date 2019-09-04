@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 //记录当前加载的URL
 @property(nonatomic, strong) NSURL *currentUrl;
+    
+//解析xml中获得首页地址
+@property(nonatomic, strong) NSString *parsedFirstPageUrl;
+    
 
 @end
 

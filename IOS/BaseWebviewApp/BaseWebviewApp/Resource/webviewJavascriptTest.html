@@ -241,8 +241,13 @@
         {
             log('JS calling handler "jsCallGetValue"')
             WebViewJavascriptBridge.callHandler('jsCallGetValue', 'foo', function(response) {
+                                                alert("function response")
                                                 log('JS got response: ', response)
                                                 })
+            log(' after jsCallGetValue 1.......')
+            log(' after jsCallGetValue 2.......')
+            log(' after jsCallGetValue 3.......')
+            alert("after js call handler")
         }
     
         function jsToOcFunction16()
@@ -256,7 +261,7 @@
         function jsToOcFunction17()
         {
             log('JS calling handler "jsCallStartRealHtml"')
-            WebViewJavascriptBridge.callHandler('jsCallStartRealHtml', 'http://www.baidu.com', function(response) {
+            WebViewJavascriptBridge.callHandler('jsCallStartRealHtml', 'http://test.html?userId=admin&stationId=901902000013', function(response) {
                                                 log('JS got response: ', response)
                                                 })
         }

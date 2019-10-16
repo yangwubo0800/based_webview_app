@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 //判断字符串是否为空
 + (BOOL)isBlankString:(NSString *)string;
 
+//json字符串拼接
++ (NSString *)UIUtilsFomateJsonWithDictionary:(NSDictionary *)dic;
+
 @end
 
 NS_ASSUME_NONNULL_END

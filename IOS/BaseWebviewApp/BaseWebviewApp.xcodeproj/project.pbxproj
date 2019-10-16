@@ -66,6 +66,12 @@
 		FE42905622DDB64100F4526C /* IJKMoviePlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */; };
 		FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A64230CCB1C000D6613 /* RealHtmlController.m */; };
 		FE870A68230D3EEB000D6613 /* UIDevice+TFDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */; };
+		FE8C580E234D737500AA68D1 /* DSCallInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C5807234D737500AA68D1 /* DSCallInfo.m */; };
+		FE8C580F234D737500AA68D1 /* InternalApis.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C580B234D737500AA68D1 /* InternalApis.m */; };
+		FE8C5810234D737500AA68D1 /* JSBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C580C234D737500AA68D1 /* JSBUtil.m */; };
+		FE8C5811234D737500AA68D1 /* DWKWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C580D234D737500AA68D1 /* DWKWebView.m */; };
+		FE8C5814234D73B800AA68D1 /* JSInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C5813234D73B800AA68D1 /* JSInterface.m */; };
+		FE982B98234EFE6D00A3BD4A /* GeneralUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FE982B97234EFE6D00A3BD4A /* GeneralUtils.m */; };
 		FEAB230922C99062007A5B30 /* RefreshNoNetworkView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEAB230822C99062007A5B30 /* RefreshNoNetworkView.m */; };
 		FEB4BFD322C2131B00787958 /* checkNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = FEB4BFD222C2131B00787958 /* checkNetwork.m */; };
 		FEB4BFD822C30F6F00787958 /* UserGuideView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEB4BFD722C30F6F00787958 /* UserGuideView.m */; };
@@ -187,6 +193,19 @@
 		FE870A64230CCB1C000D6613 /* RealHtmlController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RealHtmlController.m; sourceTree = "<group>"; };
 		FE870A66230D3EEB000D6613 /* UIDevice+TFDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+TFDevice.h"; sourceTree = "<group>"; };
 		FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+TFDevice.m"; sourceTree = "<group>"; };
+		FE8C5805234D737500AA68D1 /* dsbridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsbridge.h; sourceTree = "<group>"; };
+		FE8C5806234D737500AA68D1 /* InternalApis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalApis.h; sourceTree = "<group>"; };
+		FE8C5807234D737500AA68D1 /* DSCallInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSCallInfo.m; sourceTree = "<group>"; };
+		FE8C5808234D737500AA68D1 /* JSBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBUtil.h; sourceTree = "<group>"; };
+		FE8C5809234D737500AA68D1 /* DWKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWKWebView.h; sourceTree = "<group>"; };
+		FE8C580A234D737500AA68D1 /* DSCallInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSCallInfo.h; sourceTree = "<group>"; };
+		FE8C580B234D737500AA68D1 /* InternalApis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InternalApis.m; sourceTree = "<group>"; };
+		FE8C580C234D737500AA68D1 /* JSBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSBUtil.m; sourceTree = "<group>"; };
+		FE8C580D234D737500AA68D1 /* DWKWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWKWebView.m; sourceTree = "<group>"; };
+		FE8C5812234D73B800AA68D1 /* JSInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInterface.h; sourceTree = "<group>"; };
+		FE8C5813234D73B800AA68D1 /* JSInterface.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSInterface.m; sourceTree = "<group>"; };
+		FE982B96234EFE6D00A3BD4A /* GeneralUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneralUtils.h; sourceTree = "<group>"; };
+		FE982B97234EFE6D00A3BD4A /* GeneralUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GeneralUtils.m; sourceTree = "<group>"; };
 		FEAB230722C99062007A5B30 /* RefreshNoNetworkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefreshNoNetworkView.h; sourceTree = "<group>"; };
 		FEAB230822C99062007A5B30 /* RefreshNoNetworkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RefreshNoNetworkView.m; sourceTree = "<group>"; };
 		FEB4BFD122C2131B00787958 /* checkNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checkNetwork.h; sourceTree = "<group>"; };
@@ -276,6 +295,7 @@
 		FE161D2122A0CB0300A32148 /* BaseWebviewApp */ = {
 			isa = PBXGroup;
 			children = (
+				FE8C5804234D737500AA68D1 /* dsbridge */,
 				FE302B2122E95AF50082EB45 /* AFNetworking */,
 				FE42904922DDB64100F4526C /* IJKPlayer */,
 				FE41B00422D4716C006C36A3 /* BaseWebviewApp.entitlements */,
@@ -331,6 +351,8 @@
 				FE19061622A8FD3700216179 /* WebviewController.m */,
 				FE870A63230CCB1C000D6613 /* RealHtmlController.h */,
 				FE870A64230CCB1C000D6613 /* RealHtmlController.m */,
+				FE8C5812234D73B800AA68D1 /* JSInterface.h */,
+				FE8C5813234D73B800AA68D1 /* JSInterface.m */,
 			);
 			path = Webview;
 			sourceTree = "<group>";
@@ -429,6 +451,22 @@
 			path = IJKPlayer;
 			sourceTree = "<group>";
 		};
+		FE8C5804234D737500AA68D1 /* dsbridge */ = {
+			isa = PBXGroup;
+			children = (
+				FE8C5805234D737500AA68D1 /* dsbridge.h */,
+				FE8C5806234D737500AA68D1 /* InternalApis.h */,
+				FE8C5807234D737500AA68D1 /* DSCallInfo.m */,
+				FE8C5808234D737500AA68D1 /* JSBUtil.h */,
+				FE8C5809234D737500AA68D1 /* DWKWebView.h */,
+				FE8C580A234D737500AA68D1 /* DSCallInfo.h */,
+				FE8C580B234D737500AA68D1 /* InternalApis.m */,
+				FE8C580C234D737500AA68D1 /* JSBUtil.m */,
+				FE8C580D234D737500AA68D1 /* DWKWebView.m */,
+			);
+			path = dsbridge;
+			sourceTree = "<group>";
+		};
 		FEB4BFD022C212F000787958 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -444,6 +482,8 @@
 				FE302B3722E95CA20082EB45 /* AFNetWorkingDemo.m */,
 				FE870A66230D3EEB000D6613 /* UIDevice+TFDevice.h */,
 				FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */,
+				FE982B96234EFE6D00A3BD4A /* GeneralUtils.h */,
+				FE982B97234EFE6D00A3BD4A /* GeneralUtils.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -607,19 +647,25 @@
 				FE302B3222E95AF50082EB45 /* AFURLSessionManager.m in Sources */,
 				FE42905522DDB64100F4526C /* VideoPlayViewController.m in Sources */,
 				FE074C9622B1D53200737889 /* HWScanViewController.m in Sources */,
+				FE982B98234EFE6D00A3BD4A /* GeneralUtils.m in Sources */,
 				FEB4BFDB22C4652400787958 /* StringUtils.m in Sources */,
+				FE8C5814234D73B800AA68D1 /* JSInterface.m in Sources */,
+				FE8C580E234D737500AA68D1 /* DSCallInfo.m in Sources */,
 				FE1D44DF22B3830A00B4F1BA /* WKWebViewJavascriptBridge.m in Sources */,
+				FE8C5811234D737500AA68D1 /* DWKWebView.m in Sources */,
 				FE1D44DE22B3830A00B4F1BA /* WebViewJavascriptBridgeBase.m in Sources */,
 				FEB4BFD322C2131B00787958 /* checkNetwork.m in Sources */,
 				FEB4BFD822C30F6F00787958 /* UserGuideView.m in Sources */,
 				FE1D44E022B3830A00B4F1BA /* WebViewJavascriptBridge.m in Sources */,
 				FE1D44D422B32F0500B4F1BA /* LZKeychain.m in Sources */,
+				FE8C5810234D737500AA68D1 /* JSBUtil.m in Sources */,
 				FE074C9322B07FCB00737889 /* CameraController.m in Sources */,
 				FE161D2722A0CB0300A32148 /* ViewController.m in Sources */,
 				FEAB230922C99062007A5B30 /* RefreshNoNetworkView.m in Sources */,
 				FE41B00722D5755D006C36A3 /* JPushUtils.m in Sources */,
 				FE161D3222A0CB0400A32148 /* main.m in Sources */,
 				FE1D44E122B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m in Sources */,
+				FE8C580F234D737500AA68D1 /* InternalApis.m in Sources */,
 				FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */,
 				FE302B3122E95AF50082EB45 /* AFHTTPSessionManager.m in Sources */,
 				FEB4BFDE22C4685500787958 /* NoNetworkView.m in Sources */,
@@ -720,9 +766,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = WY44729S8K;
+				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -780,9 +827,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = WY44729S8K;
+				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -807,8 +855,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BaseWebviewApp/BaseWebviewApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -827,7 +875,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "profile-adHoc-innerTest";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -838,8 +886,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BaseWebviewApp/BaseWebviewApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -858,7 +906,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "profile-adHoc-innerTest";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 arm64e armv7s";
 			};

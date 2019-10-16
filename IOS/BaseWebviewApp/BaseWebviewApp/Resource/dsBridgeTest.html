@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+            <style type='text/css'>
+                html { font-family:Helvetica; color:#222; }
+                h1 { color:steelblue; font-size:24px; margin-top:24px; }
+                button { margin:0 3px 10px; font-size:12px; }
+                .logLine { border-bottom:1px solid #ccc; padding:4px 2px; font-family:courier; font-size:11px; }
+                </style>
+            <title>Base Webview Test</title>
+            <!--require dsbridge init js-->
+            <script src="Resource/dsbridge.js"> </script>
+            <script src="Resource/android.js"> </script>
+    </head>
+    
+    <body>
+        <h1>DSBridge Demo </h1>
+        <script>
+            // the bridge is so important.
+            var uniqueId = 1
+            function log(message, data) {
+                var log = document.getElementById('log')
+                var el = document.createElement('div')
+                el.className = 'logLine'
+                if(data == null || data  == "undefined"){
+                    el.innerHTML = uniqueId++ + '. ' + message + ':<br/>'
+                }else{
+                    el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+                }
+                
+                if (log.children.length){
+                    log.insertBefore(el, log.children[0])
+                    
+                }else{ log.appendChild(el)
+                    
+                }
+            }
+        
+        window.onerror = function(err) {
+            log('window.onerror: ' + err)
+        }
+        
+        //test emit
+        window.system = {
+            model: function(){
+                alert("123")
+            }
+        }
+        
+
+        function getDeviceId() {
+            var deviceId = dsBridge.call("ios.getDeviceId")
+            log(deviceId)
+            alert(deviceId)
+        }
+
+        function ijkLivePlay() {
+            dsBridge.call("ios.ijkLivePlay", "http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8")
+            log("ijkLivePlay")
+        }
+
+        function setJPushTag() {
+            dsBridge.call("ios.setJPushTag", "stationId001,stationId002")
+            log("setJPushTag")
+        }
+        
+        
+        function takePhoto() {
+            dsBridge.call("ios.takePhoto")
+            log("takePhoto")
+        }
+        
+        function recordVideo() {
+            dsBridge.call("ios.recordVideo")
+            log("recordVideo")
+        }
+        
+        function scanQRCode() {
+            dsBridge.call("ios.scanQRCode", "TestCaller")
+            log("scanQRCode")
+        }
+        
+        function locate() {
+            dsBridge.call("ios.locate", "TestCaller")
+            log("locate")
+        }
+        
+        
+        function videoPlay() {
+            dsBridge.call("ios.videoPlay", "https://media.w3.org/2010/05/sintel/trailer.mp4")
+            log("videoPlay")
+        }
+        
+        function dialNumber() {
+            dsBridge.call("ios.dailNumber", "88238888")
+            log("dialNumber")
+        }
+        
+        function setValueByKey() {
+            dsBridge.call("ios.setValueByKey", "{\"foo\": \"bar\", \"key2\":\"value2\"}")
+            log("setValueByKey")
+        }
+        
+        function getValueByKey() {
+            var value = dsBridge.call("ios.getValueByKey", "foo")
+            log(value)
+        }
+        
+        function checkNetwork() {
+            var available = dsBridge.call("ios.checkNetwork")
+            log(available)
+        }
+        
+        
+        function startRealHtml() {
+            dsBridge.call("ios.startRealHtml", "http://test.html?userId=admin&stationId=901902000013")
+            log("startRealHtml")
+        }
+        
+        
+        function getAppInfo() {
+            var json = dsBridge.call("ios.getAppInfo")
+            log(json)
+        }
+        
+        function getCacheSize() {
+            dsBridge.call("ios.getCacheSize")
+            log("getCacheSize")
+        }
+        
+        
+        function clearCache() {
+            dsBridge.call("ios.clearCache")
+            log("clearCache")
+        }
+        
+        
+        function testEmit() {
+            if (typeof(Android)=="undefined")
+            {alert("不存在Android")}
+            else
+            {alert("存在Android！！")}
+            
+            dsBridge.call("ios.testEmit", "callerNamewang")
+            log("testEmit")
+        }
+        
+        </script>
+        
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getDeviceId()" > 获取唯一标识</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "ijkLivePlay()" > 直播</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setJPushTag()" > 设置极光推送tag</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "takePhoto()" > 照相</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "recordVideo()" > 录像</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "scanQRCode()" > 扫码</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "locate()" > 定位</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "videoPlay()" > 视频播放</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "dialNumber()" > 拨打电话</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setValueByKey()" > 根据键设置值</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getValueByKey()" > 根据键获取值</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "checkNetwork()" > 检测网络</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "startRealHtml()" > 横屏展示实时画面</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getAppInfo()" > 获取应用信息</button></p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getCacheSize()" > 获取应用缓存大小</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "clearCache()" > 清理缓存</button> </p>
+       
+        <div id='buttons'></div>
+        <div id='log'></div>
+        <div id='scanResult'></div>
+        <div id='locateResult'></div>
+    </body>
+</html>

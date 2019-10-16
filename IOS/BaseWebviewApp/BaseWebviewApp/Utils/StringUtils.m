@@ -40,4 +40,53 @@
     
 }
 
+
++ (NSString *)UIUtilsFomateJsonWithDictionaryReverse:(NSDictionary *)dic {
+    
+    NSArray *keys = [dic allKeys];
+    NSString *string = [NSString string];
+
+    for (NSString *key in keys) {
+        NSString *value = [dic objectForKey:key];
+        value = [NSString stringWithFormat:@"\"%@\"",value];
+        NSString *newkey = [NSString stringWithFormat:@"\"%@\"",key];
+        
+        if (!string.length) {
+            string = [NSString stringWithFormat:@"%@:%@}",newkey,value];
+            
+        }else {
+            string = [NSString stringWithFormat:@"%@:%@,%@",newkey,value,string];
+        }
+    }
+
+    string = [NSString stringWithFormat:@"{%@",string];
+    
+    return string;
+    
+}
+
+
++ (NSString *)UIUtilsFomateJsonWithDictionary:(NSDictionary *)dic {
+    
+    NSArray *keys = [dic allKeys];
+    NSString *string = [NSString string];
+    
+    for (NSString *key in keys) {
+        NSString *value = [dic objectForKey:key];
+        value = [NSString stringWithFormat:@"\"%@\"",value];
+        NSString *newkey = [NSString stringWithFormat:@"\"%@\"",key];
+        
+        if (!string.length) {
+            string = [NSString stringWithFormat:@"{%@:%@",newkey,value];
+            
+        }else {
+            string = [NSString stringWithFormat:@"%@,%@:%@",string,newkey,value];
+        }
+    }
+    string = [NSString stringWithFormat:@"%@}",string];
+    
+    return string;
+}
+
+
 @end

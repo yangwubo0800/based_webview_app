@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 //JPush param
-static NSString *appKey = @"xxxxxxxxxxxxxxxxxxx";
+static NSString *appKey = @"xxxxxxxxxxx";
 static NSString *channel = @"Publish channel";
 static BOOL isProduction = FALSE;
 
@@ -25,6 +25,8 @@ static BOOL isProduction = FALSE;
 
 //解析引导页个数配置
 @property(nonatomic, assign)NSInteger pageCount;
+
+
 
 @end
 

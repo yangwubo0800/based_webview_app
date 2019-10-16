@@ -9,6 +9,7 @@
 #import "HWScanViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "./Webview/WebviewController.h"
+#import "Utils/StringUtils.h"
 
 #define KMainW [UIScreen mainScreen].bounds.size.width
 #define KMainH [UIScreen mainScreen].bounds.size.height
@@ -257,8 +258,17 @@
         NSDictionary *dict = @{@"callerName":scanCallerName, @"scanResult":scanResult};
         NSLog(@"scan resut is %@",dict);
         // TODO: 将扫码结果通过bridge调用JS回传给前端
-        [[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
-
+        //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
+        //修改为使用webview直接发送emit时间给前端
+        NSString *emitName = @"qrCode";
+        NSString *scanJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+        NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+        js = [js stringByAppendingString:@"','"];
+        js = [js stringByAppendingString:scanJsonStr];
+        js = [js stringByAppendingString:@"')"];
+        NSLog(@" js is :%@", js);
+        WebviewController *wc = [WebviewController shareInstance];
+        [[wc webView] evaluateJavaScript:js completionHandler:nil];
     }
 }
 

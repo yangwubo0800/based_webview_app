@@ -26,6 +26,8 @@
 #import "RealHtmlController.h"
 #import "../AppDelegate.h"
 #import "../Utils/UIDevice+TFDevice.h"
+#import "../dsbridge/DWKWebView.h"
+#import "JSInterface.h"
 
 
 //竖屏幕宽高
@@ -42,6 +44,7 @@
 #define NAVIGATIONBARHEIGHT (self.navigationController.navigationBar.frame.size.height)
 
 #define LOAD_LOCAL_HTML YES
+
 
 //单例模式
 static WebviewController *instance = nil;
@@ -93,10 +96,11 @@ NSString *locateCallerName;
 
 @interface WebviewController () <WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler>
 
-//webview
-@property(nonatomic, strong) WKWebView *webView;
+
 //进度条
 @property(nonatomic, strong) UIProgressView *progressView;
+
+
 
 
 
@@ -153,10 +157,11 @@ NSString *locateCallerName;
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
+
+    
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
     //检查网络
     //[checkNetwork checkNetworkCanUse];
     // 设置导航栏
@@ -373,16 +378,23 @@ NSString *locateCallerName;
 //        WKUserScript *wkUScript = [[WKUserScript alloc] initWithSource:jSString injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
 //        [config.userContentController addUserScript:wkUScript];
         //显示状态栏 隐藏导航栏，导航功能由前端界面实现
-        _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT) configuration:config];
+        _webView = [[DWKWebView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT) configuration:config];
         // UI代理
-        _webView.UIDelegate = self;
+        //_webView.UIDelegate = self;
+        //在 DWKWebView 中，请使用 DSUIDelegate 代替 UIDelegate , 因为在DWKWebView 内部 UIDelegate已经设置过了，
+        //而 DSUIDelegate 正是 UIDelegate 的一个代理。
+        //_webView.DSUIDelegate = self;
+        // open debug mode, Release mode should disable this.
+        [_webView setDebugMode:true];
+        
+        [_webView addJavascriptObject:[[JSInterface alloc] init] namespace:@"ios"];
         // 导航代理
         _webView.navigationDelegate = self;
         
         // java script bridge
-        [WebViewJavascriptBridge enableLogging];
-        _bridge = [WebViewJavascriptBridge bridgeForWebView:_webView];
-        [_bridge setWebViewDelegate:self];
+//        [WebViewJavascriptBridge enableLogging];
+//        _bridge = [WebViewJavascriptBridge bridgeForWebView:_webView];
+//        [_bridge setWebViewDelegate:self];
         
 //        [_bridge registerHandler:@"testObjcCallback" handler:^(id data, WVJBResponseCallback responseCallback) {
 //            NSLog(@"testObjcCallback called: %@", data);
@@ -391,170 +403,170 @@ NSString *locateCallerName;
 //        
 //        [_bridge callHandler:@"testJavascriptHandler" data:@{ @"foo":@"before ready" }];
         
-        //无参数
-        [_bridge registerHandler:@"jsCallWithOutData" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallWithOutData called: %@", data);
-            responseCallback(@"Response from jsCallWithOutData");
-        }];
-        
-        //有参数
-        [_bridge registerHandler:@"jsCallWithData" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallWithData called: %@", data);
-            responseCallback(@"Response from jsCallWithData");
-        }];
-        
-        //获取唯一识别码
-        [_bridge registerHandler:@"jsCallGetUUID" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallGetUUID called: %@", data);
-            NSString *deviceId = [LZKeychain getDeviceIDInKeychain];
-            NSLog(@"device id is %@", deviceId);
-            NSDictionary *dict = @{@"deviceId":deviceId};
-            responseCallback(dict);
-        }];
-        
-        //拍照
-        [_bridge registerHandler:@"jsCallTakePhoto" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallTakePhoto called: %@", data);
-            [[CameraController shareInstance] nativeTakePhoto:self];
-            responseCallback(@"take photo started");
-        }];
-        
-        
-        //录像
-        [_bridge registerHandler:@"jsCallRecordVideo" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallRecordVideo called: %@", data);
-            [[CameraController shareInstance] nativeRecordVideo:self];
-            responseCallback(@"record video started");
-        }];
-        
-        //扫码
-        [_bridge registerHandler:@"jsCallScanQRCode" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallScanQRCode called: %@", data);
-            scanCallerName = data;
-            [[CameraController shareInstance] scanQRCode:self];
-            responseCallback(@"scan qr code started");
-        }];
-        
-        //定位
-        [_bridge registerHandler:@"jsCallLocate" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallLocate called: %@", data);
-            [[LocationController shareInstance] locate:self];
-            responseCallback(@"locate started");
-        }];
-        
-        //极光分类推送，根据站点stationId 作为tag来设置接受推送消息, data 为用逗号隔开的分类tags.
-        [_bridge registerHandler:@"jsSetJPushTag" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsSetJPushTag called: %@", data);
-            [JPushUtils setJPushTags:data];
-            responseCallback(@"set JPush tag started");
-        }];
-        
-        //使用ijkplayer播放器直播
-        [_bridge registerHandler:@"jsCallLivePlay" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallLivePlay called: %@", data);
-            [self ijkLivePlay:data];
-            responseCallback(@"call live play started");
-        }];
-        
-        
-        //使用ijkplayer播放器录播
-        [_bridge registerHandler:@"jsCallVideoPlay" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallVideoPlay called: %@", data);
-            [self ijkVideoPlay:data];
-            responseCallback(@"call video play started");
-        }];
-        
-        //使用AFNetworking get
-        [_bridge registerHandler:@"jsCallGet" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallGet called: %@", data);
-            [AFNetWorkingDemo AFNGet];
-            responseCallback(@"afn get started");
-        }];
-        
-        //使用AFNetworking post
-        [_bridge registerHandler:@"jsCallPost" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallPost called: %@", data);
-            [AFNetWorkingDemo AFNPost];
-            responseCallback(@"afn post started");
-        }];
-
-        
-        //拨打电话功能
-        [_bridge registerHandler:@"jsCallPhoneNumber" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallPhoneNumber called: %@", data);
-            NSMutableString *str=[[NSMutableString alloc]initWithFormat:@"tel:%@",data];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
-            responseCallback(@" Call Phone Number started");
-        }];
-
-        //根据key设置value, js传递过来的参数以json格式{key:xxx, value:xxx}
-        [_bridge registerHandler:@"jsCallSetValue" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallSetValue called: %@", data);
-            NSError *error;
-//            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-            NSDictionary *dict = data;
-            NSLog(@"=====dict=%@", dict);
-            NSArray *keys = [dict allKeys];
-            for(int i=0; i<keys.count; i++){
-                NSString *key = keys[i];
-                NSString *value = [dict valueForKey:key];
-                NSLog(@"key is %@, value is %@", key, value);
-                [[NSUserDefaults standardUserDefaults] setObject:value  forKey:key];
-            }
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            responseCallback(@" set value started");
-        }];
-        
-        //根据key获取value, data 为 key
-        [_bridge registerHandler:@"jsCallGetValue" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallGetValue called: %@", data);
-            NSString *value = [[NSUserDefaults standardUserDefaults] objectForKey:data];
-            responseCallback(value);
-        }];
-        
-        //提供接口给前端检测是否联网，否则js接口请求后台数据无网络时无反应
-        [_bridge registerHandler:@"jsCallCheckNetwork" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallCheckNetwork called: %@", data);
-            BOOL networkAvailable = [checkNetwork checkNetworkCanUse];
-            responseCallback((networkAvailable == YES) ? @"YES": @"NO");
-        }];
-        
-        //提供接口给前端进入横屏界面，例如实时画面,data中至少要包含url
-        [_bridge registerHandler:@"jsCallStartRealHtml" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallStartRealHtml called: %@", data);
-            NSString *path = data;
-            //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
-            NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL *url = [NSURL URLWithString:urlStr];
-            RealHtmlController *vc = [[RealHtmlController alloc] initWithUrl:url];
-            UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
-            //默认为英文back，此处修改返回标题为中文
-            backBtn.title = @"返回";
-            self.navigationItem.backBarButtonItem = backBtn;
-            //使用push方式来显示横屏界面，其有导航栏，再其返回时会将屏幕设置回竖屏
-            [self.navigationController pushViewController:vc animated:YES];
-        }];
-        
-        //获取应用基本信息
-        [_bridge registerHandler:@"jsCallGetAppInfo" handler:^(id data, WVJBResponseCallback responseCallback){
-            NSLog(@" jsCallGetAppInfo called: %@", data);
-            NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-            NSString *name = [infoDictionary objectForKey:@"CFBundleName"];
-            NSString *version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
-            NSString *build = [infoDictionary objectForKey:@"CFBundleVersion"];
-            NSLog(@"name is %@, version is %@, build is %@", name, version, build);
-            
-            NSDictionary *dict = @{@"name":name,
-                                   @"version":version,
-                                   @"build":build
-                                   };
-            responseCallback(dict);
-        }];
+//        //无参数
+//        [_bridge registerHandler:@"jsCallWithOutData" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallWithOutData called: %@", data);
+//            responseCallback(@"Response from jsCallWithOutData");
+//        }];
+//
+//        //有参数
+//        [_bridge registerHandler:@"jsCallWithData" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallWithData called: %@", data);
+//            responseCallback(@"Response from jsCallWithData");
+//        }];
+//
+//        //获取唯一识别码
+//        [_bridge registerHandler:@"jsCallGetUUID" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallGetUUID called: %@", data);
+//            NSString *deviceId = [LZKeychain getDeviceIDInKeychain];
+//            NSLog(@"device id is %@", deviceId);
+//            NSDictionary *dict = @{@"deviceId":deviceId};
+//            responseCallback(dict);
+//        }];
+//
+//        //拍照
+//        [_bridge registerHandler:@"jsCallTakePhoto" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallTakePhoto called: %@", data);
+//            [[CameraController shareInstance] nativeTakePhoto:self];
+//            responseCallback(@"take photo started");
+//        }];
+//
+//
+//        //录像
+//        [_bridge registerHandler:@"jsCallRecordVideo" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallRecordVideo called: %@", data);
+//            [[CameraController shareInstance] nativeRecordVideo:self];
+//            responseCallback(@"record video started");
+//        }];
+//
+//        //扫码
+//        [_bridge registerHandler:@"jsCallScanQRCode" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallScanQRCode called: %@", data);
+//            scanCallerName = data;
+//            [[CameraController shareInstance] scanQRCode:self];
+//            responseCallback(@"scan qr code started");
+//        }];
+//
+//        //定位
+//        [_bridge registerHandler:@"jsCallLocate" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallLocate called: %@", data);
+//            [[LocationController shareInstance] locate:self];
+//            responseCallback(@"locate started");
+//        }];
+//
+//        //极光分类推送，根据站点stationId 作为tag来设置接受推送消息, data 为用逗号隔开的分类tags.
+//        [_bridge registerHandler:@"jsSetJPushTag" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsSetJPushTag called: %@", data);
+//            [JPushUtils setJPushTags:data];
+//            responseCallback(@"set JPush tag started");
+//        }];
+//
+//        //使用ijkplayer播放器直播
+//        [_bridge registerHandler:@"jsCallLivePlay" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallLivePlay called: %@", data);
+//            [self ijkLivePlay:data];
+//            responseCallback(@"call live play started");
+//        }];
+//
+//
+//        //使用ijkplayer播放器录播
+//        [_bridge registerHandler:@"jsCallVideoPlay" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallVideoPlay called: %@", data);
+//            [self ijkVideoPlay:data];
+//            responseCallback(@"call video play started");
+//        }];
+//
+//        //使用AFNetworking get
+//        [_bridge registerHandler:@"jsCallGet" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallGet called: %@", data);
+//            [AFNetWorkingDemo AFNGet];
+//            responseCallback(@"afn get started");
+//        }];
+//
+//        //使用AFNetworking post
+//        [_bridge registerHandler:@"jsCallPost" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallPost called: %@", data);
+//            [AFNetWorkingDemo AFNPost];
+//            responseCallback(@"afn post started");
+//        }];
+//
+//
+//        //拨打电话功能
+//        [_bridge registerHandler:@"jsCallPhoneNumber" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallPhoneNumber called: %@", data);
+//            NSMutableString *str=[[NSMutableString alloc]initWithFormat:@"tel:%@",data];
+//            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
+//            responseCallback(@" Call Phone Number started");
+//        }];
+//
+//        //根据key设置value, js传递过来的参数以json格式{key:xxx, value:xxx}
+//        [_bridge registerHandler:@"jsCallSetValue" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallSetValue called: %@", data);
+//            NSError *error;
+////            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+//            NSDictionary *dict = data;
+//            NSLog(@"=====dict=%@", dict);
+//            NSArray *keys = [dict allKeys];
+//            for(int i=0; i<keys.count; i++){
+//                NSString *key = keys[i];
+//                NSString *value = [dict valueForKey:key];
+//                NSLog(@"key is %@, value is %@", key, value);
+//                [[NSUserDefaults standardUserDefaults] setObject:value  forKey:key];
+//            }
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//            responseCallback(@" set value started");
+//        }];
+//
+//        //根据key获取value, data 为 key
+//        [_bridge registerHandler:@"jsCallGetValue" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallGetValue called: %@", data);
+//            NSString *value = [[NSUserDefaults standardUserDefaults] objectForKey:data];
+//            responseCallback(value);
+//        }];
+//
+//        //提供接口给前端检测是否联网，否则js接口请求后台数据无网络时无反应
+//        [_bridge registerHandler:@"jsCallCheckNetwork" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallCheckNetwork called: %@", data);
+//            BOOL networkAvailable = [checkNetwork checkNetworkCanUse];
+//            responseCallback((networkAvailable == YES) ? @"YES": @"NO");
+//        }];
+//
+//        //提供接口给前端进入横屏界面，例如实时画面,data中至少要包含url
+//        [_bridge registerHandler:@"jsCallStartRealHtml" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallStartRealHtml called: %@", data);
+//            NSString *path = data;
+//            //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
+//            NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//            NSURL *url = [NSURL URLWithString:urlStr];
+//            RealHtmlController *vc = [[RealHtmlController alloc] initWithUrl:url];
+//            UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
+//            //默认为英文back，此处修改返回标题为中文
+//            backBtn.title = @"返回";
+//            self.navigationItem.backBarButtonItem = backBtn;
+//            //使用push方式来显示横屏界面，其有导航栏，再其返回时会将屏幕设置回竖屏
+//            [self.navigationController pushViewController:vc animated:YES];
+//        }];
+//
+//        //获取应用基本信息
+//        [_bridge registerHandler:@"jsCallGetAppInfo" handler:^(id data, WVJBResponseCallback responseCallback){
+//            NSLog(@" jsCallGetAppInfo called: %@", data);
+//            NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+//            NSString *name = [infoDictionary objectForKey:@"CFBundleName"];
+//            NSString *version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+//            NSString *build = [infoDictionary objectForKey:@"CFBundleVersion"];
+//            NSLog(@"name is %@, version is %@, build is %@", name, version, build);
+//
+//            NSDictionary *dict = @{@"name":name,
+//                                   @"version":version,
+//                                   @"build":build
+//                                   };
+//            responseCallback(dict);
+//        }];
 
 
         // 使用宏来控制是加载本地页面还是网络请求
         if (LOAD_LOCAL_HTML) {
-            NSString *htmlPath = [[NSBundle mainBundle] pathForResource:@"webviewJavascriptTest.html" ofType:nil inDirectory:@"Resource"];
+            NSString *htmlPath = [[NSBundle mainBundle] pathForResource:@"dsBridgeTest.html" ofType:nil inDirectory:@"Resource"];
             NSLog(@"LOAD_LOCAL_HTML htmlPath=%@", htmlPath);
     
             NSData *data = [[NSData alloc] initWithContentsOfFile:htmlPath];
@@ -597,9 +609,11 @@ NSString *locateCallerName;
 
 - (void)ijkLivePlay:(NSString *)livePath {
     //萤石云
-    NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
+    //NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
     //CCTV1
     //NSString *path = @"http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
+    //海康 中控室
+    NSString *path  = @"rtmp://rtmp.open.ys7.com/openlive/0a2cff841ba243809a9a8611e29edc9b.hd";
     // https
     //NSString *path  = @"https://media.w3.org/2010/05/sintel/trailer.mp4";
     //big duck
@@ -625,9 +639,11 @@ NSString *locateCallerName;
 
 - (void)ijkVideoPlay:(NSString*)videoPath {
     //萤石云
-    NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
+    //NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
     //CCTV1
     //NSString *path = @"http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
+    //海康 中控室
+    //NSString *path  = @"rtmp://rtmp.open.ys7.com/openlive/0a2cff841ba243809a9a8611e29edc9b.hd";
     // https
     //NSString *path  = @"https://media.w3.org/2010/05/sintel/trailer.mp4";
     //big duck
@@ -791,82 +807,85 @@ NSString *locateCallerName;
 }
 
 
-#pragma mark -- WKUIDelegate
-
-/**
- *  web界面中有弹出警告框时调用
- *
- *  @param webView           实现该代理的webview
- *  @param message           警告框中的内容
- *  @param completionHandler 警告框消失调用
- */
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
-    
-    NSLog(@" runJavaScriptAlertPanelWithMessage ");
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"HTML的弹出框" message:message?:@"" preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:([UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        completionHandler();
-    }])];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-// 确认框
-//JavaScript调用confirm方法后回调的方法 confirm是js中的确定框，需要在block中把用户选择的情况传递进去
-- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler{
-    
-    NSLog(@" runJavaScriptConfirmPanelWithMessage ");
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:message?:@"" preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:([UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        completionHandler(NO);
-    }])];
-    [alertController addAction:([UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        completionHandler(YES);
-    }])];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-// 输入框
-//JavaScript调用prompt方法后回调的方法 prompt是js中的输入框 需要在block中把用户输入的信息传入
-- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler{
-    
-    NSLog(@" runJavaScriptTextInputPanelWithPrompt ");
-//    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:prompt message:@"" preferredStyle:UIAlertControllerStyleAlert];
+//#pragma mark -- WKUIDelegate
 //
-//    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-//        textField.text = defaultText;
-//    }];
+///**
+// *  web界面中有弹出警告框时调用
+// *
+// *  @param webView           实现该代理的webview
+// *  @param message           警告框中的内容
+// *  @param completionHandler 警告框消失调用
+// */
+//- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
+//
+//    NSLog(@" runJavaScriptAlertPanelWithMessage ");
+//    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"HTML的弹出框" message:message?:@"" preferredStyle:UIAlertControllerStyleAlert];
 //    [alertController addAction:([UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//        completionHandler(alertController.textFields[0].text?:@"");
+//        completionHandler();
 //    }])];
-//
 //    [self presentViewController:alertController animated:YES completion:nil];
-    NSLog(@"%@---%@",prompt,defaultText);
-    //这里就是要返回给JS的返回值, 同步返回的，可以根据prompt来区分实现不同功能
-//    NSString *deviceId = [LZKeychain getDeviceIDInKeychain];
-//    NSLog(@" device ID is %@", deviceId);
-    completionHandler(@"OC return str to JS according prompt use");
-}
+//}
+//
+//// 确认框
+////JavaScript调用confirm方法后回调的方法 confirm是js中的确定框，需要在block中把用户选择的情况传递进去
+//- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler{
+//
+//    NSLog(@" runJavaScriptConfirmPanelWithMessage ");
+//    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:message?:@"" preferredStyle:UIAlertControllerStyleAlert];
+//    [alertController addAction:([UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+//        completionHandler(NO);
+//    }])];
+//    [alertController addAction:([UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//        completionHandler(YES);
+//    }])];
+//    [self presentViewController:alertController animated:YES completion:nil];
+//}
+//
+//// 输入框
+////JavaScript调用prompt方法后回调的方法 prompt是js中的输入框 需要在block中把用户输入的信息传入
+//- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler{
+//
+//    NSLog(@" runJavaScriptTextInputPanelWithPrompt ");
+////    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:prompt message:@"" preferredStyle:UIAlertControllerStyleAlert];
+////
+////    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+////        textField.text = defaultText;
+////    }];
+////    [alertController addAction:([UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+////        completionHandler(alertController.textFields[0].text?:@"");
+////    }])];
+////
+////    [self presentViewController:alertController animated:YES completion:nil];
+//    NSLog(@"%@---%@",prompt,defaultText);
+//    //这里就是要返回给JS的返回值, 同步返回的，可以根据prompt来区分实现不同功能
+////    NSString *deviceId = [LZKeychain getDeviceIDInKeychain];
+////    NSLog(@" device ID is %@", deviceId);
+//    completionHandler(@"OC return str to JS according prompt use");
+//}
+//
+//// 页面是弹出窗口 _blank 处理
+//- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures {
+//
+//    NSLog(@" createWebViewWithConfiguration ");
+//    if (!navigationAction.targetFrame.isMainFrame) {
+//        [webView loadRequest:navigationAction.request];
+//    }
+//    return nil;
+//}
+//
 
-// 页面是弹出窗口 _blank 处理
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures {
-    
-    NSLog(@" createWebViewWithConfiguration ");
-    if (!navigationAction.targetFrame.isMainFrame) {
-        [webView loadRequest:navigationAction.request];
-    }
-    return nil;
-}
+
 
 
 - (void)dealloc{
     //移除注册的js方法
-    [_bridge removeHandler:@"jsCallWithOutData"];
-    [_bridge removeHandler:@"jsCallWithData"];
-    [_bridge removeHandler:@"jsCallGetUUID"];
-    [_bridge removeHandler:@"jsCallTakePhoto"];
-    [_bridge removeHandler:@"jsCallRecordVideo"];
-    [_bridge removeHandler:@"jsCallScanQRCode"];
-    [_bridge removeHandler:@"jsCallLocate"];
+//    [_bridge removeHandler:@"jsCallWithOutData"];
+//    [_bridge removeHandler:@"jsCallWithData"];
+//    [_bridge removeHandler:@"jsCallGetUUID"];
+//    [_bridge removeHandler:@"jsCallTakePhoto"];
+//    [_bridge removeHandler:@"jsCallRecordVideo"];
+//    [_bridge removeHandler:@"jsCallScanQRCode"];
+//    [_bridge removeHandler:@"jsCallLocate"];
     
     //移除观察者
     [_webView removeObserver:self

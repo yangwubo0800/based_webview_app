@@ -100,7 +100,7 @@
     }
     
     // 这里判断是否第一次
-    if (/*[[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]*/false) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
         
         UserGuideView *hvc = [[UserGuideView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
         [self.window.rootViewController.view addSubview:hvc];

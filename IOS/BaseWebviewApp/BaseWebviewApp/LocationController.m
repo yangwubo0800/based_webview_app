@@ -8,6 +8,7 @@
 
 #import "LocationController.h"
 #import "Webview/WebviewController.h"
+#import "Utils/StringUtils.h"
 
 static LocationController *instance;
 
@@ -129,7 +130,17 @@ static LocationController *instance;
                                    @"latitude":self.latitude,
                                    @"longitude":self.longitude
                                    };
-            [[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:dict];
+            //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:dict];
+            //修改为使用webview直接发送emit时间给前端
+            NSString *emitName = @"location";
+            NSString *locateJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+            NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+            js = [js stringByAppendingString:@"','"];
+            js = [js stringByAppendingString:locateJsonStr];
+            js = [js stringByAppendingString:@"')"];
+            NSLog(@" js is :%@", js);
+            WebviewController *wc = [WebviewController shareInstance];
+            [[wc webView] evaluateJavaScript:js completionHandler:nil];
             
             NSString *city = placeMark.locality;
             if (!city) {

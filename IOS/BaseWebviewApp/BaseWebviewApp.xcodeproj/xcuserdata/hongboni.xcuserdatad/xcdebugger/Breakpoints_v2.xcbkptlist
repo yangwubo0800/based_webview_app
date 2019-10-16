@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BaseWebviewApp/Webview/WebviewController.m"
-            timestampString = "588237458.359722"
+            filePath = "BaseWebviewApp/Utils/StringUtils.m"
+            timestampString = "592390362.16725"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "580"
-            endingLineNumber = "580"
-            landmarkName = "-webView"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "+UIUtilsFomateJsonWithDictionaryReverse:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,29 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BaseWebviewApp/Webview/RealHtmlController.m"
-            timestampString = "588237458.3598599"
+            filePath = "BaseWebviewApp/Utils/GeneralUtils.m"
+            timestampString = "592390362.167419"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "-progressView"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "+folderSizeAtPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BaseWebviewApp/Webview/JSInterface.m"
+            timestampString = "592390362.167515"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "-setValueByKey:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

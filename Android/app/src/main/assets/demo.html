@@ -27,6 +27,11 @@
             document.getElementById("deviceId").innerText="串码：" + res.deviceId;
 
        })
+
+       function getCacheSize(){
+            var size = window.functionTag.getAppCacheSize();
+            document.getElementById("size").innerText= "缓存大小：" + size ;
+       }
     </script>
 	
     <style type="text/css">
@@ -98,6 +103,16 @@
             <img src="../images/photo.png">
             <label>预览图片</label>
         </div>
+
+        <div onclick="getCacheSize()">
+            <img src="../images/photo.png">
+            <label>获取应用缓存</label>
+        </div>
+
+        <div onclick="window.functionTag.CleanWebCache()">
+            <img src="../images/photo.png">
+            <label>清理缓存</label>
+        </div>
 	</section>
 	
 	   <div id="location" style="margin:10px;">定位信息:</div>
@@ -108,6 +123,8 @@
 	   <div id="scanResult" style="margin:10px;"></div>
 	   <div id="scanName" style="margin:10px;"></div>
 	   <div id="deviceId" style="margin:10px;"></div>
+       <div id="size" style="margin:10px;"></div>
+
 
 </body>
 </html>

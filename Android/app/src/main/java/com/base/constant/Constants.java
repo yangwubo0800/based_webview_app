@@ -46,9 +46,9 @@ public class Constants {
 
 
     /**
-     * 通知 默认已开启
+     * 通知开关的key ，设置字符串开启为on, 关闭为off， 默认开启
      */
-    public static final String NOTIFYCATION ="on";
+    public static final String NOTIFYCATION_SWITCH_KEY="notification_switch";
 
     //定义activity里面请求码
     //界面跳转请求

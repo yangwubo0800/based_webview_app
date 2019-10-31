@@ -9,7 +9,7 @@
     <!-- sample地址，播放相关：file:///android_asset/sample/videoRelative.html -->
     <!-- sample地址，获取App信息相关：file:///android_asset/sample/getInfoFromApp.html -->
     <!-- 注意如果url中含有 & 符号，请将 "&"转义字符&amp;代替 -->
-    <first_page_url url="http://www.baidu.com"/>
+    <first_page_url url="file:///android_asset/sample/fileUpload.html"/>
 
 
     <!-- 按返回键需要退出程序的url界面 -->

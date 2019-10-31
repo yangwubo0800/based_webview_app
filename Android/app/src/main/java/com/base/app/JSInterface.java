@@ -23,6 +23,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
+import com.base.utils.DataCleanManager;
 import com.base.utils.SpUtils;
 import com.example.ezrealplayer.ui.EZRealPlayActivity;
 import com.example.ezrealplayer.util.EZUtils;
@@ -1264,4 +1265,25 @@ public class JSInterface {
             AFLog.e(TAG,"wrong clientId");
         }
     }
+
+
+    /**
+     * 功能：获取应用缓存大小
+     * 参数：无
+     * 返回值：带有单位的缓存大小字符串, 单位最小为KB
+     * 使用方式：window.functionTag.getAppCacheSize()
+     */
+    @JavascriptInterface
+    public String getAppCacheSize(){
+        String size = "";
+        try {
+            size = DataCleanManager.getTotalCacheSize(mContext);
+        } catch (Exception e) {
+            AFLog.e(TAG,"getAppCacheSize Exception");
+            e.printStackTrace();
+        }
+        AFLog.w(TAG,"getAppCacheSize is " + size);
+        return size;
+    }
+
 }

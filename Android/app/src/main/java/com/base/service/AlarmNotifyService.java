@@ -249,7 +249,7 @@ public class AlarmNotifyService extends Service {
 //        EBSharedPrefManager prefManager = BridgeFactory.getBridge(Bridges.SHARED_PREFERENCE);
 //        notifycationFlag = prefManager.getKDSharedPrefSetting().getString(EBSharedPrefSetting.NOTIFYCATION, "on");
         SharedPreferences sp = getSharedPreferences(Constants.PREF_NAME_SETTING, Context.MODE_PRIVATE);
-        notifycationFlag = sp.getString(Constants.NOTIFYCATION, "on");
+        notifycationFlag = sp.getString(Constants.NOTIFYCATION_SWITCH_KEY, "on");
         // TODO: 告警列表页面也需要H5来实现，所以此处使用传递url方式，让webview来加载显示，代替AlarmNotifyActivity
         if(notifycationFlag.equals("on")){
             intent=new Intent(getApplication(), WebViewActivity.class);

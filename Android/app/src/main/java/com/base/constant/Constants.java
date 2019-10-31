@@ -58,18 +58,20 @@ public class Constants {
     public static final int TAKE_PHOTO_AND_UPLOAD_REQUEST = 5;
     public static final int RECORD_VIDEO_AND_UPLOAD_REQUEST = 6;
     public static final int OPEN_ALERT_WINDOW_PERMISSION = 7;
+    public static final int TAKE_PHOTO_AND_COMPRESS_UPLOAD_REQUEST = 8;
     //请求权限
-    public static final int PERMISSION_REQUEST_CAMERA_FOR_PHOTO = 10;
-    public static final int PERMISSION_REQUEST_CAMERA_FOR_VIDEO = 11;
-    public static final int PERMISSION_REQUEST_CAMERA_FOR_SCAN = 12;
-    public static final int PERMISSION_REQUEST_FOR_LOCATION = 13;
-    public static final int PERMISSION_REQUEST_FOR_STORAGE = 14;
-    public static final int PERMISSION_REQUEST_FOR_EZOPENPLAY = 15;
-    public static final int PERMISSION_REQUEST_FOR_IMEI = 16;
-    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_STORAGE = 17;
-    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO = 18;
-    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO = 19;
-    public static final int PERMISSION_REQUEST_FOR_SAVE_LOG = 20;
+    public static final int PERMISSION_REQUEST_CAMERA_FOR_PHOTO = 100;
+    public static final int PERMISSION_REQUEST_CAMERA_FOR_VIDEO = 101;
+    public static final int PERMISSION_REQUEST_CAMERA_FOR_SCAN = 102;
+    public static final int PERMISSION_REQUEST_FOR_LOCATION = 103;
+    public static final int PERMISSION_REQUEST_FOR_STORAGE = 104;
+    public static final int PERMISSION_REQUEST_FOR_EZOPENPLAY = 105;
+    public static final int PERMISSION_REQUEST_FOR_IMEI = 106;
+    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_STORAGE = 107;
+    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO = 108;
+    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO = 109;
+    public static final int PERMISSION_REQUEST_FOR_SAVE_LOG = 110;
+    public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS = 111;
 
     //更新位置信息消息
     public static final int MSG_FOR_LOCATION = 10001;

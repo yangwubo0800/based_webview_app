@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,6 +22,10 @@ import com.base.app.BaseWebviewApp;
 import com.base.utils.log.AFLog;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -27,6 +33,11 @@ import java.util.List;
 public class BaseAppUtil {
 
     private static final String TAG = BaseAppUtil.class.getSimpleName();
+
+    // 提供设置图片压缩的高和宽
+    public static int mCompressImageWidth;
+    public static int mCompressImageHeight;
+
 
     /**
      * 检测是否联网
@@ -348,6 +359,73 @@ public class BaseAppUtil {
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         intent.setData(Uri.parse(url));
         context.startActivity(intent);
+    }
+
+
+
+    /**
+     * 功能：将SD卡路径下的图片使用采样压缩成指定高宽的bitmap
+     * 参数：path 图片路径
+     * 返回值：压缩后的bitmap
+     */
+    public static Bitmap convertToBitmap(String path) {
+        //先读取设置的高宽，如果没有设置，则默认都为1080
+        int w;
+        int h;
+        if (mCompressImageWidth == 0 || mCompressImageHeight == 0){
+            w = 1080;
+            h = 1080;
+        }else {
+            w = mCompressImageWidth;
+            h = mCompressImageHeight;
+        }
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        // 设置为ture只获取图片大小
+        opts.inJustDecodeBounds = true;
+        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        // 返回为空
+        BitmapFactory.decodeFile(path, opts);
+        int width = opts.outWidth;
+        int height = opts.outHeight;
+        float scaleWidth = 0.f, scaleHeight = 0.f;
+        if (width > w || height > h) {
+            // 缩放
+            scaleWidth = ((float) width) / w;
+            scaleHeight = ((float) height) / h;
+        }
+        opts.inJustDecodeBounds = false;
+        float scale = Math.max(scaleWidth, scaleHeight);
+        // TODO: 缩放尺寸根据宽度来定
+
+        opts.inSampleSize = (int)scale;
+        AFLog.d(TAG, "convertToBitmap scaleWidth="+scaleWidth +" scaleHeight="+scaleHeight
+                +" scale="+scale +" opts.inSampleSize="+opts.inSampleSize);
+        WeakReference weak = new WeakReference(BitmapFactory.decodeFile(path, opts));
+        return Bitmap.createScaledBitmap((Bitmap) weak.get(), w, h, true);
+    }
+
+
+    /**
+     * 功能：将bitmap 转换成jpeg格式存储到指定路径
+     * 参数：bitmap 位图， savePath 图片存储全路径
+     * 返回值：存储路径
+     */
+    public static String saveBitToJpg(Bitmap bitmap, String savePath) {
+        File file = new File(savePath);
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return savePath;
     }
 
 }

@@ -486,6 +486,37 @@ public class WebViewActivity extends AppCompatActivity {
                                 });
                     }
                     break;
+                //照相压缩并选择该文件
+                case Constants.TAKE_PHOTO_AND_COMPRESS_UPLOAD_REQUEST:
+                    AFLog.d(TAG,"onActivityResult TAKE_PHOTO_AND_COMPRESS_UPLOAD_REQUEST ");
+                    String finalPhotoPath;
+                    if (TextUtils.isEmpty(CameraFunctionUtil.fileFullName)) {
+//                    ToastUtil.makeText(mContext, "拍照失败了");
+                        finalPhotoPath = CameraFunctionUtil.fileFullName;
+                    } else {
+//                    ToastUtil.makeText(mContext, "照片生成路径：" + CameraFunctionUtil.fileFullName);
+                        // 扫描新生成的文件到媒体库
+                        MediaScannerConnection.scanFile(this, new String[] { CameraFunctionUtil.fileFullName },
+                                null, new MediaScannerConnection.OnScanCompletedListener() {
+                                    public void onScanCompleted(String path, Uri uri) {
+                                        AFLog.i(TAG, "Scanned " + path + ":");
+                                        AFLog.i(TAG, "-> uri=" + uri);
+                                    }
+                                });
+
+                        // TODO: 压缩图片处理，然后以带有compressed 前缀存储
+                        finalPhotoPath = CameraFunctionUtil.fileFullName;
+                        Bitmap bm = BaseAppUtil.convertToBitmap(finalPhotoPath);
+                        File file = new File(finalPhotoPath);
+                        String originalName = file.getName();
+                        int slashIndex = finalPhotoPath.lastIndexOf("/");
+                        String newFileName = finalPhotoPath.substring(0, slashIndex+1) + "Compressed_"+ originalName;
+                        finalPhotoPath = BaseAppUtil.saveBitToJpg(bm, newFileName);
+                        AFLog.i(TAG, "compress image finalPhotoPath=" + finalPhotoPath);
+                    }
+                    //对 input 标签中设置  拍照路径回调，不论成败
+                    setFilePathCallback(null, finalPhotoPath);
+                    break;
                 default:
                     break;
             }
@@ -759,6 +790,22 @@ public class WebViewActivity extends AppCompatActivity {
                     }
                 } else {
                     AFLog.d(TAG,"PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO no grant result");
+                    ToastUtil.makeText(mContext, "请打开摄像头和文件存储权限");
+                }
+                break;
+            case Constants.PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS:
+                if (null != grantResults && grantResults.length > 0) {
+                    if (BaseAppUtil.permissionGrantedCheck(grantResults)){
+                        AFLog.d(TAG,"PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS permission get succeed");
+                        // 授权后继续
+                        Intent it = CameraFunctionUtil.takePhoto(mContext);
+                        startActivityForResult(it, Constants.TAKE_PHOTO_AND_COMPRESS_UPLOAD_REQUEST);
+                    } else {
+                        setFilePathCallback(null, null);
+                        ToastUtil.makeText(mContext, "请打开摄像头和文件存储权限");
+                    }
+                } else {
+                    AFLog.d(TAG,"PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS no grant result");
                     ToastUtil.makeText(mContext, "请打开摄像头和文件存储权限");
                 }
                 break;
@@ -1142,6 +1189,22 @@ public class WebViewActivity extends AppCompatActivity {
                                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                         android.Manifest.permission.CAMERA },
                                 Constants.PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO);
+                    }
+                    return true;
+                }
+
+                // TODO: 拍照后进行图片压缩，然后将压缩图片填充到input标签中，等待上传
+                if ((acceptTypes.length > 0) && acceptTypes[0].equals("image/compress")) {
+                    AFLog.d(TAG, "onShowFileChooser take photo permission cameraAndStorage=" + cameraAndStorage);
+                    if (cameraAndStorage) {
+                        Intent it = CameraFunctionUtil.takePhoto(mContext);
+                        startActivityForResult(it, Constants.TAKE_PHOTO_AND_COMPRESS_UPLOAD_REQUEST);
+                    } else {
+                        ActivityCompat.requestPermissions(WebViewActivity.this,
+                                new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.CAMERA },
+                                Constants.PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS);
                     }
                     return true;
                 }

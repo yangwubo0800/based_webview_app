@@ -20,10 +20,8 @@
     }
 
     window.onload=function(){
-        //funFromjs("IMEI:")
-        //loadAndroidMethod()
-        var imei = window.functionTag.getDeviceId();
-        document.getElementById("scanResult").innerText="IMEI:" + imei;
+ // 设置压缩图片的宽 和 高
+        window.functionTag.setCompressImageWidthAndHeight(2000,2500);
 
     }
 
@@ -94,7 +92,9 @@
         <br/>
         <input type="submit" value="上传" />
     </form>
-   
+    <!-- 点击此按钮，会先调用摄像头拍照，然后将拍摄的照片压缩 在将压缩后的内容放入到input标签中 -->
+    <p>拍照压缩然后选择该文件:  <input type="file" accept="image/compress" /> </p>
+
 
 </body>
 </html>

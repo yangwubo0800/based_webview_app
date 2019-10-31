@@ -1286,4 +1286,22 @@ public class JSInterface {
         return size;
     }
 
+
+
+    /**
+     * 功能：设置压缩图片的固定宽和高
+     * 参数：w 宽度 h 高度，注意都要大于0
+     * 返回值：无
+     * 使用方式：window.functionTag.setCompressImageWidthAndHeight(int w, int h)
+     */
+    @JavascriptInterface
+    public void setCompressImageWidthAndHeight(int w, int h){
+        AFLog.d(TAG,"setCompressImageWidthAndHeight w=" + w +" h="+h);
+        if (w > 0  && h >0){
+            BaseAppUtil.mCompressImageWidth = w;
+            BaseAppUtil.mCompressImageHeight = h;
+        }
+    }
+
+
 }

@@ -338,4 +338,16 @@ public class BaseAppUtil {
         return deviceInfo;
     }
 
+    /**
+     * 功能：下载文件
+     * 参数：url 下载链接
+     * 返回值：无
+     */
+    public static void downloadByBrowser(Context context, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setData(Uri.parse(url));
+        context.startActivity(intent);
+    }
+
 }

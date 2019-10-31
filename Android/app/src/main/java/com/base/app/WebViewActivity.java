@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -836,6 +837,16 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void  initWebview(){
+
+        //设置下载回调
+        mWebviewPage.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
+                //处理下载事件
+                AFLog.d(TAG,"onDownloadStart url="+url);
+                BaseAppUtil.downloadByBrowser(mContext, url);
+            }
+        });
 
         //设置webview client
         mWebviewPage.setWebViewClient(new WebViewClient() {

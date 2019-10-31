@@ -1,6 +1,6 @@
 <appInfos>
     <!-- 注意如果url中含有 & 符号，请将 "&"转义字符&amp;代替 -->
-    <first_page_url>http://www.baidu.com</first_page_url>
+    <first_page_url>http://m.hydro.xxxxcloud.com</first_page_url>
     <!-- 配置是否需要引导页, 需要填YES，不需要填NO -->
     <need_guide_page>YES</need_guide_page>
     

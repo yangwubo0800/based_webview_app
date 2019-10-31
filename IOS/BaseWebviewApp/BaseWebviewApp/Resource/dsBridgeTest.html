@@ -114,7 +114,7 @@
         
         
         function startRealHtml() {
-            dsBridge.call("ios.startRealHtml", "http://test.html?userId=admin&stationId=901902000013")
+            dsBridge.call("ios.startRealHtml", "http://hydro.xxxxcloud.com/xxxx/xxxxdata/visiblecontrol/广东省阳江市马南泵站水闸项目_工况图.html?userId=admin&stationId=901902000013")
             log("startRealHtml")
         }
         
@@ -135,6 +135,11 @@
             log("clearCache")
         }
         
+        
+        function imagePreview() {
+            dsBridge.call("ios.imagePreview", "http://ww2.sinaimg.cn/bmiddle/904c2a35jw1emu3ec7kf8j20c10epjsn.jpg")
+            log("imagePreview")
+        }
         
         function testEmit() {
             if (typeof(Android)=="undefined")
@@ -164,6 +169,7 @@
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getAppInfo()" > 获取应用信息</button></p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getCacheSize()" > 获取应用缓存大小</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "clearCache()" > 清理缓存</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "imagePreview()" > 图片预览</button> </p>
        
         <div id='buttons'></div>
         <div id='log'></div>

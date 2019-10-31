@@ -50,13 +50,8 @@
 static WebviewController *instance = nil;
 
 // static变量类内部使用，首页url path配置
-static NSString *firstPagePath = @"http://www.baidu.com";
+static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 
-//为了增加技能多样，先暂且用 extern 方式来从外部类获取变量，切忌名称重复，也可以使用property,使用单例获取，
-//记录扫码调用者名称
-NSString *scanCallerName;
-//记录定位调用者名称
-NSString *locateCallerName;
 
 
 #pragma mark 此部分为使用系统自带的执行js方法需要实现的delegate，目前在代码中已经不用。

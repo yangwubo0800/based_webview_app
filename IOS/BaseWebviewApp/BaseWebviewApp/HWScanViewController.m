@@ -254,8 +254,9 @@
             }
         }];
         // TODO: 待使用真机测试
-        extern NSString *scanCallerName;
-        NSDictionary *dict = @{@"callerName":scanCallerName, @"scanResult":scanResult};
+        WebviewController *wc = [WebviewController shareInstance];
+        NSString *callerName = wc.scanCallerName;
+        NSDictionary *dict = @{@"callerName":callerName, @"scanResult":scanResult};
         NSLog(@"scan resut is %@",dict);
         // TODO: 将扫码结果通过bridge调用JS回传给前端
         //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
@@ -267,7 +268,6 @@
         js = [js stringByAppendingString:scanJsonStr];
         js = [js stringByAppendingString:@"')"];
         NSLog(@" js is :%@", js);
-        WebviewController *wc = [WebviewController shareInstance];
         [[wc webView] evaluateJavaScript:js completionHandler:nil];
     }
 }
@@ -313,7 +313,21 @@
                 }
             }];
             // TODO: 将扫码结果通过bridge调用JS回传给前端
-            [[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:scanResult];
+            WebviewController *wc = [WebviewController shareInstance];
+            NSString *callerName = wc.scanCallerName;
+            NSDictionary *dict = @{@"callerName":callerName, @"scanResult":scanResult};
+            NSLog(@"scan resut is %@",dict);
+            // TODO: 将扫码结果通过bridge调用JS回传给前端
+            //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
+            //修改为使用webview直接发送emit时间给前端
+            NSString *emitName = @"qrCode";
+            NSString *scanJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+            NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+            js = [js stringByAppendingString:@"','"];
+            js = [js stringByAppendingString:scanJsonStr];
+            js = [js stringByAppendingString:@"')"];
+            NSLog(@" js is :%@", js);
+            [[wc webView] evaluateJavaScript:js completionHandler:nil];
             
         }else{
             [self showAlertWithTitle:@"没有识别到二维码或条形码" message:nil sureHandler:nil cancelHandler:nil];

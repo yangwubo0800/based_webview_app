@@ -39,6 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 //webview
 @property(nonatomic, strong) DWKWebView *webView;
+
+//记录扫码调用者名称
+@property(nonatomic, strong) NSString *scanCallerName;
+//记录定位调用者名称
+@property(nonatomic, strong) NSString *locateCallerName;
     
 
 @end

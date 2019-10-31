@@ -1,0 +1,5 @@
+${PODS_ROOT}/Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp-frameworks.sh
+${BUILT_PRODUCTS_DIR}/YHPhotoBrowser/YHPhotoBrowser.framework
+${BUILT_PRODUCTS_DIR}/YYCache/YYCache.framework
+${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework
+${BUILT_PRODUCTS_DIR}/YYWebImage/YYWebImage.framework

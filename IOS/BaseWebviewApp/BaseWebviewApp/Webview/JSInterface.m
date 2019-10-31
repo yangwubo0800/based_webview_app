@@ -16,6 +16,19 @@
 #import "../Utils/checkNetwork.h"
 #import "RealHtmlController.h"
 #import "../Utils/GeneralUtils.h"
+#import "../ImagePreviewViewController.h"
+#import "../Utils/pingTool/WHPingTester.h"
+#import "../UserGuide/RefreshNoNetworkView.h"
+
+//竖屏幕宽高
+#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+
+@interface JSInterface() <WHPingDelegate>
+
+@property(nonatomic, strong) WHPingTester* pingTester;
+
+@end
 
 @implementation JSInterface
 
@@ -64,6 +77,7 @@
 // 扫码
 - (NSString *) scanQRCode:(NSString *) callerName{
     WebviewController *wc = [WebviewController shareInstance];
+    wc.scanCallerName = callerName;
     [[CameraController shareInstance] scanQRCode:wc];
     return @"scanQRCode started";
 }
@@ -71,6 +85,7 @@
 // 定位
 - (NSString *) locate:(NSString *) callerName{
     WebviewController *wc = [WebviewController shareInstance];
+    wc.locateCallerName = callerName;
     [[LocationController shareInstance] locate:wc];
     return @"locate started";
 }
@@ -120,10 +135,52 @@
 
 // 检测网络连接是否可用
 - (NSString *) checkNetwork:(NSString*) msg{
-    BOOL networkAvailable = [checkNetwork checkNetworkCanUse];
-    return (networkAvailable == YES) ? @"YES": @"NO";
+//    BOOL networkAvailable = [checkNetwork checkNetworkCanUse];
+//    return (networkAvailable == YES) ? @"YES": @"NO";
+    
+    // TODO: 将访问苹果网站改为ping baidu,放置局域网的限制策略，误判网络不可用
+    NSLog(@"=====checkNetwork started");
+    self.pingTester = [[WHPingTester alloc] initWithHostName:@"www.baidu.com"];
+    self.pingTester.delegate = self;
+    [self.pingTester startPing];
+    // 此处还是无法异步返回，因为结果在其他回调中才知道
+    return @"checkNetwork started";
+    
 }
 
+#pragma delegate
+-(void)didPingSucccessWithTime:(float)time withError:(NSError *)error{
+    NSLog(@"=====didPingSucccessWithTime");
+    NSDictionary *dict;
+    WebviewController *wc = [WebviewController shareInstance];
+    if (error) {
+        NSLog(@"=====didPingSucccessWithTime error=%@",error);
+        dict = @{@"NetworkAvailable":@"NO"};
+        //TODO: 加载无网络页面
+        NSLog(@" show no network UI");
+        RefreshNoNetworkView *rv = [[RefreshNoNetworkView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        [wc.view addSubview:rv];
+        
+    }else{
+        //返回网络正常给前端
+        NSLog(@"ping网络正常");
+        dict = @{@"NetworkAvailable":@"YES"};
+    }
+    
+    [self.pingTester stopPing];
+    
+
+    NSLog(@"ping resut is %@",dict);
+    //修改为使用webview直接发送emit时间给前端
+    NSString *emitName = @"checkNetwork";
+    NSString *JsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+    NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+    js = [js stringByAppendingString:@"','"];
+    js = [js stringByAppendingString:JsonStr];
+    js = [js stringByAppendingString:@"')"];
+    NSLog(@" js is :%@", js);
+    [[wc webView] evaluateJavaScript:js completionHandler:nil];
+}
 
 // 启动横屏显示实时画面
 - (NSString *) startRealHtml:(NSString*) htmlPath{
@@ -176,6 +233,14 @@
     [GeneralUtils clearCache];
     NSLog(@" clearCache");
     return @"clearCache started";
+}
+
+
+// 图片预览
+- (NSString *) imagePreview:(NSString*) imageUrl{
+    [[ImagePreviewViewController shareInstance] show:imageUrl];
+    NSLog(@" imagePreview");
+    return @"imagePreview started";
 }
 
 // 测试调用js 触发前端监听事件

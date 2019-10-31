@@ -100,7 +100,7 @@
                         </view>
                         <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="4ZI-0o-F2w">
                             <rect key="frame" x="0.0" y="0.0" width="480" height="44"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                             <items>
                                 <barButtonItem title="返回" id="1XF-Pk-v6Z">
                                     <connections>

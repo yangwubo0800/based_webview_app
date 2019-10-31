@@ -92,7 +92,7 @@
                         </view>
                         <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="hli-Pt-qlQ">
                             <rect key="frame" x="0.0" y="0.0" width="480" height="44"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                             <items>
                                 <barButtonItem title="返回" id="7LH-0d-ut3">
                                     <connections>
@@ -123,7 +123,7 @@
                 <outlet property="topPanel" destination="hli-Pt-qlQ" id="d6d-hJ-dhM"/>
                 <outlet property="totalDurationLabel" destination="SEI-Or-Idx" id="2wh-FR-fBW"/>
             </connections>
-            <point key="canvasLocation" x="903" y="289"/>
+            <point key="canvasLocation" x="902.89855072463774" y="287.94642857142856"/>
         </view>
         <view contentMode="scaleToFill" id="LcC-vu-6aY">
             <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>

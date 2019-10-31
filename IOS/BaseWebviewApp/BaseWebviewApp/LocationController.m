@@ -124,7 +124,8 @@ static LocationController *instance;
             // 显示定位结果信息
             //[self showLocate:self.uiViewController];
             // TODO: 调用JS方法将定位信息回传给前端
-            extern NSString* locateCallerName;
+            WebviewController *wc = [WebviewController shareInstance];
+            NSString *locateCallerName = wc.locateCallerName;
             NSDictionary *dict = @{@"callerName":locateCallerName,
                                    @"address":self.address,
                                    @"latitude":self.latitude,
@@ -139,7 +140,6 @@ static LocationController *instance;
             js = [js stringByAppendingString:locateJsonStr];
             js = [js stringByAppendingString:@"')"];
             NSLog(@" js is :%@", js);
-            WebviewController *wc = [WebviewController shareInstance];
             [[wc webView] evaluateJavaScript:js completionHandler:nil];
             
             NSString *city = placeMark.locality;

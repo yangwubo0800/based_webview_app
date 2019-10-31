@@ -37,7 +37,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    //监听网络状态变化
+    //监听网络状态变化，不能判断那种需要登录的网络是否连接成功
     [self observerNetworkStatus];
 
     //window
@@ -100,7 +100,7 @@
     }
     
     // 这里判断是否第一次
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
+    if (/*[[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]*/ true) {
         
         UserGuideView *hvc = [[UserGuideView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
         [self.window.rootViewController.view addSubview:hvc];

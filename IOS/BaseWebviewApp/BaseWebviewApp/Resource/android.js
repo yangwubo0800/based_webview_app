@@ -304,12 +304,14 @@ window.Android = {
 Android.__proto__ = EventEmitter.prototype;
 
 Android.on("location", function(res){
-    alert("location")
+    alert(res)
     Android.emit("locationRs", JSON.parse(res))
 })
 Android.on("qrCode", function(res){
+    alert(res)
     Android.emit("qrCodeRs", JSON.parse(res))
 })
 Android.on("deviceId", function(res){
+    alert(res)
     Android.emit("deviceIdRs", JSON.parse(res))
 })

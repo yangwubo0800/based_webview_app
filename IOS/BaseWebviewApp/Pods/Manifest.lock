@@ -1,0 +1,30 @@
+PODS:
+  - YHPhotoBrowser (1.1.1):
+    - YYWebImage
+  - YYCache (1.0.4)
+  - YYImage (1.0.4):
+    - YYImage/Core (= 1.0.4)
+  - YYImage/Core (1.0.4)
+  - YYWebImage (1.0.5):
+    - YYCache
+    - YYImage
+
+DEPENDENCIES:
+  - YHPhotoBrowser (~> 1.1.1)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - YHPhotoBrowser
+    - YYCache
+    - YYImage
+    - YYWebImage
+
+SPEC CHECKSUMS:
+  YHPhotoBrowser: a53325f2f85aa3070069532a8ee3535576c83784
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
+  YYImage: 1e1b62a9997399593e4b9c4ecfbbabbf1d3f3b54
+  YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
+
+PODFILE CHECKSUM: ebc1c27bb0644dddf815efb60648baae1d63dc84
+
+COCOAPODS: 1.7.0

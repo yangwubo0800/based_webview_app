@@ -1,0 +1,6 @@
+framework module YHPhotoBrowser {
+  umbrella header "YHPhotoBrowser-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DB632836817E43969BAD69D /* Pods_BaseWebviewAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98FECBF1BAA363976619AF7 /* Pods_BaseWebviewAppTests.framework */; };
+		5C7B95999917EB1A1ACC80BD /* Pods_BaseWebviewApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5274CF0E3F0DE26FEB1682E5 /* Pods_BaseWebviewApp.framework */; };
+		9ACE91E39C885643950DF681 /* Pods_BaseWebviewAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52578061340437EE79F57966 /* Pods_BaseWebviewAppUITests.framework */; };
 		FE074C4B22ADED2200737889 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = FE074C4A22ADED2100737889 /* Resource */; };
 		FE074C9322B07FCB00737889 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE074C9222B07FCB00737889 /* CameraController.m */; };
 		FE074C9622B1D53200737889 /* HWScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE074C9522B1D53200737889 /* HWScanViewController.m */; };
@@ -37,6 +40,9 @@
 		FE1D44DF22B3830A00B4F1BA /* WKWebViewJavascriptBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1D44D722B3830A00B4F1BA /* WKWebViewJavascriptBridge.m */; };
 		FE1D44E022B3830A00B4F1BA /* WebViewJavascriptBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1D44D822B3830A00B4F1BA /* WebViewJavascriptBridge.m */; };
 		FE1D44E122B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1D44DB22B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m */; };
+		FE2532732366D32200C62155 /* ImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2532722366D32200C62155 /* ImagePreviewViewController.m */; };
+		FE25327923696E5400C62155 /* WHPingTester.m in Sources */ = {isa = PBXBuildFile; fileRef = FE25327723696E5400C62155 /* WHPingTester.m */; };
+		FE25327A23696E5400C62155 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = FE25327823696E5400C62155 /* SimplePing.m */; };
 		FE302B3022E95AF50082EB45 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = FE302B2622E95AF50082EB45 /* AFURLResponseSerialization.m */; };
 		FE302B3122E95AF50082EB45 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE302B2722E95AF50082EB45 /* AFHTTPSessionManager.m */; };
 		FE302B3222E95AF50082EB45 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE302B2922E95AF50082EB45 /* AFURLSessionManager.m */; };
@@ -98,6 +104,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0BC36D814B6E57C75A006104 /* Pods-BaseWebviewAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewAppTests.release.xcconfig"; path = "Target Support Files/Pods-BaseWebviewAppTests/Pods-BaseWebviewAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		1879954AD971ADB51037B532 /* Pods-BaseWebviewAppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewAppUITests.debug.xcconfig"; path = "Target Support Files/Pods-BaseWebviewAppUITests/Pods-BaseWebviewAppUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		2DBABC3F741C8018C112B86F /* Pods-BaseWebviewAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewAppTests.debug.xcconfig"; path = "Target Support Files/Pods-BaseWebviewAppTests/Pods-BaseWebviewAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		52578061340437EE79F57966 /* Pods_BaseWebviewAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BaseWebviewAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5274CF0E3F0DE26FEB1682E5 /* Pods_BaseWebviewApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BaseWebviewApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6FBED37D6455BC0200FEA158 /* Pods-BaseWebviewAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewAppUITests.release.xcconfig"; path = "Target Support Files/Pods-BaseWebviewAppUITests/Pods-BaseWebviewAppUITests.release.xcconfig"; sourceTree = "<group>"; };
+		7A4CD727503EA59310347FD6 /* Pods-BaseWebviewApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewApp.release.xcconfig"; path = "Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp.release.xcconfig"; sourceTree = "<group>"; };
+		8648E8960B4B31541CC8A672 /* Pods-BaseWebviewApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewApp.debug.xcconfig"; path = "Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp.debug.xcconfig"; sourceTree = "<group>"; };
+		A98FECBF1BAA363976619AF7 /* Pods_BaseWebviewAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BaseWebviewAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE074C4A22ADED2100737889 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
 		FE074C9122B07FCB00737889 /* CameraController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		FE074C9222B07FCB00737889 /* CameraController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
@@ -146,6 +161,12 @@
 		FE1D44DB22B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewJavascriptBridge_JS.m; sourceTree = "<group>"; };
 		FE1D44DC22B3830A00B4F1BA /* WebViewJavascriptBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewJavascriptBridge.h; sourceTree = "<group>"; };
 		FE1D44DD22B3830A00B4F1BA /* WKWebViewJavascriptBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewJavascriptBridge.h; sourceTree = "<group>"; };
+		FE2532712366D32200C62155 /* ImagePreviewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePreviewViewController.h; sourceTree = "<group>"; };
+		FE2532722366D32200C62155 /* ImagePreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePreviewViewController.m; sourceTree = "<group>"; };
+		FE25327523696E5400C62155 /* SimplePing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
+		FE25327623696E5400C62155 /* WHPingTester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHPingTester.h; sourceTree = "<group>"; };
+		FE25327723696E5400C62155 /* WHPingTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHPingTester.m; sourceTree = "<group>"; };
+		FE25327823696E5400C62155 /* SimplePing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		FE302B2222E95AF50082EB45 /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
 		FE302B2322E95AF50082EB45 /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
 		FE302B2422E95AF50082EB45 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
@@ -251,6 +272,7 @@
 				FE41AFEA22D44314006C36A3 /* jpush-ios-3.2.1.a in Frameworks */,
 				FE41AFEC22D44314006C36A3 /* jcore-ios-2.1.1.a in Frameworks */,
 				FE41AFEB22D44314006C36A3 /* jpush-extension-ios-1.1.2.a in Frameworks */,
+				5C7B95999917EB1A1ACC80BD /* Pods_BaseWebviewApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +280,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DB632836817E43969BAD69D /* Pods_BaseWebviewAppTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,12 +288,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9ACE91E39C885643950DF681 /* Pods_BaseWebviewAppUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A36DD696B9D2674146C8FAE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8648E8960B4B31541CC8A672 /* Pods-BaseWebviewApp.debug.xcconfig */,
+				7A4CD727503EA59310347FD6 /* Pods-BaseWebviewApp.release.xcconfig */,
+				2DBABC3F741C8018C112B86F /* Pods-BaseWebviewAppTests.debug.xcconfig */,
+				0BC36D814B6E57C75A006104 /* Pods-BaseWebviewAppTests.release.xcconfig */,
+				1879954AD971ADB51037B532 /* Pods-BaseWebviewAppUITests.debug.xcconfig */,
+				6FBED37D6455BC0200FEA158 /* Pods-BaseWebviewAppUITests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FE161D1622A0CB0300A32148 = {
 			isa = PBXGroup;
 			children = (
@@ -279,6 +316,7 @@
 				FE161D4522A0CB0400A32148 /* BaseWebviewAppUITests */,
 				FE161D2022A0CB0300A32148 /* Products */,
 				FE41AFED22D4453C006C36A3 /* Frameworks */,
+				7A36DD696B9D2674146C8FAE /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -322,6 +360,8 @@
 				FE1D44D022B23B8600B4F1BA /* LocationController.m */,
 				FE1D44D222B32F0500B4F1BA /* LZKeychain.h */,
 				FE1D44D322B32F0500B4F1BA /* LZKeychain.m */,
+				FE2532712366D32200C62155 /* ImagePreviewViewController.h */,
+				FE2532722366D32200C62155 /* ImagePreviewViewController.m */,
 			);
 			path = BaseWebviewApp;
 			sourceTree = "<group>";
@@ -370,6 +410,17 @@
 				FE1D44DD22B3830A00B4F1BA /* WKWebViewJavascriptBridge.h */,
 			);
 			path = WebViewJavascriptBridge;
+			sourceTree = "<group>";
+		};
+		FE25327423696E5400C62155 /* pingTool */ = {
+			isa = PBXGroup;
+			children = (
+				FE25327523696E5400C62155 /* SimplePing.h */,
+				FE25327623696E5400C62155 /* WHPingTester.h */,
+				FE25327723696E5400C62155 /* WHPingTester.m */,
+				FE25327823696E5400C62155 /* SimplePing.m */,
+			);
+			path = pingTool;
 			sourceTree = "<group>";
 		};
 		FE302B2122E95AF50082EB45 /* AFNetworking */ = {
@@ -432,6 +483,9 @@
 				FE41AFF222D4455D006C36A3 /* CoreTelephony.framework */,
 				FE41AFF022D4454E006C36A3 /* CoreFoundation.framework */,
 				FE41AFEE22D4453D006C36A3 /* CFNetwork.framework */,
+				5274CF0E3F0DE26FEB1682E5 /* Pods_BaseWebviewApp.framework */,
+				A98FECBF1BAA363976619AF7 /* Pods_BaseWebviewAppTests.framework */,
+				52578061340437EE79F57966 /* Pods_BaseWebviewAppUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -470,6 +524,7 @@
 		FEB4BFD022C212F000787958 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				FE25327423696E5400C62155 /* pingTool */,
 				FEB4BFE822C4C28200787958 /* Reachability.h */,
 				FEB4BFE722C4C28200787958 /* Reachability.m */,
 				FEB4BFD122C2131B00787958 /* checkNetwork.h */,
@@ -508,9 +563,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FE161D4B22A0CB0400A32148 /* Build configuration list for PBXNativeTarget "BaseWebviewApp" */;
 			buildPhases = (
+				B96D8EA4A688D4FFE5E8CDB4 /* [CP] Check Pods Manifest.lock */,
 				FE161D1B22A0CB0300A32148 /* Sources */,
 				FE161D1C22A0CB0300A32148 /* Frameworks */,
 				FE161D1D22A0CB0300A32148 /* Resources */,
+				FCA0F4608C549211E16BB1B6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -525,6 +582,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FE161D4E22A0CB0400A32148 /* Build configuration list for PBXNativeTarget "BaseWebviewAppTests" */;
 			buildPhases = (
+				DDC85AC58E5EB57046D0B053 /* [CP] Check Pods Manifest.lock */,
 				FE161D3322A0CB0400A32148 /* Sources */,
 				FE161D3422A0CB0400A32148 /* Frameworks */,
 				FE161D3522A0CB0400A32148 /* Resources */,
@@ -543,6 +601,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FE161D5122A0CB0400A32148 /* Build configuration list for PBXNativeTarget "BaseWebviewAppUITests" */;
 			buildPhases = (
+				16F02B40C502B88805A8E301 /* [CP] Check Pods Manifest.lock */,
 				FE161D3E22A0CB0400A32148 /* Sources */,
 				FE161D3F22A0CB0400A32148 /* Frameworks */,
 				FE161D4022A0CB0400A32148 /* Resources */,
@@ -637,6 +696,92 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		16F02B40C502B88805A8E301 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BaseWebviewAppUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B96D8EA4A688D4FFE5E8CDB4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BaseWebviewApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DDC85AC58E5EB57046D0B053 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BaseWebviewAppTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FCA0F4608C549211E16BB1B6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BaseWebviewApp/Pods-BaseWebviewApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FE161D1B22A0CB0300A32148 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -655,6 +800,7 @@
 				FE8C5811234D737500AA68D1 /* DWKWebView.m in Sources */,
 				FE1D44DE22B3830A00B4F1BA /* WebViewJavascriptBridgeBase.m in Sources */,
 				FEB4BFD322C2131B00787958 /* checkNetwork.m in Sources */,
+				FE25327923696E5400C62155 /* WHPingTester.m in Sources */,
 				FEB4BFD822C30F6F00787958 /* UserGuideView.m in Sources */,
 				FE1D44E022B3830A00B4F1BA /* WebViewJavascriptBridge.m in Sources */,
 				FE1D44D422B32F0500B4F1BA /* LZKeychain.m in Sources */,
@@ -664,6 +810,7 @@
 				FEAB230922C99062007A5B30 /* RefreshNoNetworkView.m in Sources */,
 				FE41B00722D5755D006C36A3 /* JPushUtils.m in Sources */,
 				FE161D3222A0CB0400A32148 /* main.m in Sources */,
+				FE25327A23696E5400C62155 /* SimplePing.m in Sources */,
 				FE1D44E122B3830A00B4F1BA /* WebViewJavascriptBridge_JS.m in Sources */,
 				FE8C580F234D737500AA68D1 /* InternalApis.m in Sources */,
 				FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */,
@@ -678,6 +825,7 @@
 				FEB4BFE922C4C28200787958 /* Reachability.m in Sources */,
 				FE42905222DDB64100F4526C /* IJKMediaControl.m in Sources */,
 				FE302B3022E95AF50082EB45 /* AFURLResponseSerialization.m in Sources */,
+				FE2532732366D32200C62155 /* ImagePreviewViewController.m in Sources */,
 				FE870A68230D3EEB000D6613 /* UIDevice+TFDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,12 +999,13 @@
 		};
 		FE161D4C22A0CB0400A32148 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8648E8960B4B31541CC8A672 /* Pods-BaseWebviewApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BaseWebviewApp/BaseWebviewApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -875,19 +1024,20 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "profile-adHoc-innerTest";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		FE161D4D22A0CB0400A32148 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A4CD727503EA59310347FD6 /* Pods-BaseWebviewApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BaseWebviewApp/BaseWebviewApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5XHQ3UAG4W;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -906,7 +1056,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "profile-adHoc-innerTest";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
@@ -914,6 +1064,7 @@
 		};
 		FE161D4F22A0CB0400A32148 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DBABC3F741C8018C112B86F /* Pods-BaseWebviewAppTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -932,6 +1083,7 @@
 		};
 		FE161D5022A0CB0400A32148 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BC36D814B6E57C75A006104 /* Pods-BaseWebviewAppTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -950,6 +1102,7 @@
 		};
 		FE161D5222A0CB0400A32148 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1879954AD971ADB51037B532 /* Pods-BaseWebviewAppUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = BaseWebviewAppUITests/Info.plist;
@@ -967,6 +1120,7 @@
 		};
 		FE161D5322A0CB0400A32148 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FBED37D6455BC0200FEA158 /* Pods-BaseWebviewAppUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = BaseWebviewAppUITests/Info.plist;

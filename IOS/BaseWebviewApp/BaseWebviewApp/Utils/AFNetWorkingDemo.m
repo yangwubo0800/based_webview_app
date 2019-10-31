@@ -8,8 +8,8 @@
 
 #import "AFNetWorkingDemo.h"
 
-NSString *getUrl = @"http://192.168.137.10:8080/hzinfo-area/area/areaInfo/queryAreaWithGradeByConfig";
-NSString *postUrl = @"http://192.168.137.10:8080/hzinfo-area/area/areaConf/addAreaConfig";
+NSString *getUrl = @"http://192.168.137.10:8080/xxxx-area/area/areaInfo/queryAreaWithGradeByConfig";
+NSString *postUrl = @"http://192.168.137.10:8080/xxxx-area/area/areaConf/addAreaConfig";
 NSString *downloadUrl = @"http://192.168.137.14:8080/FileUploadSampleForApp/upload/launchScreenPicSize.jpg";
 
 @implementation AFNetWorkingDemo
@@ -117,7 +117,7 @@ NSString *downloadUrl = @"http://192.168.137.14:8080/FileUploadSampleForApp/uplo
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     //windows 部署后台，因为课件管理中使用的是inpect模块来记录上传文件的
-    NSString *url = @"http://192.168.137.14:8080/hzinfo-CourseManage/coursemanage/cmFile/addCmFile";
+    NSString *url = @"http://192.168.137.14:8080/xxxx-CourseManage/coursemanage/cmFile/addCmFile";
     // MAC 部署后台上传,返回response 需要兼容修改
     //NSString *url = @"http://192.168.137.10:8080/FileUploadSampleForApp/UploadFile";
     

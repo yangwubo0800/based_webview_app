@@ -17,6 +17,8 @@
 
 #import "IJKMoviePlayerViewController.h"
 #import "IJKMediaControl.h"
+#import "../AppDelegate.h"
+#import "../Utils/UIDevice+TFDevice.h"
 //#import "IJKCommon.h"
 //#import "IJKDemoHistory.h"
 
@@ -65,7 +67,12 @@
 
 //    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 //    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft animated:NO];
-
+    AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    //允许转成横屏
+    appDelegate.allowRotation = YES;
+    //调用横屏代码
+    [UIDevice switchNewOrientation:UIInterfaceOrientationLandscapeRight];
+    NSLog(@"=====viewDidLoad switch UIInterfaceOrientationLandscapeRight");
 #ifdef DEBUG
     [IJKFFMoviePlayerController setLogReport:YES];
     [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_DEBUG];
@@ -77,42 +84,36 @@
     [IJKFFMoviePlayerController checkIfFFmpegVersionMatch:YES];
     // [IJKFFMoviePlayerController checkIfPlayerVersionMatch:YES major:1 minor:0 micro:0];
 
-    IJKFFOptions *options = [IJKFFOptions optionsByDefault];
-
-    self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
-    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    self.player.view.frame = self.view.bounds;
-    self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
-    self.player.shouldAutoplay = YES;
+//    IJKFFOptions *options = [IJKFFOptions optionsByDefault];
+//
+//    self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
+//    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//    self.player.view.frame = self.view.bounds;
+//    self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
+//    self.player.shouldAutoplay = YES;
 
     self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.player.view];
     [self.view addSubview:self.mediaControl];
 
-    self.mediaControl.delegatePlayer = self.player;
+//    self.mediaControl.delegatePlayer = self.player;
+    //使用异步任务来实现耗时操作
+    [self performSelectorInBackground:@selector(initIjkPlayer) withObject:nil];
     
     NSLog(@"=========================add subview for indicator");
     //TODO: add indicator and tip label on player.view
-    CGFloat playerViewWidth = self.view.frame.size.width;
-    CGFloat playerViewHeight = self.view.frame.size.height;
-//    UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-//    CGRect indicatorFrame = indicator.frame;
-//    indicatorFrame.origin = CGPointMake(200, 200);
-//    indicator.hidesWhenStopped = YES;
-//    [self.view addSubview:indicator];
-    
     self.indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     CGRect frame = self.indicator.frame;
     //frame.origin = CGPointMake((playerViewWidth - self.indicator.frame.size.width)/2, playerViewHeight/2);
     //landscape play
-    frame.origin = CGPointMake((SCREEN_HEIGHT - self.indicator.frame.size.width)/2, SCREEN_WIDTH/2);
+    frame.origin = CGPointMake((SCREEN_WIDTH - self.indicator.frame.size.width)/2, SCREEN_HEIGHT/2);
     self.indicator.frame = frame;
     self.indicator.hidesWhenStopped = YES;
-    self.indicator.startAnimating;
+    [self.indicator startAnimating];
     [self.view addSubview:self.indicator];
     
     self.label = [[UILabel alloc] init];
-    self.label.frame = CGRectMake((SCREEN_HEIGHT-100)/2, SCREEN_WIDTH/2 + 20, 100, 50);
+    self.label.frame = CGRectMake((SCREEN_WIDTH-100)/2, SCREEN_HEIGHT/2 + 20, 100, 50);
     [self.label setText:@"视频加载中..."];
     //[label setBackgroundColor:[UIColor blueColor]];
     [self.view addSubview:self.label];
@@ -125,9 +126,48 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    NSLog(@"-----viewWillAppear");
+//    [self installMovieNotificationObservers];
+//
+//    [self.player prepareToPlay];
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    NSLog(@"-----viewDidAppear");
+    
+//    IJKFFOptions *options = [IJKFFOptions optionsByDefault];
+//    
+//    self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
+//    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//    self.player.view.frame = self.view.bounds;
+//    self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
+//    self.player.shouldAutoplay = YES;
+//    
+//    self.mediaControl.delegatePlayer = self.player;
+//    
+//    [self installMovieNotificationObservers];
+//    
+//    [self.player prepareToPlay];
+    
+}
+
+-(void) initIjkPlayer{
+    NSLog(@"#######initIjkPlayer");
+    // TODO: 为了规避第一次初始化播放器耗时过长，而且页面显示被阻塞的问题，将播放器初始化放入异步线程中
+    IJKFFOptions *options = [IJKFFOptions optionsByDefault];
+    self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
+    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.player.view.frame = self.view.bounds;
+    self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
+    self.player.shouldAutoplay = YES;
+    
+    [self.view addSubview:self.player.view];
+    [self.view addSubview:self.mediaControl];
+    
+    self.mediaControl.delegatePlayer = self.player;
     
     [self installMovieNotificationObservers];
-
     [self.player prepareToPlay];
 }
 
@@ -136,6 +176,12 @@
     
     [self.player shutdown];
     [self removeMovieNotificationObservers];
+    //允许转成竖屏
+    AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
+    //切换到竖屏
+    [UIDevice switchNewOrientation:UIInterfaceOrientationPortrait];
+    NSLog(@"=====viewDidDisappear switch UIInterfaceOrientationPortrait");
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
@@ -266,7 +312,8 @@
 - (void)mediaIsPreparedToPlayDidChange:(NSNotification*)notification
 {
     NSLog(@"mediaIsPreparedToPlayDidChange\n");
-    self.indicator.stopAnimating;
+    //self.indicator.stopAnimating;
+    [self.indicator stopAnimating];
     self.label.hidden = YES;
 }
 

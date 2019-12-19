@@ -1,1 +1,2 @@
-include ':app',  ':ijkplayer', ':zxing', ':update-app', ':ezrealplayer'
+include ':app',  ':ijkplayer', ':zxing', ':update-app', ':ezrealplayer', ':fastjson'
+

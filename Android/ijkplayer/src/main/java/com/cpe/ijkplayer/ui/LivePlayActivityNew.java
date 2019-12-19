@@ -8,6 +8,8 @@ import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -44,6 +46,9 @@ public class LivePlayActivityNew extends Activity {
 	SurfaceView videoinfo_surface=null;
 	LinearLayout ll_load_fail;
 	private TextView tv_title;
+	//显示和更新视频配置信息用
+	private TextView mVideoConfigInfo;
+	public static Handler mHandler;
 
 	public static void startActivityForLPAN(Context context,String liveUrl,String liveName){
 		context.startActivity(newSelfIntent(context,liveUrl,liveName));
@@ -80,6 +85,17 @@ public class LivePlayActivityNew extends Activity {
 		}
 		videoinfo_surface=(SurfaceView)findViewById(R.id.videoinfo_surface);
 		mVideoView = (IjkVideoView) findViewById(R.id.video_view);
+		//视频配置信息控件内容更新
+		mVideoConfigInfo = findViewById(R.id.videoConfigInfo);
+		mHandler = new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+
+				String info = (String) msg.obj;
+				mVideoConfigInfo.setText(info);
+
+			}
+		};
 
 		videoinfo_surface.setOnClickListener(new OnClickListener() {
 			@Override
@@ -199,6 +215,11 @@ public class LivePlayActivityNew extends Activity {
 		mVideoView.release(true);
 		mVideoView.stopBackgroundPlay();
 //		IjkMediaPlayer.native_profileEnd();
+		//退出界面不再接受消息刷新视频配置信息控件
+		if (null != mHandler){
+			mHandler.removeCallbacksAndMessages(null);
+			mHandler = null;
+		}
 	}
 
 }

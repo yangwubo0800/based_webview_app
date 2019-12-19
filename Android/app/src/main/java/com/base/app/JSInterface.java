@@ -23,9 +23,11 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
+import com.alibaba.fastjson.JSON;
 import com.base.utils.DataCleanManager;
 import com.base.utils.DownloadUtil;
 import com.base.utils.SpUtils;
+import com.cpe.ijkplayer.ui.LivePlayActivityNew;
 import com.example.ezrealplayer.ui.EZRealPlayActivity;
 import com.example.ezrealplayer.util.EZUtils;
 import com.base.bean.AppInfo;
@@ -64,10 +66,19 @@ import com.videogo.openapi.bean.EZDeviceInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.base.app.WebViewActivity.mQrScanCallName;
 
@@ -112,6 +123,64 @@ public class JSInterface {
 
     //用来记录每次定位请求是否返回过给前端
     private boolean mHasPostLocation;
+
+    //记录获取后台实时视频配置信息的接口路径
+    private String mVideoCfgInfoUrl;
+    //获取后台实时视频配置信息数据的对象
+    private static OkHttpClient getVideoInfoClient = new OkHttpClient
+            .Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .build();
+    // 定时通过webview调用js 获取后台实时视频配置信息
+    Runnable mUpdateVideoInfoRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // TODO: 视频界面正在则更新，不在则取消定时器
+            if (null != LivePlayActivityNew.mHandler &&
+                    !TextUtils.isEmpty(mVideoCfgInfoUrl)){
+                //调用后台接口获取数据
+                // Create and send HTTP requests
+                Request rb = new Request.Builder().url(mVideoCfgInfoUrl).build();
+                Call call = getVideoInfoClient.newCall(rb);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        AFLog.e(TAG,"getVideoInfoClient fail");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        //防止两次调用后流关闭，先暂存数据
+                        String responseStr = response.body().string();
+                        AFLog.d(TAG,"getVideoInfoClient onResponse response is "+ responseStr);
+                        // TODO: 解析获取的视频配置信息，注意换行字符设置格式
+                        com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(responseStr);
+                        //{"status":"1","code":"","msg":"","data":{"实时水位":"376.5米","警戒水位":"400米"}}
+                        com.alibaba.fastjson.JSONObject data = jsonObject.getJSONObject("data");
+                        Set<String> keys = data.keySet();
+                        String showInfo = "";
+                        for(String key: keys){
+                            showInfo = showInfo + key + "：" + data.get(key) + "\n";
+                        }
+                        AFLog.d(TAG," onResponse showInfo=" + showInfo);
+                        Message msg = new Message();
+                        msg.obj = showInfo;
+                        AFLog.d(TAG,"updateVideoConfigInfo LivePlayActivityNew.mHandler=" + LivePlayActivityNew.mHandler);
+                        if (null != LivePlayActivityNew.mHandler){
+                            LivePlayActivityNew.mHandler.sendMessage(msg);
+                        }
+                    }
+                });
+
+                mHandler.postDelayed(mUpdateVideoInfoRunnable, 10000);
+            }else {
+                //取消定时器，不处理首次进入界面，耗时很长的情况。
+                AFLog.d(TAG,"mUpdateVideoInfoRunnable remove callback");
+                mHandler.removeCallbacks(mUpdateVideoInfoRunnable);
+            }
+        }
+    };
 
     /**
      *
@@ -1315,5 +1384,19 @@ public class JSInterface {
         AFLog.d(TAG,"setDownloadFileName url=" + url);
         AFLog.d(TAG,"setDownloadFileName fileName=" + fileName);
         DownloadUtil.downloadBySystem(mContext, url, null, null, fileName);
+    }
+
+
+    /**
+     * 功能：设置更新视频配置信息后台接口地址
+     * 参数：url 视频配置信息后台接口地址
+     * 返回值：无
+     * 使用方式：window.functionTag.setVideoConfigInfoUrl(url)
+     */
+    @JavascriptInterface
+    public void setVideoConfigInfoUrl(String url){
+        AFLog.d(TAG,"setVideoConfigInfoUrl url=" + url);
+        mVideoCfgInfoUrl = url;
+        mHandler.postDelayed(mUpdateVideoInfoRunnable, 1000);
     }
 }

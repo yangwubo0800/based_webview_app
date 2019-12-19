@@ -50,6 +50,18 @@
 	function playEZOpenVideo(){
 	   window.functionTag.EZOpenPlay(mVideoInfo)
 	}
+
+		// 带有设置视频配置信息的视频播放功能流程
+	function livePlayWithVideoConfigInfo(){
+	    var videoType = "standard";
+		var liveUrl = "http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
+		var liveTitle = "直播"
+		//先打开视频
+		window.functionTag.livePlay(videoType, liveUrl, liveTitle)
+		//再设置后台接口地址信息
+		window.functionTag.setVideoConfigInfoUrl("http://192.168.65.105:8101/XXXXX/video/property/getValueByVideoId?videoId=25");
+
+	}
     </script>
 	
     <style type="text/css">

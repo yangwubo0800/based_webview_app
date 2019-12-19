@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
 import com.base.utils.DataCleanManager;
+import com.base.utils.DownloadUtil;
 import com.base.utils.SpUtils;
 import com.example.ezrealplayer.ui.EZRealPlayActivity;
 import com.example.ezrealplayer.util.EZUtils;
@@ -1303,5 +1304,16 @@ public class JSInterface {
         }
     }
 
-
+    /**
+     * 功能：下载文件
+     * 参数： url 文件下载地址, fileName 文件名称
+     * 返回值：无
+     * 使用方式：window.functionTag.DownloadFileByName(url, fileName)
+     */
+    @JavascriptInterface
+    public void DownloadFileByName( String url, String fileName){
+        AFLog.d(TAG,"setDownloadFileName url=" + url);
+        AFLog.d(TAG,"setDownloadFileName fileName=" + fileName);
+        DownloadUtil.downloadBySystem(mContext, url, null, null, fileName);
+    }
 }

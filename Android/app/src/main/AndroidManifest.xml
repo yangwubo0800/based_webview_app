@@ -79,6 +79,11 @@
                 <action  android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+        <receiver android:name="com.base.receiver.MyDownloadCompleteReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
         <!-- 消息订阅功能服务-->
         <service
             android:name="com.base.service.MqttService"

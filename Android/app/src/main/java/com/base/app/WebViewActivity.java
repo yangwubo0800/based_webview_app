@@ -891,7 +891,7 @@ public class WebViewActivity extends AppCompatActivity {
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
                 //处理下载事件
                 AFLog.d(TAG,"onDownloadStart url="+url);
-                BaseAppUtil.downloadByBrowser(mContext, url);
+//                BaseAppUtil.downloadByBrowser(mContext, url);
             }
         });
 

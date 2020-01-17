@@ -10,8 +10,9 @@
                 </style>
             <title>Base Webview Test</title>
             <!--require dsbridge init js-->
-            <script src="Resource/dsbridge.js"> </script>
-            <script src="Resource/android.js"> </script>
+            <script src="https://cdn.jsdelivr.net/npm/dsbridge@3.1.4/dist/dsbridge.js"> </script>
+            <script src="Resource/device.js"> </script>
+            <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
     </head>
     
     <body>
@@ -48,7 +49,42 @@
             }
         }
         
+        
+        //带有视频配置信息显示的视频播放流程
+        var debug = 1;
+        function ijkLivePlayWithConfigInfo() {
+            //打开视频
+            dsBridge.call("ios.ijkLivePlay", "http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8")
+            //调用框架设置视频配置信息接口，框架会启动定时器
+            //var url = "http://192.168.65.62:8090/hzes/en/common/getHz3000ExpireTime"
+            //var url = "https://wanandroid.com/wxarticle/list/408/1/json"
+            var url = "http://192.168.65.105:8101/xxxx-ef/video/property/getValueByVideoId?videoId=25"
+            dsBridge.call("ios.setVideoConfigInfoGetUrl", url)
+            log("ijkLivePlayWithConfigInfo")
 
+        }
+        
+        //带有视频配置信息显示的海康视频播放流程
+        function HIKVideoPlayWithConfigInfo() {
+            //1、打开视频
+            var params = {"url":"rtsp://175.6.40.71:554/openUrl/9k85gnm",
+                "videoTitle":"hik video title"
+            }
+            dsBridge.call("ios.hikVideoPlay", JSON.stringify(params))
+            //2、设置视频配置信息更新后台接口地址
+            var url = "http://175.6.40.67:8152/xxxx-ef/video/property/getValueByVideoId?videoId=295"
+            dsBridge.call("ios.setHikVideoConfigInfoGetUrl", url)
+            log("HIKVideoPlayWithConfigInfo")
+        }
+
+
+        function platformCheck() {
+            if(dsBridge != undefined){
+                var isIos = dsBridge.hasNativeMethod('ios.platformCheck')
+                alert(isIos)
+            }
+        }
+        
         function getDeviceId() {
             var deviceId = dsBridge.call("ios.getDeviceId")
             log(deviceId)
@@ -60,9 +96,13 @@
             log("ijkLivePlay")
         }
 
-        function setJPushTag() {
-            dsBridge.call("ios.setJPushTag", "stationId001,stationId002")
-            log("setJPushTag")
+        
+        function setJPushTagAndHistoryAlarmUrl() {
+            //登录时先获取站点stationId， 然后调用接口设置极光推送接收TAG
+            dsBridge.call("ios.setJPushTag", "stationId001")
+            //设置点击告警跳转的历史url路径
+            dsBridge.call("ios.setValueByKey", "{\"historyAlarmUrl\": \"http://www.csxxxx.com/\"}")
+            log("setJPushTagAndHistoryAlarmUrl")
         }
         
         
@@ -98,12 +138,19 @@
         }
         
         function setValueByKey() {
-            dsBridge.call("ios.setValueByKey", "{\"foo\": \"bar\", \"key2\":\"value2\"}")
+            var account = {"account":"testUser",
+                "pwd":"123"
+            }
+            var info = {"userKey":account}
+            dsBridge.call("ios.setValueByKey", JSON.stringify(info))
             log("setValueByKey")
         }
         
         function getValueByKey() {
-            var value = dsBridge.call("ios.getValueByKey", "foo")
+            var value = dsBridge.call("ios.getValueByKey", "userKey")
+            var Str = JSON.stringify(value)
+            alert(value)
+            alert(Str)
             log(value)
         }
         
@@ -114,7 +161,7 @@
         
         
         function startRealHtml() {
-            dsBridge.call("ios.startRealHtml", "http://hydro.xxxxcloud.com/xxxx/xxxxdata/visiblecontrol/广东省阳江市马南泵站水闸项目_工况图.html?userId=admin&stationId=901902000013")
+            dsBridge.call("ios.startRealHtml", "http://192.168.65.164:8089/xxxx-yx/hz3000data/visiblecontrol/%E5%B9%BF%E4%B8%9C%E5%B9%BF%E5%AE%81%E5%8F%A4%E5%85%B4%E6%B0%B4%E7%94%B5%E7%AB%99_1G%E6%9C%BA%E7%BB%84%E5%BC%80%E6%9C%BA%E6%B5%81%E7%A8%8B.html?userId=admin&stationId=901900000015")
             log("startRealHtml")
         }
         
@@ -141,6 +188,25 @@
             log("imagePreview")
         }
         
+        // 海康视频播放
+        function hikVideoPlay() {
+            var params = {"url":"rtsp://175.6.40.71:554/openUrl/mMHeO64",
+                "videoTitle":"hik video title"
+            }
+            dsBridge.call("ios.hikVideoPlay", JSON.stringify(params))
+            log("hikVideoPlay")
+        }
+        
+        //萤石云视频播放
+        function ijkLivePlayWithTitle() {
+            var params = {"url":"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8",
+                "videoTitle":"ijk video title"
+            }
+            
+            dsBridge.call("ios.ijkLivePlayWithTitle", JSON.stringify(params))
+            log("ijkLivePlayWithTitle")
+        }
+        
         function testEmit() {
             if (typeof(Android)=="undefined")
             {alert("不存在Android")}
@@ -153,9 +219,10 @@
         
         </script>
         
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "platformCheck()" > 平台检测</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getDeviceId()" > 获取唯一标识</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "ijkLivePlay()" > 直播</button> </p>
-       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setJPushTag()" > 设置极光推送tag</button> </p>
+       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setJPushTagAndHistoryAlarmUrl()" > 设置极光推送tag和历史告警地址</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "takePhoto()" > 照相</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "recordVideo()" > 录像</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "scanQRCode()" > 扫码</button> </p>
@@ -170,6 +237,13 @@
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "getCacheSize()" > 获取应用缓存大小</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "clearCache()" > 清理缓存</button> </p>
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "imagePreview()" > 图片预览</button> </p>
+      <p style="text-align:center"> <button id="btn1" type = "button" onclick = "ijkLivePlayWithConfigInfo()" > 带有配置信息的萤石云视频播放</button> </p>
+      
+      <p style="text-align:center"> <button id="btn1" type = "button" onclick = "HIKVideoPlayWithConfigInfo()" > 带有配置信息的海康视频播放</button> </p>
+      
+      <p style="text-align:center"> <button id="btn1" type = "button" onclick = "hikVideoPlay()" > 海康视频播放</button> </p>
+      
+     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "ijkLivePlayWithTitle()" > ijk带有标题的视频播放</button> </p>
        
         <div id='buttons'></div>
         <div id='log'></div>

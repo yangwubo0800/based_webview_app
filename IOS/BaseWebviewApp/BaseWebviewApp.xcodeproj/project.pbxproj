@@ -70,6 +70,14 @@
 		FE42905422DDB64100F4526C /* VideoPlayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE42904E22DDB64100F4526C /* VideoPlayViewController.xib */; };
 		FE42905522DDB64100F4526C /* VideoPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE42905022DDB64100F4526C /* VideoPlayViewController.m */; };
 		FE42905622DDB64100F4526C /* IJKMoviePlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */; };
+		FE7B8EA223A1F13600F1F548 /* HikVideoPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EA123A1F13600F1F548 /* HikVideoPlayer.framework */; };
+		FE7B8EA323A1F13C00F1F548 /* HikVideoPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EA123A1F13600F1F548 /* HikVideoPlayer.framework */; };
+		FE7B8EA423A1F13C00F1F548 /* HikVideoPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EA123A1F13600F1F548 /* HikVideoPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FE7B8EAD23A20E0A00F1F548 /* HikRealplayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE7B8EAB23A20E0A00F1F548 /* HikRealplayViewController.m */; };
+		FE7B8EAE23A20E0A00F1F548 /* HikRealplayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE7B8EAC23A20E0A00F1F548 /* HikRealplayViewController.xib */; };
+		FE7B8EB423A21A2D00F1F548 /* Toast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EB323A21A2D00F1F548 /* Toast.framework */; };
+		FE7B8EB523A21A3800F1F548 /* Toast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EB323A21A2D00F1F548 /* Toast.framework */; };
+		FE7B8EB623A21A3800F1F548 /* Toast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FE7B8EB323A21A2D00F1F548 /* Toast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE870A65230CCB1C000D6613 /* RealHtmlController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A64230CCB1C000D6613 /* RealHtmlController.m */; };
 		FE870A68230D3EEB000D6613 /* UIDevice+TFDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = FE870A67230D3EEB000D6613 /* UIDevice+TFDevice.m */; };
 		FE8C580E234D737500AA68D1 /* DSCallInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FE8C5807234D737500AA68D1 /* DSCallInfo.m */; };
@@ -102,6 +110,21 @@
 			remoteInfo = BaseWebviewApp;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FE7B8EA523A1F13D00F1F548 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				FE7B8EB623A21A3800F1F548 /* Toast.framework in Embed Frameworks */,
+				FE7B8EA423A1F13C00F1F548 /* HikVideoPlayer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0BC36D814B6E57C75A006104 /* Pods-BaseWebviewAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseWebviewAppTests.release.xcconfig"; path = "Target Support Files/Pods-BaseWebviewAppTests/Pods-BaseWebviewAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -210,6 +233,12 @@
 		FE42904F22DDB64100F4526C /* IJKMediaControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKMediaControl.h; sourceTree = "<group>"; };
 		FE42905022DDB64100F4526C /* VideoPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayViewController.m; sourceTree = "<group>"; };
 		FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IJKMoviePlayerViewController.xib; sourceTree = "<group>"; };
+		FE7B8EA123A1F13600F1F548 /* HikVideoPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HikVideoPlayer.framework; sourceTree = "<group>"; };
+		FE7B8EAA23A20E0A00F1F548 /* HikRealplayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HikRealplayViewController.h; sourceTree = "<group>"; };
+		FE7B8EAB23A20E0A00F1F548 /* HikRealplayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HikRealplayViewController.m; sourceTree = "<group>"; };
+		FE7B8EAC23A20E0A00F1F548 /* HikRealplayViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HikRealplayViewController.xib; sourceTree = "<group>"; };
+		FE7B8EAF23A20EA600F1F548 /* Toast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Toast.framework; path = BaseWebviewApp/Lib/Toast.framework; sourceTree = "<group>"; };
+		FE7B8EB323A21A2D00F1F548 /* Toast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Toast.framework; sourceTree = "<group>"; };
 		FE870A63230CCB1C000D6613 /* RealHtmlController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RealHtmlController.h; sourceTree = "<group>"; };
 		FE870A64230CCB1C000D6613 /* RealHtmlController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RealHtmlController.m; sourceTree = "<group>"; };
 		FE870A66230D3EEB000D6613 /* UIDevice+TFDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+TFDevice.h"; sourceTree = "<group>"; };
@@ -256,12 +285,15 @@
 				FE131CAF22DC9E4500F10673 /* CoreVideo.framework in Frameworks */,
 				FE131CAD22DC9E3900F10673 /* CoreMedia.framework in Frameworks */,
 				FE41AFF722D44578006C36A3 /* CoreGraphics.framework in Frameworks */,
+				FE7B8EA323A1F13C00F1F548 /* HikVideoPlayer.framework in Frameworks */,
 				FE131CAB22DC9E2200F10673 /* AVFoundation.framework in Frameworks */,
 				FE131CA922DC9E1000F10673 /* AudioToolbox.framework in Frameworks */,
 				FE41B00322D445FF006C36A3 /* libresolv.tbd in Frameworks */,
+				FE7B8EB423A21A2D00F1F548 /* Toast.framework in Frameworks */,
 				FE41B00122D445E7006C36A3 /* UserNotifications.framework in Frameworks */,
 				FE41AFFF22D445D4006C36A3 /* libz.tbd in Frameworks */,
 				FE41AFFD22D445C9006C36A3 /* Security.framework in Frameworks */,
+				FE7B8EA223A1F13600F1F548 /* HikVideoPlayer.framework in Frameworks */,
 				FE41AFFB22D445BC006C36A3 /* UIKit.framework in Frameworks */,
 				FE41AFF922D445AB006C36A3 /* Foundation.framework in Frameworks */,
 				FE41AFF522D4456B006C36A3 /* SystemConfiguration.framework in Frameworks */,
@@ -272,6 +304,7 @@
 				FE41AFEA22D44314006C36A3 /* jpush-ios-3.2.1.a in Frameworks */,
 				FE41AFEC22D44314006C36A3 /* jcore-ios-2.1.1.a in Frameworks */,
 				FE41AFEB22D44314006C36A3 /* jpush-extension-ios-1.1.2.a in Frameworks */,
+				FE7B8EB523A21A3800F1F548 /* Toast.framework in Frameworks */,
 				5C7B95999917EB1A1ACC80BD /* Pods_BaseWebviewApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,6 +366,7 @@
 		FE161D2122A0CB0300A32148 /* BaseWebviewApp */ = {
 			isa = PBXGroup;
 			children = (
+				FE7B8EA623A20D1B00F1F548 /* hikVideoPlayer */,
 				FE8C5804234D737500AA68D1 /* dsbridge */,
 				FE302B2122E95AF50082EB45 /* AFNetworking */,
 				FE42904922DDB64100F4526C /* IJKPlayer */,
@@ -447,6 +481,8 @@
 		FE41AFE422D44314006C36A3 /* Lib */ = {
 			isa = PBXGroup;
 			children = (
+				FE7B8EB323A21A2D00F1F548 /* Toast.framework */,
+				FE7B8EA123A1F13600F1F548 /* HikVideoPlayer.framework */,
 				FE131CC722DC9FF800F10673 /* IJKMediaFramework.framework */,
 				FE131CBC22DC9EC100F10673 /* IJKMediaFramework.h */,
 				FE41AFE522D44314006C36A3 /* jpush-ios-3.2.1.a */,
@@ -461,6 +497,7 @@
 		FE41AFED22D4453C006C36A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FE7B8EAF23A20EA600F1F548 /* Toast.framework */,
 				FE131CC922DCA02900F10673 /* libc++.tbd */,
 				FE131CBA22DC9E8B00F10673 /* VideoToolbox.framework */,
 				FE131CB822DC9E8100F10673 /* QuartzCore.framework */,
@@ -503,6 +540,16 @@
 				FE42905122DDB64100F4526C /* IJKMoviePlayerViewController.xib */,
 			);
 			path = IJKPlayer;
+			sourceTree = "<group>";
+		};
+		FE7B8EA623A20D1B00F1F548 /* hikVideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				FE7B8EAA23A20E0A00F1F548 /* HikRealplayViewController.h */,
+				FE7B8EAB23A20E0A00F1F548 /* HikRealplayViewController.m */,
+				FE7B8EAC23A20E0A00F1F548 /* HikRealplayViewController.xib */,
+			);
+			path = hikVideoPlayer;
 			sourceTree = "<group>";
 		};
 		FE8C5804234D737500AA68D1 /* dsbridge */ = {
@@ -568,6 +615,7 @@
 				FE161D1C22A0CB0300A32148 /* Frameworks */,
 				FE161D1D22A0CB0300A32148 /* Resources */,
 				FCA0F4608C549211E16BB1B6 /* [CP] Embed Pods Frameworks */,
+				FE7B8EA523A1F13D00F1F548 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -673,6 +721,7 @@
 			files = (
 				FE42905422DDB64100F4526C /* VideoPlayViewController.xib in Resources */,
 				FE074C4B22ADED2200737889 /* Resource in Resources */,
+				FE7B8EAE23A20E0A00F1F548 /* HikRealplayViewController.xib in Resources */,
 				FE161D2F22A0CB0400A32148 /* LaunchScreen.storyboard in Resources */,
 				FE161D2C22A0CB0400A32148 /* Assets.xcassets in Resources */,
 				FE161D2A22A0CB0300A32148 /* Main.storyboard in Resources */,
@@ -787,6 +836,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE7B8EAD23A20E0A00F1F548 /* HikRealplayViewController.m in Sources */,
 				FE302B3822E95CA20082EB45 /* AFNetWorkingDemo.m in Sources */,
 				FE302B3522E95AF50082EB45 /* AFSecurityPolicy.m in Sources */,
 				FE302B3222E95AF50082EB45 /* AFURLSessionManager.m in Sources */,
@@ -1022,10 +1072,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseWebviewApp/Lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hnac.hzinfo.ecoflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1054,10 +1104,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseWebviewApp/Lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.org.BaseWebviewApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hnac.hzinfo.ecoflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Release;

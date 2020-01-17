@@ -223,7 +223,7 @@
         
        
 //        // 2.创建URL
-//        //debug http://m.electro.xxxxcloud.com
+//        //debug http://m.electro.hnaccloud.com
 //        NSString *path = firstPagePath;
 //        //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
 //        NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

@@ -35,6 +35,7 @@
 @property(nonatomic,strong) IBOutlet UIView *overlayPanel;
 @property(nonatomic,strong) IBOutlet UIView *topPanel;
 @property(nonatomic,strong) IBOutlet UIView *bottomPanel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *videoTitleItem;
 
 @property(nonatomic,strong) IBOutlet UIButton *playButton;
 @property(nonatomic,strong) IBOutlet UIButton *pauseButton;

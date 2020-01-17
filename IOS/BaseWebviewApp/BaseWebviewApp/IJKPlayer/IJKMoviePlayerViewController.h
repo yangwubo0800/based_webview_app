@@ -23,11 +23,15 @@
 @interface IJKVideoViewController : UIViewController
 
 @property(atomic,strong) NSURL *url;
+@property(atomic,strong) NSString *videoTitle;
 @property(atomic, retain) id<IJKMediaPlayback> player;
 
-- (id)initWithURL:(NSURL *)url;
+- (id)initWithURL:(NSURL *)url withTitle:(NSString *)title;
 
 + (void)presentFromViewController:(UIViewController *)viewController withTitle:(NSString *)title URL:(NSURL *)url completion:(void(^)())completion;
+
+
++(IJKVideoViewController*)getInstance;
 
 - (IBAction)onClickMediaControl:(id)sender;
 - (IBAction)onClickOverlay:(id)sender;
@@ -45,5 +49,11 @@
 
 @property (strong, nonatomic) UIActivityIndicatorView *indicator;
 @property (strong, nonatomic) UILabel *label;
+// 显示视频配置信息
+@property (strong, nonatomic) UILabel *videoConfigInfo;
+// 定时更新配置信息的定时器
+@property(retain, nonatomic) NSTimer* timer;
+// 更新视频配置信息的后台地址
+@property(copy, nonatomic) NSString* videoInfoUrl;
 
 @end

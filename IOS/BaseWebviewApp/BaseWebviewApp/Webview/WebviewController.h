@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)reloadWebview;
 
 // 提供直播功能
-- (void)ijkLivePlay:(NSString *)livePath;
+- (void)ijkLivePlay:(NSString *)livePath withTitle:(NSString *)title;
 
 // 视频播放功能
 - (void)ijkVideoPlay:(NSString*)videoPath;

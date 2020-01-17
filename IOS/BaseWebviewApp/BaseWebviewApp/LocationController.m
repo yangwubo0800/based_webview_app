@@ -12,6 +12,9 @@
 
 static LocationController *instance;
 
+//确保一次请求定位只返回一次
+static Boolean hasPostLoaction;
+
 @implementation LocationController
 
 //singlton
@@ -38,6 +41,21 @@ static LocationController *instance;
 }
 
 
+// 权限提示方法
+-(void)alertShowPermissionTip{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您还未开启定位服务，是否需要开启？" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSURL *setingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication]openURL:setingsURL];
+    }];
+    
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    [self.uiViewController.navigationController presentViewController:alert animated:YES completion:nil];
+}
+
 
 -(void)showLocate:(UIViewController *)vc{
     
@@ -56,38 +74,67 @@ static LocationController *instance;
     self.uiViewController = vc;
     NSLog(@"locate vc is %p", self.uiViewController);
     if ([CLLocationManager locationServicesEnabled]) {//监测权限设置
-        NSLog(@"locate begin...");
+        NSLog(@"location service is enable");
         self.locationManager = [[CLLocationManager alloc]init];
         self.locationManager.delegate = self;//设置代理
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;//设置精度
         self.locationManager.distanceFilter = 1000.0f;//距离过滤
         [self.locationManager requestAlwaysAuthorization];//位置权限申请
-        [self.locationManager startUpdatingLocation];//开始定位
+        CLAuthorizationStatus locateStatus = [CLLocationManager authorizationStatus];
+        NSLog(@" locateStatus is %d", locateStatus);
+        //用户拒绝过，让用户先开启权限
+        if (locateStatus == kCLAuthorizationStatusDenied) {
+            [self alertShowPermissionTip];
+            return;
+        } else{
+            // TODO: 当用户第一次操作，系统弹框半天不操作，停留一段时间后会有异常，因为定位已经开始。
+            [self.locationManager startUpdatingLocation];//开始定位
+            NSLog(@"really start update location...");
+            hasPostLoaction = false;
+            //设置10秒超时
+            [self performSelector:@selector(processLoacteTimeout) withObject:nil afterDelay:10];
+        }
+    } else{
+        NSLog(@"location service is unable");
+        [self alertShowPermissionTip];
     }
+}
+
+-(void)processLoacteTimeout{
+    //调用JS方法将定位信息回传给前端
+    WebviewController *wc = [WebviewController shareInstance];
+    NSString *locateCallerName = wc.locateCallerName;
+    NSDictionary *dict = @{@"name":locateCallerName,
+                           @"address":self.address,
+                           @"latitude":self.latitude,
+                           @"longitude":self.longitude,
+                           @"type":@"timeout"
+                           };
+    //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:dict];
+    //修改为使用webview直接发送emit时间给前端
+    NSString *emitName = @"location";
+    NSString *locateJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+    NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
+    js = [js stringByAppendingString:@"','"];
+    js = [js stringByAppendingString:locateJsonStr];
+    js = [js stringByAppendingString:@"')"];
+    NSLog(@" js is :%@", js);
+    [[wc webView] evaluateJavaScript:js completionHandler:nil];
+    
+    [self.locationManager stopUpdatingLocation];//停止定位
 }
 
 #pragma mark location代理
 -(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     NSLog(@"locate didFailWithError...");
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您还未开启定位服务，是否需要开启？" preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-    }];
-    UIAlertAction *queren = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        NSURL *setingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-        [[UIApplication sharedApplication]openURL:setingsURL];
-    }];
-    [alert addAction:cancel];
-    [alert addAction:queren];
-    
-    [self.uiViewController.navigationController presentViewController:alert animated:YES completion:nil];
+    [self alertShowPermissionTip];
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
     NSLog(@"locate didUpdateLocations...");
     
-    
+    //取消超时
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(processLoacteTimeout) object:nil];
     [self.locationManager stopUpdatingLocation];//停止定位
     //地理反编码
     CLLocation *currentLocation = [locations lastObject];
@@ -126,21 +173,27 @@ static LocationController *instance;
             // TODO: 调用JS方法将定位信息回传给前端
             WebviewController *wc = [WebviewController shareInstance];
             NSString *locateCallerName = wc.locateCallerName;
-            NSDictionary *dict = @{@"callerName":locateCallerName,
+            NSDictionary *dict = @{@"name":locateCallerName,
                                    @"address":self.address,
                                    @"latitude":self.latitude,
-                                   @"longitude":self.longitude
+                                   @"longitude":self.longitude,
+                                   @"type":@"normal"
                                    };
             //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackLocateResult" data:dict];
             //修改为使用webview直接发送emit时间给前端
-            NSString *emitName = @"location";
-            NSString *locateJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
-            NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
-            js = [js stringByAppendingString:@"','"];
-            js = [js stringByAppendingString:locateJsonStr];
-            js = [js stringByAppendingString:@"')"];
-            NSLog(@" js is :%@", js);
-            [[wc webView] evaluateJavaScript:js completionHandler:nil];
+            NSLog(@"location hasPostLoaction=%hhu", hasPostLoaction);
+            if (!hasPostLoaction) {
+                NSString *emitName = @"location";
+                NSString *locateJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+                NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
+                js = [js stringByAppendingString:@"','"];
+                js = [js stringByAppendingString:locateJsonStr];
+                js = [js stringByAppendingString:@"')"];
+                NSLog(@" js is :%@", js);
+                [[wc webView] evaluateJavaScript:js completionHandler:nil];
+                hasPostLoaction = true;
+            }
+
             
             NSString *city = placeMark.locality;
             if (!city) {

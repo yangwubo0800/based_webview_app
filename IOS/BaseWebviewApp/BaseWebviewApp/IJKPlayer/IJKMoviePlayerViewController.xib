@@ -107,7 +107,9 @@
                                         <action selector="onClickDone:" destination="-1" id="Lbg-xk-WzB"/>
                                     </connections>
                                 </barButtonItem>
-                                <barButtonItem systemItem="flexibleSpace" id="pST-nN-ULY"/>
+                                <barButtonItem style="plain" systemItem="flexibleSpace" id="ezk-Ji-zC8"/>
+                                <barButtonItem id="i9c-eX-Cub"/>
+                                <barButtonItem style="plain" systemItem="flexibleSpace" id="RV6-Bb-ZVU"/>
                             </items>
                         </toolbar>
                     </subviews>
@@ -130,6 +132,7 @@
                 <outlet property="playButton" destination="40" id="66"/>
                 <outlet property="topPanel" destination="4ZI-0o-F2w" id="igp-Gq-Qk0"/>
                 <outlet property="totalDurationLabel" destination="44" id="63"/>
+                <outlet property="videoTitleItem" destination="i9c-eX-Cub" id="gak-kf-lGU"/>
             </connections>
             <point key="canvasLocation" x="559.4202898550725" y="300"/>
         </view>

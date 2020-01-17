@@ -43,7 +43,7 @@
 #define STATUSBARHEIGHT     ([[UIApplication sharedApplication] statusBarFrame].size.height)
 #define NAVIGATIONBARHEIGHT (self.navigationController.navigationBar.frame.size.height)
 
-#define LOAD_LOCAL_HTML YES
+#define LOAD_LOCAL_HTML NO
 
 
 //单例模式
@@ -372,8 +372,10 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 //        //用于进行JavaScript注入
 //        WKUserScript *wkUScript = [[WKUserScript alloc] initWithSource:jSString injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
 //        [config.userContentController addUserScript:wkUScript];
-        //显示状态栏 隐藏导航栏，导航功能由前端界面实现
-        _webView = [[DWKWebView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT) configuration:config];
+        //显示状态栏 隐藏导航栏，导航功能由前端界面实现, 给前端的界面高度需要减掉状态栏高度
+        _webView = [[DWKWebView alloc] initWithFrame:CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-STATUSBARHEIGHT) configuration:config];
+        //禁止webview拖拽
+        _webView.scrollView.bounces = NO;
         // UI代理
         //_webView.UIDelegate = self;
         //在 DWKWebView 中，请使用 DSUIDelegate 代替 UIDelegate , 因为在DWKWebView 内部 UIDelegate已经设置过了，
@@ -602,7 +604,7 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 }
 
 
-- (void)ijkLivePlay:(NSString *)livePath {
+- (void)ijkLivePlay:(NSString *)livePath withTitle:(NSString *)title{
     //萤石云
     //NSString *path = @"http://hls.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b.hd.m3u8";
     //CCTV1
@@ -626,7 +628,7 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
     if ([scheme isEqualToString:@"http"]
         || [scheme isEqualToString:@"https"]
         || [scheme isEqualToString:@"rtmp"]) {
-        [IJKVideoViewController presentFromViewController:self withTitle:[NSString stringWithFormat:@"URL: %@", url] URL:url completion:^{
+        [IJKVideoViewController presentFromViewController:self withTitle:title URL:url completion:^{
             //            [self.navigationController popViewControllerAnimated:NO];
         }];
     }

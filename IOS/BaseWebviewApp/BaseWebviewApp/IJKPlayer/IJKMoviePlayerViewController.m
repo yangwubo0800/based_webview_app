@@ -21,10 +21,17 @@
 #import "../Utils/UIDevice+TFDevice.h"
 //#import "IJKCommon.h"
 //#import "IJKDemoHistory.h"
+#import "AFNetworking.h"
+#import "../Utils/StringUtils.h"
 
 //竖屏幕宽高
 #define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+
+
+
+//提供给外部的实例
+static IJKVideoViewController *instance = nil;
 
 @implementation IJKVideoViewController
 
@@ -39,15 +46,23 @@
 //    historyItem.url = url;
 //    [[IJKDemoHistory instance] add:historyItem];
     
-    [viewController presentViewController:[[IJKVideoViewController alloc] initWithURL:url] animated:YES completion:completion];
+    [viewController presentViewController:[[IJKVideoViewController alloc] initWithURL:url withTitle:title] animated:YES completion:completion];
 }
 
-- (instancetype)initWithURL:(NSURL *)url {
+- (instancetype)initWithURL:(NSURL *)url withTitle:(NSString *)title{
     self = [self initWithNibName:@"IJKMoviePlayerViewController" bundle:nil];
     if (self) {
         self.url = url;
+        self.videoTitle = title;
     }
+    //将每次的示例赋值给对象
+    instance = self;
+    
     return self;
+}
+
++(IJKVideoViewController*)getInstance{
+    return instance;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -120,6 +135,7 @@
     
     // TODO: live play hide bottom panel
     self.mediaControl.bottomPanel.hidden = YES;
+    [self.mediaControl.videoTitleItem setTitle:self.videoTitle];
     
     
 }
@@ -159,17 +175,35 @@
     self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
     self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     self.player.view.frame = self.view.bounds;
-    self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
+    //全屏播放设置，高和宽都缩放
+    self.player.scalingMode = IJKMPMovieScalingModeFill;
     self.player.shouldAutoplay = YES;
     
     [self.view addSubview:self.player.view];
     [self.view addSubview:self.mediaControl];
+    
     
     self.mediaControl.delegatePlayer = self.player;
     
     [self installMovieNotificationObservers];
     [self.player prepareToPlay];
 }
+
+// 添加视频配置信息
+-(void) addVideoConfigInfo{
+    self.videoConfigInfo = [[UILabel alloc] init];
+//    [self.videoConfigInfo setText:@"视频配置信息：\n朝辞白帝彩云间，\n 千里江陵一日还。\n 两岸猿声啼不住，\n 轻舟已过万重山。\n"];
+    [self.videoConfigInfo setTextColor:[UIColor whiteColor]];
+    self.videoConfigInfo.numberOfLines = 0;
+    self.videoConfigInfo.lineBreakMode = NSLineBreakByTruncatingTail;
+    CGSize maxLabelSize = CGSizeMake(200, 9999);
+    CGSize expectSize = [self.videoConfigInfo sizeThatFits:maxLabelSize];
+    self.videoConfigInfo.frame = CGRectMake(20, 50, expectSize.width, expectSize.height);
+    [self.view addSubview:self.videoConfigInfo];
+    //是否需要关闭
+//    [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(updateVideoInfo:) userInfo:nil repeats:YES];
+}
+
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -181,6 +215,15 @@
     appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
     //切换到竖屏
     [UIDevice switchNewOrientation:UIInterfaceOrientationPortrait];
+    //销毁定时器
+    if (self.timer) {
+        [self.timer invalidate];
+        NSLog(@"viewDidDisappear invalidate timer");
+    }
+    if (self.videoInfoUrl) {
+        self.videoInfoUrl = nil;
+        NSLog(@"viewDidDisappear clean video info url");
+    }
     NSLog(@"=====viewDidDisappear switch UIInterfaceOrientationPortrait");
 }
 
@@ -315,6 +358,49 @@
     //self.indicator.stopAnimating;
     [self.indicator stopAnimating];
     self.label.hidden = YES;
+    //添加视频配置显示控件
+    [self addVideoConfigInfo];
+    //获取后台数据进行填充
+    if (self.videoInfoUrl) {
+        AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+        NSLog(@"-------start get updateVideoCfgInfo .....");
+        // parameters 参数字典
+        [manager GET:self.videoInfoUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+            //进度
+            NSLog(@"downloadProgress is %lld", downloadProgress.completedUnitCount);
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            // responseObject:请求成功返回的响应结果（AFN内部已经把响应体转换为OC对象，通常是字典或数组)
+            NSLog(@" success responseObject is %@", responseObject);
+            //TODO: 解析后台返回数据，并更新
+            NSDictionary *dictResponse =  responseObject;
+            NSDictionary *data = [dictResponse objectForKey:@"data"];
+            NSString *showInfo=@"";
+            NSArray *keys = [data allKeys];
+            for (int i=0; i< [keys count]; i++) {
+                NSString *key = keys[i];
+                NSString *value = [data objectForKey:key];
+                showInfo = [NSString stringWithFormat:@"%@：%@\n%@", key, value, showInfo];
+            }
+            //TODO: 更新
+            //NSString* info = [StringUtils UIUtilsFomateJsonWithDictionary:responseObject];
+            NSLog(@" setVideoConfigInfo showInfo=%@", showInfo);
+            [self.videoConfigInfo setText:showInfo];
+            [self.videoConfigInfo setBackgroundColor:[[UIColor blackColor]colorWithAlphaComponent:0.5f]];
+            [self.videoConfigInfo setTextColor:[UIColor whiteColor]];
+            self.videoConfigInfo.numberOfLines = 0;
+            self.videoConfigInfo.lineBreakMode = NSLineBreakByTruncatingTail;
+            CGSize maxLabelSize = CGSizeMake(200, 9999);
+            CGSize expectSize = [self.videoConfigInfo sizeThatFits:maxLabelSize];
+            self.videoConfigInfo.frame = CGRectMake(20, 50, expectSize.width, expectSize.height);
+            
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            // error 错误信息
+            NSLog(@" failure response is %@", task.response);
+            NSLog(@" failure error is %@", error.description);
+        }];
+    }else{
+        NSLog(@"The video config info url is nil");
+    }
 }
 
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification

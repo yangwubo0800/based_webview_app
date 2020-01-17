@@ -20,7 +20,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.org.BaseWebviewApp</key>
-		<string>profile-adHoc-innerTest</string>
+		<string>profile-adHoc-innerTest1021</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>iPhone Distribution</string>

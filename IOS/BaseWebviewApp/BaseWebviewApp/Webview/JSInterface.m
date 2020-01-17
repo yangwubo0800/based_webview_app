@@ -19,14 +19,23 @@
 #import "../ImagePreviewViewController.h"
 #import "../Utils/pingTool/WHPingTester.h"
 #import "../UserGuide/RefreshNoNetworkView.h"
+#import "../IJKPlayer/IJKMoviePlayerViewController.h"
+#import "AFNetworking.h"
+#import "../hikVideoPlayer/HikRealplayViewController.h"
 
 //竖屏幕宽高
 #define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
 
+
+static NSString* locationCallerName;
+
 @interface JSInterface() <WHPingDelegate>
 
 @property(nonatomic, strong) WHPingTester* pingTester;
+
+@property(nonatomic, strong) NSString* videoCfgInfoUrl;
+
 
 @end
 
@@ -34,6 +43,11 @@
 
 //(id) handler:(id) msg
 //参数可以是任何类型, 但是返回值类型不能为 void。 如果不需要参数，也必须声明，声明后不使用就行
+
+// 平台检测，提供给前端判断当前运行环境
+- (NSString *) platformCheck:(NSString *) msg{
+    return  @"ios";
+}
 
 // 获取唯一标识
 - (NSString *) getDeviceId:(NSString *) msg{
@@ -46,8 +60,67 @@
 // 直播
 - (NSString *) ijkLivePlay:(NSString *) playPath{
     WebviewController *wc = [WebviewController shareInstance];
-    [wc ijkLivePlay:playPath];
+    [wc ijkLivePlay:playPath withTitle:@""];
     return  @"ijkLivePlay started";
+}
+
+
+// ijk播放，带有视频标题
+- (NSString *) ijkLivePlayWithTitle:(NSString*) jsonStr{
+    NSLog(@"ijkLivePlayWithTitle jsonStr=%@", jsonStr);
+    NSError *error;
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[jsonStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
+    //NSDictionary *dict = jsonStr;
+    NSLog(@"ijkLivePlayWithTitle dict=%@", dict);
+    NSArray *keys = [dict allKeys];
+    NSString *url;
+    NSString *videoTitle;
+    for(int i=0; i<keys.count; i++){
+        NSString *key = keys[i];
+        if ([@"url" isEqualToString:key]){
+            url = [dict valueForKey:key];
+        }
+        
+        if([@"videoTitle" isEqualToString:key]){
+            videoTitle = [dict valueForKey:key];
+        }
+    }
+    NSLog(@"ijkLivePlayWithTitle url=%@ videoTitle=%@", url, videoTitle);
+    if (url != nil) {
+        WebviewController *wc = [WebviewController shareInstance];
+        [wc ijkLivePlay:url withTitle:videoTitle];
+    }
+
+    return  @"ijkLivePlayWithTitle started";
+}
+
+
+// 海康视频播放
+- (NSString *) hikVideoPlay:(NSString*) jsonStr{
+    NSLog(@"hikVideoPlay jsonStr=%@", jsonStr);
+    NSError *error;
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[jsonStr dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
+    //NSDictionary *dict = jsonStr;
+    NSLog(@"hikVideoPlay dict=%@", dict);
+    NSArray *keys = [dict allKeys];
+    NSString *url;
+    NSString *videoTitle;
+    for(int i=0; i<keys.count; i++){
+        NSString *key = keys[i];
+        if ([@"url" isEqualToString:key]){
+            url = [dict valueForKey:key];
+        }
+        
+        if([@"videoTitle" isEqualToString:key]){
+            videoTitle = [dict valueForKey:key];
+        }
+    }
+    NSLog(@"hikVideoPlay url=%@ videoTitle=%@", url, videoTitle);
+    if (url != nil) {
+        WebviewController *wc = [WebviewController shareInstance];
+        [HikRealplayViewController presentFromViewController:wc URL:url videoTitle:videoTitle];
+    }
+    return  @"hikVideoPlay started";
 }
 
 
@@ -174,7 +247,7 @@
     //修改为使用webview直接发送emit时间给前端
     NSString *emitName = @"checkNetwork";
     NSString *JsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
-    NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+    NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
     js = [js stringByAppendingString:@"','"];
     js = [js stringByAppendingString:JsonStr];
     js = [js stringByAppendingString:@"')"];
@@ -184,10 +257,11 @@
 
 // 启动横屏显示实时画面
 - (NSString *) startRealHtml:(NSString*) htmlPath{
-    NSString *path = htmlPath;
-    //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
-    NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL *url = [NSURL URLWithString:urlStr];
+//    NSString *path = htmlPath;
+//    //转义字符或字符串中含有中文， 都可能导致url=nil,需要处理
+//    NSString * urlStr = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSURL *url = [NSURL URLWithString:urlStr];
+    NSURL *url = [NSURL URLWithString:htmlPath];
     RealHtmlController *vc = [[RealHtmlController alloc] initWithUrl:url];
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
     //默认为英文back，此处修改返回标题为中文
@@ -243,13 +317,141 @@
     return @"imagePreview started";
 }
 
+// 定时设置视频配置信息, 传递后台数据获取的url过来，返回时关闭定时器
+- (NSString *) setVideoConfigInfoGetUrl:(NSString*) url{
+    self.videoCfgInfoUrl = url;
+    NSLog(@"setVideoConfigInfo url is %@", url);
+    IJKVideoViewController *ijkVideo = [IJKVideoViewController getInstance];
+    NSLog(@" setVideoConfigInfo ijkVideo=%@", ijkVideo);
+    //由于不知道视频什么时候会完成加载显示，故启动时直接获取后台数据设置可能无效，将url设置到视频播放界面，由界面自行获取数据来设置
+    ijkVideo.videoInfoUrl = url;
+    //创建定时器， 销毁定时器在退出界面之前，在ijkMoviePlay里面
+    ijkVideo.timer =  [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(updateVideoCfgInfo) userInfo:nil repeats:YES];
+    
+    return @"setVideoConfigInfoGetUrl started";
+}
+
+//海康视频配置信息更新需要新增一个借口，启用其自身定时器来实现更新界面
+- (NSString *) setHikVideoConfigInfoGetUrl:(NSString*) url{
+    self.videoCfgInfoUrl = url;
+    NSLog(@"setHikVideoConfigInfoGetUrl url is %@", url);
+    HikRealplayViewController *hikVideo = [HikRealplayViewController getInstance];
+    NSLog(@" setHikVideoConfigInfoGetUrl hikVideo=%@", hikVideo);
+    hikVideo.videoInfoUrl = url;
+    //创建定时器， 销毁定时器在退出界面之前，在ijkMoviePlay里面
+    hikVideo.timer =  [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(updateHikVideoCfgInfo) userInfo:nil repeats:YES];
+    
+    return @"setHikVideoConfigInfoGetUrl started";
+}
+
+
+-(void)updateHikVideoCfgInfo{
+    if (self.videoCfgInfoUrl) {
+        AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+        NSLog(@"-------start get updateVideoCfgInfo .....");
+        // parameters 参数字典
+        [manager GET:self.videoCfgInfoUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+            //进度
+            NSLog(@" downloadProgress is %lld", downloadProgress.completedUnitCount);
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            // task 我们可以通过task拿到响应头
+            NSLog(@" success response is %@", task.response);
+            // responseObject:请求成功返回的响应结果（AFN内部已经把响应体转换为OC对象，通常是字典或数组)
+            NSLog(@" success responseObject is %@", responseObject);
+            //TODO: 解析后台返回数据，并更新
+            NSDictionary *dictResponse =  responseObject;
+            NSDictionary *data = [dictResponse objectForKey:@"data"];
+            NSString *showInfo=@"";
+            NSArray *keys = [data allKeys];
+            for (int i=0; i< [keys count]; i++) {
+                NSString *key = keys[i];
+                NSString *value = [data objectForKey:key];
+                showInfo = [NSString stringWithFormat:@"%@：%@\n%@", key, value, showInfo];
+            }
+            
+            //NSString* info = [StringUtils UIUtilsFomateJsonWithDictionary:responseObject];
+            HikRealplayViewController *hikVideo = [HikRealplayViewController getInstance];
+            NSLog(@" setVideoConfigInfo hikVideo=%@", hikVideo);
+            NSLog(@" setVideoConfigInfo showInfo=%@", showInfo);
+            if (hikVideo) {
+                [hikVideo.videoConfigInfo setText:showInfo];
+                [hikVideo.videoConfigInfo setBackgroundColor:[[UIColor blackColor]colorWithAlphaComponent:0.5f]];
+                [hikVideo.videoConfigInfo setTextColor:[UIColor whiteColor]];
+                hikVideo.videoConfigInfo.numberOfLines = 0;
+                hikVideo.videoConfigInfo.lineBreakMode = NSLineBreakByTruncatingTail;
+                CGSize maxLabelSize = CGSizeMake(200, 9999);
+                CGSize expectSize = [hikVideo.videoConfigInfo sizeThatFits:maxLabelSize];
+                hikVideo.videoConfigInfo.frame = CGRectMake(20, 50, expectSize.width, expectSize.height);
+            }
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            // error 错误信息
+            NSLog(@" failure response is %@", task.response);
+            NSLog(@" failure error is %@", error.description);
+        }];
+    }else{
+        NSLog(@"The video config info url is nil");
+    }
+}
+
+
+
+//ios框架自主获取后台视频配置信息进行更新
+-(void)updateVideoCfgInfo{
+    if (self.videoCfgInfoUrl) {
+        AFHTTPSessionManager *manager =[AFHTTPSessionManager manager];
+        NSLog(@"-------start get updateVideoCfgInfo .....");
+        // parameters 参数字典
+        [manager GET:self.videoCfgInfoUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+            //进度
+            NSLog(@" downloadProgress is %lld", downloadProgress.completedUnitCount);
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            // task 我们可以通过task拿到响应头
+            NSLog(@" success response is %@", task.response);
+            // responseObject:请求成功返回的响应结果（AFN内部已经把响应体转换为OC对象，通常是字典或数组)
+            NSLog(@" success responseObject is %@", responseObject);
+            //TODO: 解析后台返回数据，并更新
+            NSDictionary *dictResponse =  responseObject;
+            NSDictionary *data = [dictResponse objectForKey:@"data"];
+            NSString *showInfo=@"";
+            NSArray *keys = [data allKeys];
+            for (int i=0; i< [keys count]; i++) {
+                NSString *key = keys[i];
+                NSString *value = [data objectForKey:key];
+                showInfo = [NSString stringWithFormat:@"%@：%@\n%@", key, value, showInfo];
+            }
+            
+            //NSString* info = [StringUtils UIUtilsFomateJsonWithDictionary:responseObject];
+            IJKVideoViewController *ijkVideo = [IJKVideoViewController getInstance];
+            NSLog(@" setVideoConfigInfo ijkVideo=%@", ijkVideo);
+            NSLog(@" setVideoConfigInfo showInfo=%@", showInfo);
+            if (ijkVideo) {
+                [ijkVideo.videoConfigInfo setText:showInfo];
+                [ijkVideo.videoConfigInfo setBackgroundColor:[[UIColor blackColor]colorWithAlphaComponent:0.5f]];
+                [ijkVideo.videoConfigInfo setTextColor:[UIColor whiteColor]];
+                ijkVideo.videoConfigInfo.numberOfLines = 0;
+                ijkVideo.videoConfigInfo.lineBreakMode = NSLineBreakByTruncatingTail;
+                CGSize maxLabelSize = CGSizeMake(200, 9999);
+                CGSize expectSize = [ijkVideo.videoConfigInfo sizeThatFits:maxLabelSize];
+                ijkVideo.videoConfigInfo.frame = CGRectMake(20, 50, expectSize.width, expectSize.height);
+            }
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            // error 错误信息
+            NSLog(@" failure response is %@", task.response);
+            NSLog(@" failure error is %@", error.description);
+        }];
+    }else{
+        NSLog(@"The video config info url is nil");
+    }
+}
+
+
 // 测试调用js 触发前端监听事件
 - (NSString *) testEmit:(NSString *) callerName{
     WebviewController *wc = [WebviewController shareInstance];
     NSString *emitName = @"location";
     //NSString *locationJson = @"empty";
     NSString *locationJson = @"{\"address\":\"中国湖南省长沙市岳麓区佳园路\",\"latitude\":\"28.229733\",\"longitude\":\"112.864245\",\"name\":\"test1\"}";
-    NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+    NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
     js = [js stringByAppendingString:@"','"];
     js = [js stringByAppendingString:locationJson];
     js = [js stringByAppendingString:@"')"];

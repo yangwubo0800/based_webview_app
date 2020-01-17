@@ -236,34 +236,42 @@
         NSLog(@"#####scanResult is %@",scanResult);
         //[self showAlertWithTitle:@"扫描结果" message:scanResult sureHandler:nil cancelHandler:nil];
         //在显示完扫码结果之后，跳转到webview界面
-        [self showAlertWithTitle:@"扫描结果" message:scanResult sureHandler:^(void){
-            
-            for(UIViewController *controller in self.navigationController.viewControllers){
-                NSLog(@"#####controller is %p", controller);
-                if([controller isKindOfClass:[WebviewController class]]){
-                    [self.navigationController popToViewController:controller animated:YES];
-                }
+//        [self showAlertWithTitle:@"扫描结果" message:scanResult sureHandler:^(void){
+//
+//            for(UIViewController *controller in self.navigationController.viewControllers){
+//                NSLog(@"#####controller is %p", controller);
+//                if([controller isKindOfClass:[WebviewController class]]){
+//                    [self.navigationController popToViewController:controller animated:YES];
+//                }
+//            }
+//        } cancelHandler:^(void){
+//
+//            for(UIViewController *controller in self.navigationController.viewControllers){
+//                NSLog(@"#####controller is %p", controller);
+//                if([controller isKindOfClass:[WebviewController class]]){
+//                    [self.navigationController popToViewController:controller animated:YES];
+//                }
+//            }
+//        }];
+        
+        //扫描结束之后返回webview界面
+        for(UIViewController *controller in self.navigationController.viewControllers){
+            NSLog(@"#####controller is %p", controller);
+            if([controller isKindOfClass:[WebviewController class]]){
+                [self.navigationController popToViewController:controller animated:YES];
             }
-        } cancelHandler:^(void){
-            
-            for(UIViewController *controller in self.navigationController.viewControllers){
-                NSLog(@"#####controller is %p", controller);
-                if([controller isKindOfClass:[WebviewController class]]){
-                    [self.navigationController popToViewController:controller animated:YES];
-                }
-            }
-        }];
+        }
         // TODO: 待使用真机测试
         WebviewController *wc = [WebviewController shareInstance];
-        NSString *callerName = wc.scanCallerName;
-        NSDictionary *dict = @{@"callerName":callerName, @"scanResult":scanResult};
+        NSString *name = wc.scanCallerName;
+        NSDictionary *dict = @{@"name":name, @"scanResult":scanResult};
         NSLog(@"scan resut is %@",dict);
         // TODO: 将扫码结果通过bridge调用JS回传给前端
         //[[[WebviewController shareInstance] bridge] callHandler:@"feedBackScanResult" data:dict];
         //修改为使用webview直接发送emit时间给前端
         NSString *emitName = @"qrCode";
         NSString *scanJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
-        NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+        NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
         js = [js stringByAppendingString:@"','"];
         js = [js stringByAppendingString:scanJsonStr];
         js = [js stringByAppendingString:@"')"];
@@ -322,7 +330,7 @@
             //修改为使用webview直接发送emit时间给前端
             NSString *emitName = @"qrCode";
             NSString *scanJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
-            NSString *js = [@"Android.emit('" stringByAppendingString:emitName];
+            NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
             js = [js stringByAppendingString:@"','"];
             js = [js stringByAppendingString:scanJsonStr];
             js = [js stringByAppendingString:@"')"];

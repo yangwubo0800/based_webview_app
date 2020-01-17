@@ -100,7 +100,7 @@
     }
     
     // 这里判断是否第一次
-    if (/*[[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]*/ true) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
         
         UserGuideView *hvc = [[UserGuideView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
         [self.window.rootViewController.view addSubview:hvc];
@@ -205,6 +205,12 @@
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"%@", [NSString stringWithFormat:@"Device Token: %@", deviceToken]);
     [JPUSHService registerDeviceToken:deviceToken];
+    
+    // TODO:清空设备TAG,不登录时就收不到之前设置过的TAG消息了
+    //firstly clean tags
+    [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+        NSLog(@"#########cleanTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
+    } seq:1];
 }
 
 //实现注册 APNs 失败接口（可选）
@@ -246,23 +252,24 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
     NSLog(@"=======willPresentNotification");
     NSDictionary * userInfo = notification.request.content.userInfo;
+    NSLog(@"=======willPresentNotification userInfo=%@", userInfo);
     
-    UNNotificationRequest *request = notification.request; // 收到推送的请求
-    UNNotificationContent *content = request.content; // 收到推送的消息内容
-    
-    NSNumber *badge = content.badge;  // 推送消息的角标
-    NSString *body = content.body;    // 推送消息体
-    UNNotificationSound *sound = content.sound;  // 推送消息的声音
-    NSString *subtitle = content.subtitle;  // 推送消息的副标题
-    NSString *title = content.title;  // 推送消息的标题
-    
-    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-        [JPUSHService handleRemoteNotification:userInfo];
-        NSLog(@"iOS10 前台收到远程通知:%@", [self logDic:userInfo]);
-    }else {
-        // 判断为本地通知
-        NSLog(@"iOS10 前台收到本地通知:{\nbody:%@，\ntitle:%@,\nsubtitle:%@,\nbadge：%@，\nsound：%@，\nuserInfo：%@\n}",body,title,subtitle,badge,sound,userInfo);
-    }
+//    UNNotificationRequest *request = notification.request; // 收到推送的请求
+//    UNNotificationContent *content = request.content; // 收到推送的消息内容
+//
+//    NSNumber *badge = content.badge;  // 推送消息的角标
+//    NSString *body = content.body;    // 推送消息体
+//    UNNotificationSound *sound = content.sound;  // 推送消息的声音
+//    NSString *subtitle = content.subtitle;  // 推送消息的副标题
+//    NSString *title = content.title;  // 推送消息的标题
+//
+//    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+//        [JPUSHService handleRemoteNotification:userInfo];
+//        NSLog(@"iOS10 前台收到远程通知:%@", [self logDic:userInfo]);
+//    }else {
+//        // 判断为本地通知
+//        NSLog(@"iOS10 前台收到本地通知:{\nbody:%@，\ntitle:%@,\nsubtitle:%@,\nbadge：%@，\nsound：%@，\nuserInfo：%@\n}",body,title,subtitle,badge,sound,userInfo);
+//    }
     completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
 }
 
@@ -272,8 +279,7 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     // 冷启动时，webview 还没有初始化，所以此时还是会跳转到登录界面，先不处理这种情况
     // 目前调试阶段为直接跳转百度页面，后续url从通知内容中获取，后台在推送消息时携带跳转页面路径url.
     NSLog(@"=======didReceiveNotificationResponse");
-    [WebviewController shareInstance].currentUrl = [NSURL URLWithString:@"http://www.baidu.com"];
-    [[WebviewController shareInstance] reloadWebview];
+
     
     NSDictionary * userInfo = response.notification.request.content.userInfo;
     UNNotificationRequest *request = response.notification.request; // 收到推送的请求
@@ -282,6 +288,15 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     NSLog(@" didReceiveNotificationResponse userInfo=%@ \n content=%@", userInfo, content);
     NSString *extraUrl = userInfo[@"jumpUrl"];
     NSLog(@" extralUrl=%@", extraUrl);
+    //历史告警页面地址改为由前端设置，框架获取来跳转
+    NSString *jumpUrlKey = @"historyAlarmUrl";
+    NSString *jumpUrlValue = [[NSUserDefaults standardUserDefaults] objectForKey:jumpUrlKey];
+    NSLog(@" jumpUrlValue=%@", jumpUrlValue);
+    if (jumpUrlValue) {
+        [WebviewController shareInstance].currentUrl = [NSURL URLWithString:jumpUrlValue];
+        [[WebviewController shareInstance] reloadWebview];
+    }
+
     
     NSNumber *badge = content.badge;  // 推送消息的角标
     NSString *body = content.body;    // 推送消息体

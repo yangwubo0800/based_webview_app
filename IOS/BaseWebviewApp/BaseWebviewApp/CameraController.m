@@ -221,6 +221,15 @@ didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 
 // 跳转到扫码界面进行扫码
 - (void)scanQRCode:(UIViewController *)webViewController{
+    self.uiViewController = webViewController;
+    NSString *mediaType = AVMediaTypeVideo;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    NSLog(@" authStatus is %ld", (long)authStatus);
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        NSLog(@"请在'设置'中打开相机权限");
+        [self alertShowPermissionTip];
+        return;
+    }
     
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
     //默认为英文back，此处修改返回标题为中文
@@ -240,6 +249,7 @@ didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
     if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
         //            mAlertView(@"", @"请在'设置'中打开相机权限")
         NSLog(@"请在'设置'中打开相机权限");
+        [self alertShowPermissionTip];
         return;
     }
     
@@ -266,6 +276,7 @@ didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
     if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
         //            mAlertView(@"", @"请在'设置'中打开相机权限")
         NSLog(@"请在'设置'中打开相机权限");
+        [self alertShowPermissionTip];
         return;
     }
     
@@ -287,5 +298,20 @@ didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
     [webViewController presentViewController:vc animated:YES completion:nil];
 }
 
+
+// 权限提示方法
+-(void)alertShowPermissionTip{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"您还未开启相机权限，是否需要开启？" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSURL *setingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication]openURL:setingsURL];
+    }];
+    
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    [self.uiViewController.navigationController presentViewController:alert animated:YES completion:nil];
+}
 
 @end

@@ -7,6 +7,8 @@
 //
 
 #import "LZKeychain.h"
+#import "./Webview/WebviewController.h"
+#import "Utils/StringUtils.h"
 
 NSString * const KEY_UDID_INSTEAD = @"com.myapp.udid.test";
 
@@ -29,6 +31,17 @@ NSString * const KEY_UDID_INSTEAD = @"com.myapp.udid.test";
         getUDIDInKeychain = (NSString *)[LZKeychain load:KEY_UDID_INSTEAD];
     }
     NSLog(@"最终 ———— UDID_INSTEAD %@",getUDIDInKeychain);
+    // TODO: 调用JS方法将唯一标识信息回传给前端
+    WebviewController *wc = [WebviewController shareInstance];
+    NSDictionary *dict = @{@"deviceId":getUDIDInKeychain};
+    NSString *emitName = @"deviceId";
+    NSString *deviceIdJsonStr = [StringUtils UIUtilsFomateJsonWithDictionary:dict];
+    NSString *js = [@"MOBILE_API.emit('" stringByAppendingString:emitName];
+    js = [js stringByAppendingString:@"','"];
+    js = [js stringByAppendingString:deviceIdJsonStr];
+    js = [js stringByAppendingString:@"')"];
+    NSLog(@" js is :%@", js);
+    [[wc webView] evaluateJavaScript:js completionHandler:nil];
     return getUDIDInKeychain;
 }
 

@@ -138,6 +138,19 @@ static Boolean hasPostLoaction;
     [self.locationManager stopUpdatingLocation];//停止定位
     //地理反编码
     CLLocation *currentLocation = [locations lastObject];
+    if (nil != currentLocation) {
+        double lat = currentLocation.coordinate.latitude;
+        double lon = currentLocation.coordinate.longitude;
+        double altitude = currentLocation.altitude;
+        NSLog(@"currentLocation lat is %f, lon is %f, altitude is %f", lat, lon, altitude);
+        //为了使定位返回的坐标系都为WGS84, 此处先将经纬度进行赋值
+        self.latitude = [[NSString alloc] initWithFormat:@"%f", lat];
+        self.longitude = [[NSString alloc] initWithFormat:@"%f", lon];
+    }else{
+        NSLog(@"currentLocation is nil");
+    }
+
+    
     CLGeocoder *geoCoder = [[CLGeocoder alloc]init];
     //当系统设置为其他语言时，可利用此方法获得中文地理名称
     NSMutableArray *userDefaultLanguages = [[NSUserDefaults standardUserDefaults]objectForKey:@"AppleLanguages"];
@@ -159,14 +172,14 @@ static Boolean hasPostLoaction;
             NSLog(@"whole address is %@",wholeAddress);
             
             //获取经纬度
-            double latitude = placeMark.location.coordinate.latitude;
-            double longitude = placeMark.location.coordinate.longitude;
-            
+            //double latitude = placeMark.location.coordinate.latitude;
+            //double longitude = placeMark.location.coordinate.longitude;
+            //经纬度前面已经使用了WGS84坐标，此处只需要使用解析后的地理位置名称
             self.address = wholeAddress;
-            self.latitude = [[NSString alloc] initWithFormat:@"%f", latitude];
-            self.longitude = [[NSString alloc] initWithFormat:@"%f", longitude];
-            NSLog(@" latitude is %@", self.latitude);
-            NSLog(@" longitude is %@", self.longitude);
+            //self.latitude = [[NSString alloc] initWithFormat:@"%f", latitude];
+            //self.longitude = [[NSString alloc] initWithFormat:@"%f", longitude];
+            //NSLog(@" latitude is %@", self.latitude);
+            //NSLog(@" longitude is %@", self.longitude);
             
             // 显示定位结果信息
             //[self showLocate:self.uiViewController];

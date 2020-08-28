@@ -172,8 +172,9 @@
         }
         
         function getCacheSize() {
-            dsBridge.call("ios.getCacheSize")
+            var size = dsBridge.call("ios.getCacheSize")
             log("getCacheSize")
+            alert(size)
         }
         
         
@@ -217,6 +218,58 @@
             log("testEmit")
         }
         
+        //此处如果需要传名字的话，需要带好文件后缀名，否则不要传入，系统会自己根据路径命名。
+        function downloadAndPreviewFile() {
+            var params = {"url":"http://ww2.sinaimg.cn/bmiddle/904c2a35jw1emu3ec7kf8j20c10epjsn.jpg",
+                "fileName":"漂亮美眉.jpg"
+            }
+            
+            dsBridge.call("ios.downloadAndPreviewFile", JSON.stringify(params))
+            log("downloadAndPreviewFile")
+        }
+        
+        function setOrientation(){
+            dsBridge.call("ios.setOrientation", "0")
+            log("setOrientation")
+        }
+        
+        function checkoutUpdateAppVersion(){
+            dsBridge.call("ios.checkoutUpdateAppVersion", "1494423528")
+            log("checkoutUpdateAppVersion")
+        }
+        
+        function doNavigation(){
+            var params = {
+                "sname":"王朝一中",
+                "slat":"28.2293481",
+                "slon":"112.86404595",
+                "dname":"洗心禅寺",
+                "dlat":"28.283453812824025",
+                "dlon":"112.85752267799153"
+            }
+            
+            dsBridge.call("ios.doNavigation", JSON.stringify(params))
+            log("doNavigation")
+        }
+        
+        MOBILE_API.on("locationRs", function(res){
+                      log(res.longitude)
+                      log(res.latitude)
+                      log(res.address)
+                      
+                      var params = {
+                      "sname":res.address,
+                      "slat":res.latitude,
+                      "slon":res.longitude,
+                      "dname":"洗心禅寺",
+                      "dlat":"28.283453812824025",
+                      "dlon":"112.85752267799153"
+                      }
+                      
+                      dsBridge.call("ios.doNavigation", JSON.stringify(params))
+                      
+                      })
+        
         </script>
         
        <p style="text-align:center"> <button id="btn1" type = "button" onclick = "platformCheck()" > 平台检测</button> </p>
@@ -244,7 +297,26 @@
       <p style="text-align:center"> <button id="btn1" type = "button" onclick = "hikVideoPlay()" > 海康视频播放</button> </p>
       
      <p style="text-align:center"> <button id="btn1" type = "button" onclick = "ijkLivePlayWithTitle()" > ijk带有标题的视频播放</button> </p>
-       
+     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "downloadAndPreviewFile()" > 文件下载和预览</button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setOrientation()" > 设置屏幕模式        </button> </p>
+    
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "checkoutUpdateAppVersion()" > 应用更新检测        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "doNavigation()" > 开启导航        </button> </p>
+
+<!--     <p>测试A标签下载功能：<p>-->
+<!--     <a href="http://58.20.55.73:38082/repository/npm-local/hz-hydro                                              " download="zip文件">-->
+<!--         <img border="0" src="/i/w3school_logo_white.gif" alt="文件下载">-->
+<!--     </a>-->
+
+     <div>
+         <!--拍照 -->
+         <input type="file" accept="image/*" capture="environment" name="takePhoto">
+         <!--拍视频 -->
+         <input type="file" accept="video/*" capture="environment" name="takevideo">
+         <!--文件选择，无法直接进入相册 -->
+         <input type="file" accept="*/*" name="choose from file system">
+     </div>
+     
         <div id='buttons'></div>
         <div id='log'></div>
         <div id='scanResult'></div>

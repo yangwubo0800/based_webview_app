@@ -76,6 +76,9 @@
 //        [[WebviewController shareInstance] reloadWebview];
 //    }
     
+    // 启动图片延时: 2秒
+    [NSThread sleepForTimeInterval:2];
+    
     return YES;
 }
 
@@ -489,14 +492,22 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
 //在AppDelegate.m中添加转屏的代理方法
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(nullable UIWindow *)window{
     
-    if (self.allowRotation == YES) {
-        //横屏
+//    if (self.allowRotation == YES) {
+//        //横屏
+//        return UIInterfaceOrientationMaskAll;
+//
+//    }else{
+//        //竖屏
+//        return UIInterfaceOrientationMaskPortrait;
+//
+//    }
+    
+    if ([self.orientationMode isEqualToString:@"0"]) {
+        return UIInterfaceOrientationMaskAll;
+    }else if ([self.orientationMode isEqualToString:@"1"]){
         return UIInterfaceOrientationMaskLandscape;
-        
-    }else{
-        //竖屏
+    }else {
         return UIInterfaceOrientationMaskPortrait;
-        
     }
     
 }

@@ -7,6 +7,7 @@
 //
 
 #import "GeneralUtils.h"
+#import <WebKit/WebKit.h>
 
 @implementation GeneralUtils
 
@@ -100,10 +101,44 @@
         }
     }
     
+    [self deleteWebCache];
     //读取缓存大小
 //    float cacheSize = [self readCacheSize] *1024;
 //    self.cacheSize.text = [NSString stringWithFormat:@"%.2fKB",cacheSize];
     
+}
+
++(void)deleteWebCache {
+    
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0) {
+//        NSSet *websiteDataTypes = [NSSet setWithArray:@[
+//                                WKWebsiteDataTypeDiskCache,
+//                                //WKWebsiteDataTypeOfflineWebApplicationCache,
+//                                WKWebsiteDataTypeMemoryCache,
+//                                //WKWebsiteDataTypeLocalStorage,
+//                                //WKWebsiteDataTypeCookies,
+//                                //WKWebsiteDataTypeSessionStorage,
+//                                //WKWebsiteDataTypeIndexedDBDatabases,
+//                                //WKWebsiteDataTypeWebSQLDatabases
+//                                ]];
+        //// All kinds of data
+        NSSet *websiteDataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+        //// Date from
+        NSDate *dateFrom = [NSDate dateWithTimeIntervalSince1970:0];
+        //// Execute
+        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:dateFrom completionHandler:^{
+            // Done
+            NSLog(@"deleteWebCache ios 9.0 or higher");
+        }];
+        
+    } else {
+        
+        NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *cookiesFolderPath = [libraryPath stringByAppendingString:@"/Cookies"];
+        NSError *errors;
+        [[NSFileManager defaultManager] removeItemAtPath:cookiesFolderPath error:&errors];
+        NSLog(@"deleteWebCache ios 8.0 or lower");
+    }
 }
 
 @end

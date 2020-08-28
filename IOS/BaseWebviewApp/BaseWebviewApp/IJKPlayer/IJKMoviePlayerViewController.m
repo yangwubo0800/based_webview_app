@@ -84,7 +84,8 @@ static IJKVideoViewController *instance = nil;
 //    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft animated:NO];
     AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     //允许转成横屏
-    appDelegate.allowRotation = YES;
+    //appDelegate.allowRotation = YES;
+    appDelegate.orientationMode = @"1";
     //调用横屏代码
     [UIDevice switchNewOrientation:UIInterfaceOrientationLandscapeRight];
     NSLog(@"=====viewDidLoad switch UIInterfaceOrientationLandscapeRight");
@@ -212,7 +213,8 @@ static IJKVideoViewController *instance = nil;
     [self removeMovieNotificationObservers];
     //允许转成竖屏
     AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
+    //appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
+    appDelegate.orientationMode = @"2";
     //切换到竖屏
     [UIDevice switchNewOrientation:UIInterfaceOrientationPortrait];
     //销毁定时器

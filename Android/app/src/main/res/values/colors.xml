@@ -18,5 +18,7 @@
 
     <!--状态栏-->
     <color name="statusBarColor">#3277b3</color>
+    <!--标题栏-->
+    <color name="titleBG">#3277b3</color>
 
 </resources>

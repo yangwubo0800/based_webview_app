@@ -32,8 +32,9 @@ public class SplashActivity extends Activity {
         SpUtils.setSpFileName(Constants.PREF_NAME_SETTING);
         boolean isFirstOpen = SpUtils.getBoolean(this, Constants.FIRST_OPEN_KEY, true);
         // 如果是第一次启动，则先进入功能引导页
-        if (isFirstOpen && ParseConfig.sNeedGuidePage) {
-            Intent intent = new Intent(this, WelcomeGuideActivity.class);
+        if (isFirstOpen ) {
+            //首先进入用户协议，点击同意后再判断是否要进入向导页面
+            Intent intent = new Intent(this, AgreementActivity.class);
             startActivity(intent);
             finish();
             return;

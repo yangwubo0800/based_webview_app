@@ -969,7 +969,8 @@ public class WebViewActivity extends AppCompatActivity {
                 String logLine = "E " + " description=" + description +" errorCode=" + errorCode;
                 sendLogMsg(logLine);
                 // 在这里显示自定义错误页,只处理没有连接网络的情况
-                if (errorCode == -2){
+                //规避出现非断网情况下，errorCode也为-2，但是错误描述为ERR_NAME_NOT_RESOLVE时显示默认无网络页面的问题
+                if ((errorCode == -2) && ("net::ERR_INTERNET_DISCONNECTED".equals(description))){
                     showErrorPage();//显示错误页面
                 }
             }
@@ -990,7 +991,7 @@ public class WebViewActivity extends AppCompatActivity {
                     String logLine = "E " + " errDes=" + errDes +" errorCode=" + errorCode;
                     sendLogMsg(logLine);
                     // 在这里显示自定义错误页,只处理没有连接网络的情况
-                    if (errorCode == -2){
+                    if ((errorCode == -2) && ("net::ERR_INTERNET_DISCONNECTED".equals(errDes))){
                         showErrorPage();//显示错误页面
                     }
                 }

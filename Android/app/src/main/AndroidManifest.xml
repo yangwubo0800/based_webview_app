@@ -63,6 +63,8 @@
         </activity>
         <activity android:name=".example.FileUploadDemoActivity"></activity>
         <activity android:name=".ModeChooseActivity"></activity>
+        <activity android:name=".ui.guide.AgreementActivity"></activity>
+        <activity android:name=".ui.guide.AgreementDetailActivity"></activity>
         <activity
             android:name=".RealHtmlActivity">
         </activity>

@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup.LayoutParams;
@@ -17,8 +18,12 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.MessageDigest;
@@ -44,6 +49,7 @@ import java.util.regex.Pattern;
  */
 public final class GeneralUtils {
 
+    private static String TAG = "GeneralUtils";
     /**
      * 判断对象是否为null , 为null返回true,否则返回false
      *
@@ -910,4 +916,40 @@ public final class GeneralUtils {
         }
         return "";
     }
+
+
+    /**
+     * 获取asset目录下的文件中内容
+     * @param context
+     * @param fileName
+     * @return
+     */
+    public static String getContentFromAsset(Context context, String fileName) {
+        String str = null;
+        try {
+            InputStream inputStream = context.getAssets().open(fileName);
+
+            InputStreamReader inputStreamReader = null;
+            try {
+                inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+            } catch (UnsupportedEncodingException e1) {
+                e1.printStackTrace();
+            }
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            StringBuffer sb = new StringBuffer("");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+            //赋值字符串，关闭资源
+            str = sb.toString();
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG,"getContentFromAsset str is:"+ str);
+        return str;
+    }
+
 }

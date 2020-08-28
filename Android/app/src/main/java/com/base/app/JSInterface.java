@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
 import com.alibaba.fastjson.JSON;
+import com.base.app.ui.guide.AgreementDetailActivity;
 import com.base.utils.DataCleanManager;
 import com.base.utils.DownloadUtil;
 import com.base.utils.SpUtils;
@@ -1399,4 +1400,30 @@ public class JSInterface {
         mVideoCfgInfoUrl = url;
         mHandler.postDelayed(mUpdateVideoInfoRunnable, 1000);
     }
+
+    /**
+     * 功能：退出应用
+     * 参数：
+     * 返回值：无
+     * 使用方式：window.functionTag.finish()
+     */
+    @JavascriptInterface
+    public void finish(){
+        AFLog.d(TAG,"finish");
+        mActivity.finish();
+    }
+
+
+    /**
+     * 提供前端界面进入用户协议或者隐私政策的入口
+     * @param infoType 用户协议传入字符串agreement， 隐私政策传入字符串privacy
+     */
+    @JavascriptInterface
+    public void enterAgreementDetail(String infoType){
+        AFLog.d(TAG,"enterAgreementDetail infoType="+infoType);
+        Intent it = new Intent(mActivity, AgreementDetailActivity.class);
+        it.putExtra("infoType",infoType);
+        mActivity.startActivity(it);
+    }
+
 }

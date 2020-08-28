@@ -4,6 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="./js/android.js" type="text/javascript"></script>
+    <script src="./js/device.js" type="text/javascript"></script>
 	<title>主页</title>
 
     <script type="text/javascript">
@@ -13,6 +14,27 @@
             document.getElementById("latitude").innerText="纬度：" + res.latitude;
             document.getElementById("address").innerText="地址：" + res.address;
             document.getElementById("name").innerText="名称：" + res.name;
+       })
+
+
+       MOBILE_API.on("locationRs", function(res){
+            console.log(res)
+            document.getElementById("longitude").innerText="经度：" + res.longitude;
+            document.getElementById("latitude").innerText="纬度：" + res.latitude;
+            document.getElementById("address").innerText="地址：" + res.address;
+            document.getElementById("name").innerText="名称：" + res.name;
+
+            var params = {
+            "sname":"我的位置",
+            "slat":"0",
+            "slon":"0",
+            "dname":res.address,
+            "dlat":res.latitude,
+            "dlon":res.longitude
+            }
+
+            window.functionTag.startMapNavigation(JSON.stringify(params));
+
        })
 	   
 	   
@@ -28,10 +50,44 @@
 
        })
 
-       function getCacheSize(){
+
+       function saveAccount(){
+        //var account = '{remember:"1",account:"sduser",pwd:"123"}';
+        window.functionTag.setKeyValue('account', 'sduser')
+        }
+
+        function getAccount(){
+            var account = window.functionTag.getValueByKey('account');
+            document.getElementById("account").innerText= "账号信息：" + account ;
+        }
+        function getCacheSize(){
             var size = window.functionTag.getAppCacheSize();
             document.getElementById("size").innerText= "缓存大小：" + size ;
-       }
+        }
+
+        function navigation(){
+            //望城一中
+            var slat = "28.2293481"
+            var slon = "112.86404595"
+            var sname = "望城一中"
+
+            //洗心禅寺
+            var dlat = "28.28199636750406"
+            var dlon = "112.85373773503902"
+            var dname = "洗心禅寺"
+
+            var params = {
+            "sname":"望城一中",
+            "slat":"28.2293481",
+            "slon":"112.86404595",
+            "dname":"洗心禅寺",
+            "dlat":"28.283453812824025",
+            "dlon":"112.85752267799153"
+            }
+
+            window.functionTag.startMapNavigation(JSON.stringify(params));
+
+        }
     </script>
 	
     <style type="text/css">
@@ -89,6 +145,11 @@
             <img src="../images/photo.png">
             <label>获取定位信息</label>
         </div>
+        <div onclick="navigation()">
+            <img src="../images/photo.png">
+            <label>指定导航</label>
+        </div>
+        <!--
 		<div onclick="Android.scanQRCode('scantest2')">
             <img src="../images/photo.png">
             <label>获取扫码信息</label>
@@ -97,6 +158,21 @@
 		<div onclick="Android.deviceId()">
             <img src="../images/photo.png">
             <label>获取串码</label>
+        </div>
+
+        <div onclick="saveAccount()">
+            <img src="../images/photo.png">
+            <label>保存账号</label>
+        </div>
+
+        <div onclick="getAccount()">
+            <img src="../images/photo.png">
+            <label>获取账号</label>
+        </div>
+
+        <div onclick="window.functionTag.checkNewVersion()">
+            <img src="../images/photo.png">
+            <label>检测更新</label>
         </div>
 
         <div onclick="window.functionTag.previewPhoto('http://mmbiz.qpic.cn/mmbiz/PwIlO51l7wuFyoFwAXfqPNETWCibjNACIt6ydN7vw8LeIwT7IjyG3eeribmK4rhibecvNKiaT2qeJRIWXLuKYPiaqtQ/0')">
@@ -113,7 +189,19 @@
             <img src="../images/photo.png">
             <label>清理缓存</label>
         </div>
-	</section>
+
+        <div onclick="window.functionTag.enterAgreementDetail('agreement')">
+            <img src="../images/photo.png">
+            <label>用户协议</label>
+        </div>
+
+        <div onclick="window.functionTag.enterAgreementDetail('privacy')">
+            <img src="../images/photo.png">
+            <label>隐私政策</label>
+        </div>
+
+        -->
+        </section>
 	
 	   <div id="location" style="margin:10px;">定位信息:</div>
 	   <div id="longitude" style="margin:10px;"></div>
@@ -123,6 +211,7 @@
 	   <div id="scanResult" style="margin:10px;"></div>
 	   <div id="scanName" style="margin:10px;"></div>
 	   <div id="deviceId" style="margin:10px;"></div>
+       <div id="account" style="margin:10px;">account info</div>
        <div id="size" style="margin:10px;"></div>
 
 

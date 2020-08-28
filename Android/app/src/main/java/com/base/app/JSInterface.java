@@ -2,7 +2,9 @@ package com.base.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -22,11 +24,15 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.base.app.ui.guide.AgreementDetailActivity;
+import com.base.bean.GPS;
 import com.base.utils.DataCleanManager;
 import com.base.utils.DownloadUtil;
+import com.base.utils.GPSConverterUtils;
+import com.base.utils.MapUtil;
 import com.base.utils.SpUtils;
 import com.cpe.ijkplayer.ui.LivePlayActivityNew;
 import com.example.ezrealplayer.ui.EZRealPlayActivity;
@@ -182,6 +188,9 @@ public class JSInterface {
             }
         }
     };
+
+    //跳转三方地图当行选择框
+    private AlertDialog mapItemDialog;
 
     /**
      *
@@ -1426,4 +1435,132 @@ public class JSInterface {
         mActivity.startActivity(it);
     }
 
+    /**
+     *
+     * @param navigationLocation 出发地和目的地参数json字符串
+     */
+    @JavascriptInterface
+    public void startMapNavigation(String navigationLocation){
+
+        //先根据手机上安装的地图应用，显示列表框，如果没有安装任何地图，提示用户安装
+        boolean gaodeInstalled =  MapUtil.isGdMapInstalled();
+        boolean baiduInstalled =  MapUtil.isBaiduMapInstalled();
+        boolean tencentMapInstalled =  MapUtil.isTencentMapInstalled();
+
+        if (!gaodeInstalled && !baiduInstalled && !tencentMapInstalled){
+            Toast.makeText(mContext, "请在手机上安装百度、高德、腾讯地图中的一种地图", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //解析json字符参数
+        com.alibaba.fastjson.JSONObject locations =  JSON.parseObject(navigationLocation);
+        final String slatStr = locations.getString("slat");
+        String slonStr = locations.getString("slon");
+        final String sname = locations.getString("sname");
+        String dlatStr = locations.getString("dlat");
+        String dlonStr = locations.getString("dlon");
+        final String dname = locations.getString("dname");
+
+
+        ArrayList<String> mapItems = new ArrayList<>();
+        if (gaodeInstalled){
+            mapItems.add("高德地图");
+        }
+
+        if (baiduInstalled){
+            mapItems.add("百度地图");
+        }
+
+        if (tencentMapInstalled){
+            mapItems.add("腾讯地图");
+        }
+
+        AFLog.d(TAG,"原始GPS坐标数据出发地 slatStr="+slatStr+" slonStr="+slonStr);
+        AFLog.d(TAG,"原始GPS坐标数据目的地 dlatStr="+dlatStr+" dlonStr="+dlonStr);
+
+        try{
+            final double slat = Double.parseDouble(slatStr);
+            final double slon = Double.parseDouble(slonStr);
+            final double dlat = Double.parseDouble(dlatStr);
+            final double dlon = Double.parseDouble(dlonStr);
+
+
+            //将GS84转换为火星坐标系
+            GPS gcj02Destination = GPSConverterUtils.gps84_To_Gcj02(dlat, dlon);
+            final double gcj02LatD = (null == gcj02Destination) ?0:gcj02Destination.getLat();
+            final double gcj02LonD = (null == gcj02Destination) ?0:gcj02Destination.getLon();
+            AFLog.d(TAG,"目的地转换为火星坐标后 gcj02LatD="+gcj02LatD+" gcj02LonD="+gcj02LonD);
+
+            GPS gcj02Start = GPSConverterUtils.gps84_To_Gcj02(slat, slon);
+            final double gcj02LatS = (null == gcj02Start) ?0:gcj02Start.getLat();
+            final double gcj02LonS = (null == gcj02Start) ?0:gcj02Start.getLon();
+            AFLog.d(TAG,"出发地转换为火星坐标后 gcj02LatS="+gcj02LatS+" gcj02LonS="+gcj02LonS);
+
+
+            final String[] items = (String[]) mapItems.toArray(new String[mapItems.size()]);
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
+            alertBuilder.setTitle("地图选择");
+            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //Toast.makeText(mContext, items[i], Toast.LENGTH_SHORT).show();
+                    //根据选择的应用来确认坐标系转换
+                    mapItemDialog.dismiss();
+                    if ("高德地图".equals(items[i])){
+                        if ("0".equals(slatStr)){
+                           MapUtil.openGaoDeNavi(mContext, 0, 0, "我的位置" , gcj02LatD, gcj02LonD, dname);
+                        }else {
+                            MapUtil.openGaoDeNavi(mContext, gcj02LatS, gcj02LonS, sname, gcj02LatD, gcj02LonD, dname);
+                        }
+
+                    }
+
+                    if ("腾讯地图".equals(items[i])){
+                        if ("0".equals(slatStr)){
+                            MapUtil.openTencentMap(mContext, 0, 0, "我的位置" , gcj02LatD, gcj02LonD, dname);
+                        }else {
+                            MapUtil.openTencentMap(mContext, gcj02LatS, gcj02LonS, sname, gcj02LatD, gcj02LonD, dname);
+                        }
+
+                    }
+
+                    if ("百度地图".equals(items[i])){
+
+                        //将火星坐标转换为百度坐标
+//                        GPS bd09Destination = GPSConverterUtils.gcj02_To_Bd09(gcj02LatD, gcj02LonD);
+//                        double bd09LatD = (null == bd09Destination) ?0:bd09Destination.getLat();
+//                        double bd09LonD = (null == bd09Destination) ?0:bd09Destination.getLon();
+//                        AFLog.d(TAG,"目的地转换为百度坐标后 bd09LatD="+bd09LatD+" bd09LonD="+bd09LonD);
+//
+//                        GPS bd09Start = GPSConverterUtils.gcj02_To_Bd09(gcj02LatS, gcj02LonS);
+//                        double bd09LatS = (null == bd09Start) ?0:bd09Start.getLat();
+//                        double bd09LonS = (null == bd09Start) ?0:bd09Start.getLon();
+//                        AFLog.d(TAG,"出发地转换为百度坐标后 bd09LatS="+bd09LatS+" bd09LonS="+bd09LonS);
+//
+//
+//                        if ("0".equals(slatStr)){
+//                            MapUtil.openBaiDuNavi(mContext, 0, 0, "我的位置" , bd09LatD, bd09LonD, dname);
+//                        }else {
+//                            MapUtil.openBaiDuNavi(mContext, bd09LatS, bd09LonS, sname, bd09LatD, bd09LonD, dname);
+//                        }
+
+
+                        if ("0".equals(slatStr)){
+                            MapUtil.openBaiDuNavi(mContext, 0, 0, "我的位置" , gcj02LatD, gcj02LonD, dname);
+                        }else {
+                            MapUtil.openBaiDuNavi(mContext, gcj02LatS, gcj02LonS, sname, gcj02LatD, gcj02LonD, dname);
+                        }
+
+                    }
+                }
+            });
+            mapItemDialog = alertBuilder.create();
+            mapItemDialog.show();
+
+
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+            AFLog.d(TAG,"传入经纬度参数有误");
+        }
+    }
 }

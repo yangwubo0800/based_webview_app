@@ -25,6 +25,11 @@
     <!-- 配置需要打包到本地的不经常变化的大的js文件,注意一定要在 app/src/main/assets/js/ 目录下放置对应的文件 -->
     <!-- 可以配置多个，没有需要本地打包的js请将此配置删除 -->
     <local_js_file jsName="vendor.js" />
-   
+
+    <!-- 是否需要极光推送 -->
+    <need_jpush need="0" />
+
+    <!-- 是否需要百度云推送 -->
+    <need_baiduPush need="1" />
 
 </appInfos>

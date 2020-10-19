@@ -18,6 +18,7 @@ android {
         manifestPlaceholders = [
                 JPUSH_APPKEY : "xxxxx",//值来自开发者平台取得的AppKey
                 JPUSH_CHANNEL: "company channel",
+                BaiduPUSH_APPKEY : "xxxx",//百度云推送apikey
         ]
     }
     buildTypes {

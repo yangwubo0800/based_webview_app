@@ -2,9 +2,11 @@ package com.base.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.InputFilter;
@@ -950,6 +952,35 @@ public final class GeneralUtils {
         }
         Log.d(TAG,"getContentFromAsset str is:"+ str);
         return str;
+    }
+
+
+    /**
+     * 根据mainifest.xml中的 metakey获取数据
+     * @param context
+     * @param metaKey
+     * @return
+     */
+    public static String getMetaValue(Context context, String metaKey) {
+        Bundle metaData = null;
+        String apiKey = null;
+        if (context == null || metaKey == null) {
+            return null;
+        }
+        try {
+            ApplicationInfo ai = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(),
+                            PackageManager.GET_META_DATA);
+            if (null != ai) {
+                metaData = ai.metaData;
+            }
+            if (null != metaData) {
+                apiKey = metaData.getString(metaKey);
+            }
+        } catch (NameNotFoundException e) {
+            Log.e(TAG, "error " + e.getMessage());
+        }
+        return apiKey;
     }
 
 }

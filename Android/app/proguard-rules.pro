@@ -50,3 +50,8 @@
 
 -dontwarn cn.jiguang.**
 -keep class cn.jiguang.** { *; }
+
+#百度云消息推送混淆配置
+-libraryjars libs/pushservice-7.0.0.27.jar
+-dontwarn com.baidu.**
+-keep class com.baidu.**{*; }

@@ -32,6 +32,10 @@ public class ParseConfig {
     public static boolean sNeedGuidePage = true;
     //解析后的需要引用本地Js的文件名称
     public static ArrayList<String> sLocalJsFiles;
+    //是否需要极光推送
+    public static boolean sNeedJpush= false;
+    //是否需要百度云推送
+    public static boolean sNeedBaiduPush= false;
 
 
     /**
@@ -199,6 +203,14 @@ public class ParseConfig {
                                 Log.d(TAG, "loadAppConfig jsName=" + jsName);
                                 sLocalJsFiles.add(jsName);
                             }
+                        }else if (Constants.NEED_JPUSH.equals(parser.getName())) {
+                            String needJPush = parser.getAttributeValue(null, Constants.NEED_KEY);
+                            Log.d(TAG, "loadAppConfig needJPush=" + needJPush);
+                            sNeedJpush = Integer.parseInt(needJPush) == 0 ? false : true;
+                        }else if (Constants.NEED_BAIDU_PUSH.equals(parser.getName())) {
+                            String needBaiduPush = parser.getAttributeValue(null, Constants.NEED_KEY);
+                            Log.d(TAG, "loadAppConfig needBaiduPush=" + needBaiduPush);
+                            sNeedBaiduPush = Integer.parseInt(needBaiduPush) == 0 ? false : true;
                         }
                         break;
                     case XmlPullParser.END_TAG:

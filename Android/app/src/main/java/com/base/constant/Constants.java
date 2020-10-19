@@ -43,6 +43,10 @@ public class Constants {
     public static final String APP_XML_BACKUP_FILE_NAME = "app_config_backup.xml";
     //是否从asset中加载过配置文件
     public static final String HAS_LOADED_ASSET_KEY = "has_loaded_asset";
+    //是否需要极光推送的标签
+    public static final String NEED_JPUSH= "need_jpush";
+    //是否需要百度云推送的标签
+    public static final String NEED_BAIDU_PUSH= "need_baiduPush";
 
 
     /**

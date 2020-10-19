@@ -27,6 +27,7 @@ import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.baidu.android.pushservice.PushManager;
 import com.base.app.ui.guide.AgreementDetailActivity;
 import com.base.bean.GPS;
 import com.base.utils.DataCleanManager;
@@ -194,6 +195,11 @@ public class JSInterface {
 
     //跳转三方地图当行选择框
     private AlertDialog mapItemDialog;
+    //区分百度云消息推送是设置还是清理标签 "set" "clean"
+    public static String mBaiduPushOperate;
+    //需要设置的百度推送标签
+    public static String mBaiduPushTags;
+
 
     /**
      *
@@ -1620,5 +1626,89 @@ public class JSInterface {
         JPushInterface.cleanTags(mContext, 2021);
     }
 
+
+    public static List<String> getTagsList(String originalText) {
+        if (TextUtils.isEmpty(originalText)) {
+            return null;
+        }
+        List<String> tags = new ArrayList<String>();
+        int indexOfComma = originalText.indexOf(',');
+        String tag;
+        while (indexOfComma != -1) {
+            tag = originalText.substring(0, indexOfComma);
+            tags.add(tag);
+
+            originalText = originalText.substring(indexOfComma + 1);
+            indexOfComma = originalText.indexOf(',');
+        }
+
+        tags.add(originalText);
+        return tags;
+    }
+
+    /**
+     * 功能：设置百度云消息推送tag
+     * 参数：tagWithUrl 由标签和跳转页面组成的json字符串
+     * tags 标签，如果有多个，以逗号分隔
+     * jumpUrl 点击消息跳转页面路径
+     * 返回值：无
+     * 使用方式：window.functionTag.setBaiduPushTagAndJumpUrl(tagWithUrl)
+     */
+    @JavascriptInterface
+    public void setBaiduPushTagAndJumpUrl(String tagWithUrl){
+
+        String jumpUrl = null;
+        String tags = null;
+        com.alibaba.fastjson.JSONObject tagWithUrlObj = JSON.parseObject(tagWithUrl);
+        if (null != tagWithUrlObj){
+            jumpUrl = tagWithUrlObj.getString("jumpUrl");
+            tags = tagWithUrlObj.getString("tags");
+        }
+
+        //设置历史告警页面查看地址, 将此动作和推送tag关联起来，便于前端使用,其也不必要关注使用哪个key来设置了
+        if (!TextUtils.isEmpty(jumpUrl)){
+            setKeyValue(Constants.PUSH_MESSAGE_JUMP_URL_KEY, jumpUrl);
+        }
+
+        AFLog.d(TAG,"setBaiduPushTagAndJumpUrl tags="+tags);
+        if (!TextUtils.isEmpty(tags)){
+            mBaiduPushOperate = "set";
+            mBaiduPushTags = tags;
+            // TODO: 先都获取，然后删除，最后设置
+            PushManager.listTags(mContext);
+            AFLog.d(TAG,"设置百度云消息推送tag接口已经调用,等待结果...");
+        }else {
+            AFLog.e(TAG,"setBaiduPushTagAndJumpUrl tags为空");
+        }
+    }
+
+
+    /**
+     * 功能：清除百度云消息推送tag
+     * 参数：无
+     * 返回值：无
+     * 使用方式：window.functionTag.cleanBaiduPushTag()
+     */
+    @JavascriptInterface
+    public void cleanBaiduPushTag(){
+        AFLog.d(TAG,"开始清除百度云消息推送tag，等待结果...");
+        mBaiduPushOperate = "clean";
+        // TODO: 先都获取，然后删除
+        PushManager.listTags(mContext);
+    }
+
+
+    /**
+     * 功能：清除百度云消息推送tag
+     * 参数：无
+     * 返回值：无
+     * 使用方式：window.functionTag.ShowBaiduPushTag()
+     */
+    @JavascriptInterface
+    public void ShowBaiduPushTag(){
+        AFLog.d(TAG,"开始获取百度云消息推送tag，等待结果...");
+        mBaiduPushOperate = null;
+        PushManager.listTags(mContext);
+    }
 
 }

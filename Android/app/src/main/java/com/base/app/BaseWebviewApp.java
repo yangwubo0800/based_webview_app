@@ -2,6 +2,10 @@ package com.base.app;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.base.utils.GeneralUtils;
 import com.base.utils.log.AFLog;
 
 import com.base.bean.User;
@@ -85,10 +89,19 @@ public class BaseWebviewApp extends Application {
         //处理未捕获异常
         new MyCrashHandler(this);
         //极光推送初始化,  TODO:是否要做成可配置
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(mContext);
-        String registId = JPushInterface.getRegistrationID(mContext);
-        AFLog.e(TAG, "极光初始化后注册 registId="+registId);
+        if (ParseConfig.sNeedJpush){
+            JPushInterface.setDebugMode(true);
+            JPushInterface.init(mContext);
+            String registId = JPushInterface.getRegistrationID(mContext);
+            AFLog.e(TAG, "极光初始化后注册 registId="+registId);
+        }
+
+        if (ParseConfig.sNeedBaiduPush){
+            String baiduPushKey = GeneralUtils.getMetaValue(mContext, "BaiduPUSH_APPKEY");
+            PushManager.startWork(mContext, PushConstants.LOGIN_TYPE_API_KEY, baiduPushKey);
+            AFLog.e(TAG, "百度云消息推送初始化 baiduPushKey="+baiduPushKey);
+        }
+
 
     }
 

@@ -50,6 +50,11 @@ public class Constants {
      */
     public static final String NOTIFYCATION_SWITCH_KEY="notification_switch";
 
+    /**
+     * 三方推送消息点击跳转地址, 基于之前IOS已经使用过极光推送，为了兼容前端，使用的key字段为historyAlarmUrl
+     */
+    public static final String PUSH_MESSAGE_JUMP_URL_KEY="historyAlarmUrl";
+
     //定义activity里面请求码
     //界面跳转请求
     public static final int TAKE_PHOTO_REQUEST = 2;

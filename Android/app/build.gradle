@@ -15,6 +15,10 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                JPUSH_APPKEY : "xxxxx",//值来自开发者平台取得的AppKey
+                JPUSH_CHANNEL: "company channel",
+        ]
     }
     buildTypes {
 
@@ -26,6 +30,17 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+    }
+
+    //TODO：只保留ABI为:'armeabi-v7a'的so, 'armeabi'已经不支持，'armeabi'的so通常可以直接置于'armeabi-v7a'
+    // 海康视频，此配置用来分割apk,减小大小，会导致生成文件带有abi名字
+    // 极光推送提供了所有平台的so，但是市面上大部分机型为armv7 https://www.jianshu.com/p/918149d3ef34
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a'
         }
     }
 

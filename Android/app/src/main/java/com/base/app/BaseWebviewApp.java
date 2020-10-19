@@ -7,6 +7,8 @@ import com.base.utils.log.AFLog;
 import com.base.bean.User;
 import com.base.receiver.MyNetworkReceiver;
 import com.base.utils.config.ParseConfig;
+
+import cn.jpush.android.api.JPushInterface;
 import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
 
 public class BaseWebviewApp extends Application {
@@ -82,6 +84,11 @@ public class BaseWebviewApp extends Application {
         SQLiteOnWeb.init(this).start();
         //处理未捕获异常
         new MyCrashHandler(this);
+        //极光推送初始化,  TODO:是否要做成可配置
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(mContext);
+        String registId = JPushInterface.getRegistrationID(mContext);
+        AFLog.e(TAG, "极光初始化后注册 registId="+registId);
 
     }
 

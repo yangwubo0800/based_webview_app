@@ -75,12 +75,15 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -1563,4 +1566,59 @@ public class JSInterface {
             AFLog.d(TAG,"传入经纬度参数有误");
         }
     }
+
+
+
+    /**
+     * 功能：设置极光推送tag
+     * 参数：tagWithUrl 由标签和跳转页面组成的json字符串
+     * tags 标签，如果有多个，以逗号分隔
+     * jumpUrl 点击消息跳转页面路径
+     * 返回值：无
+     * 使用方式：window.functionTag.setJPushTagAndJumpUrl(tagWithUrl)
+     */
+    @JavascriptInterface
+    public void setJPushTagAndJumpUrl(String tagWithUrl){
+
+        String jumpUrl = null;
+        String tags = null;
+        com.alibaba.fastjson.JSONObject tagWithUrlObj = JSON.parseObject(tagWithUrl);
+        if (null != tagWithUrlObj){
+            jumpUrl = tagWithUrlObj.getString("jumpUrl");
+            tags = tagWithUrlObj.getString("tags");
+        }
+
+        //设置历史告警页面查看地址, 将此动作和推送tag关联起来，便于前端使用,其也不必要关注使用哪个key来设置了
+        if (!TextUtils.isEmpty(jumpUrl)){
+            setKeyValue(Constants.PUSH_MESSAGE_JUMP_URL_KEY, jumpUrl);
+        }
+
+        AFLog.d(TAG,"setJPushTag tags="+tags);
+        if (!TextUtils.isEmpty(tags)){
+            String[] tagStr = tags.split(",");
+
+            List<String> list = Arrays.asList(tagStr);
+            Set<String> tagSet = new HashSet<>(list);
+            // 设置是覆盖逻辑
+            JPushInterface.setTags(mContext, 2020, tagSet);
+            AFLog.d(TAG,"设置tag接口已经调用,等待结果...");
+        }else {
+            AFLog.e(TAG,"setJPushTag tags为空");
+        }
+    }
+
+
+    /**
+     * 功能：清除极光推送tag
+     * 参数：无
+     * 返回值：无
+     * 使用方式：window.functionTag.cleanJPushTag()
+     */
+    @JavascriptInterface
+    public void cleanJPushTag(){
+        AFLog.d(TAG,"开始清除极光推送tag，等待结果...");
+        JPushInterface.cleanTags(mContext, 2021);
+    }
+
+
 }

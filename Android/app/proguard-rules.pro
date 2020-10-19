@@ -38,3 +38,15 @@
 -keepclassmembers class * extends android.webkit.WebChromeClient {
    public void openFileChooser(...);
 }
+
+
+#极光推送混淆配置
+-dontoptimize
+-dontpreverify
+
+-dontwarn cn.jpush.**
+-keep class cn.jpush.** { *; }
+-keep class * extends cn.jpush.android.helpers.JPushMessageReceiver { *; }
+
+-dontwarn cn.jiguang.**
+-keep class cn.jiguang.** { *; }

@@ -36,7 +36,8 @@ public class ParseConfig {
     public static boolean sNeedJpush= false;
     //是否需要百度云推送
     public static boolean sNeedBaiduPush= false;
-
+    //是否需要个推推送
+    public static boolean sNeedGTPush= false;
 
     /**
      * 从asset目录下加载 配置xml资源到data目录
@@ -211,6 +212,10 @@ public class ParseConfig {
                             String needBaiduPush = parser.getAttributeValue(null, Constants.NEED_KEY);
                             Log.d(TAG, "loadAppConfig needBaiduPush=" + needBaiduPush);
                             sNeedBaiduPush = Integer.parseInt(needBaiduPush) == 0 ? false : true;
+                        }else if (Constants.NEED_GETUI_PUSH.equals(parser.getName())) {
+                            String needGTPush = parser.getAttributeValue(null, Constants.NEED_KEY);
+                            Log.d(TAG, "loadAppConfig needGTPush=" + needGTPush);
+                            sNeedGTPush = Integer.parseInt(needGTPush) == 0 ? false : true;
                         }
                         break;
                     case XmlPullParser.END_TAG:

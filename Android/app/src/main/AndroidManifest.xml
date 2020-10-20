@@ -25,6 +25,13 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Push service 运行需要的权限 END -->
 
+    <!-- 集成个推推送消息开始， 浮动通知权限 -->
+    <uses-permission android:name="getui.permission.GetuiService.${applicationId}" />
+
+    <permission
+        android:name="getui.permission.GetuiService.${applicationId}"
+        android:protectionLevel="normal" />
+    <!-- 集成个推推送消息结束， 浮动通知权限 -->
 
     <!-- GPS或者network定位权限 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -218,6 +225,16 @@
         <meta-data android:name="JPUSH_APPKEY" android:value="${JPUSH_APPKEY}" /> <!--  </>值来自开发者平台取得的AppKey-->
         <!-- 百度云推送apikey -->
         <meta-data android:name="BaiduPUSH_APPKEY" android:value="${BaiduPUSH_APPKEY}" />
+        <!-- 个推消息推送key -->
+        <meta-data
+            android:name="PUSH_APPID"
+            android:value="${GETUI_APP_ID}" />
+        <meta-data
+            android:name="PUSH_APPKEY"
+            android:value="${GETUI_APP_KEY}" />
+        <meta-data
+            android:name="PUSH_APPSECRET"
+            android:value="${GETUI_APP_SECRET}" />
 
         <!-- User defined.  For test only  用户自定义接收消息器,3.0.7开始支持,目前新tag/alias接口设置结果会在该广播接收器对应的方法中回调-->
         <!--since 3.3.0 接收JPush相关事件-->
@@ -228,7 +245,7 @@
             </intent-filter>
         </receiver>
         <!-- 百度云推送 push必须的组件声明  START -->
-        <receiver android:name="com.hnac.receiver.BaiduPushMessageReceiver">
+        <receiver android:name="com.base.receiver.BaiduPushMessageReceiver">
             <intent-filter>
                 <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
                 <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
@@ -289,6 +306,48 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:process=":bdservice_v1" />
         <!-- push必须的组件声明  END -->
+
+
+        <!-- 个推消息推送集成， 配置SDK核心服务 -->
+        <service
+            android:name="com.igexin.sdk.PushService"
+            android:exported="false"
+            android:label="NotificationCenter"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:process=":pushservice"/>
+
+        <receiver android:name="com.igexin.sdk.PushReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.igexin.sdk.PushActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:process=":pushservice"
+            android:taskAffinity="com.igexin.sdk.PushActivityTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="com.igexin.sdk.GActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:process=":pushservice"
+            android:taskAffinity="com.igexin.sdk.PushActivityTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复-->
+        <service
+            android:name="com.base.service.GTPushIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <!-- 个推消息推送end -->
 
     </application>
 

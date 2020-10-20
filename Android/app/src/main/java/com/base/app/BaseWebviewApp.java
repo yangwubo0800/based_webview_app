@@ -2,6 +2,7 @@ package com.base.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
@@ -11,6 +12,7 @@ import com.base.utils.log.AFLog;
 import com.base.bean.User;
 import com.base.receiver.MyNetworkReceiver;
 import com.base.utils.config.ParseConfig;
+import com.igexin.sdk.IUserLoggerInterface;
 
 import cn.jpush.android.api.JPushInterface;
 import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
@@ -100,6 +102,20 @@ public class BaseWebviewApp extends Application {
             String baiduPushKey = GeneralUtils.getMetaValue(mContext, "BaiduPUSH_APPKEY");
             PushManager.startWork(mContext, PushConstants.LOGIN_TYPE_API_KEY, baiduPushKey);
             AFLog.e(TAG, "百度云消息推送初始化 baiduPushKey="+baiduPushKey);
+        }
+
+        if (ParseConfig.sNeedGTPush){
+            Log.d(TAG, "initializing getui push sdk...");
+            com.igexin.sdk.PushManager.getInstance().initialize(this);
+            if (BuildConfig.DEBUG) {
+                // 切勿在 release 版本上开启调试日志
+                com.igexin.sdk.PushManager.getInstance().setDebugLogger(mContext, new IUserLoggerInterface() {
+                    @Override
+                    public void log(String s) {
+                        Log.i("PUSH_LOG", s);
+                    }
+                });
+            }
         }
 
 

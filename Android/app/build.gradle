@@ -19,6 +19,10 @@ android {
                 JPUSH_APPKEY : "xxxxx",//值来自开发者平台取得的AppKey
                 JPUSH_CHANNEL: "company channel",
                 BaiduPUSH_APPKEY : "xxxx",//百度云推送apikey
+
+                GETUI_APP_ID : "xxxx",//个推消息推送apikey
+                GETUI_APP_KEY : "xxxx",
+                GETUI_APP_SECRET : "xxxx",
         ]
     }
     buildTypes {

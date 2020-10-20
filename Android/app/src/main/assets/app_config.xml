@@ -29,7 +29,11 @@
     <!-- 是否需要极光推送 -->
     <need_jpush need="0" />
 
+
     <!-- 是否需要百度云推送 -->
-    <need_baiduPush need="1" />
+    <need_baiduPush need="0" />
+
+    <!-- 是否需要个推推送 -->
+    <need_GTPush need="1" />
 
 </appInfos>

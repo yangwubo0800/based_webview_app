@@ -55,3 +55,9 @@
 -libraryjars libs/pushservice-7.0.0.27.jar
 -dontwarn com.baidu.**
 -keep class com.baidu.**{*; }
+
+-keep class com.baidu.**{*; }
+
+#个推消息推送混淆配置
+-dontwarn com.igexin.**
+-keep class com.igexin.** { *; }

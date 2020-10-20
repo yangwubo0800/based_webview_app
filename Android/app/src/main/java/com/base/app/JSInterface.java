@@ -90,6 +90,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import com.igexin.sdk.Tag;
 
 import static com.base.app.WebViewActivity.mQrScanCallName;
 
@@ -282,8 +283,8 @@ public class JSInterface {
                     AFLog.d(TAG,"onLocationChanged provider=" + provider);
                     //以json格式返回经纬度信息
                     LocationInfo locationInfo = null;
-                    // 当address 解析为空时，也返回超时timeout
-                    if (TextUtils.isEmpty(locationAddress)){
+                    // 由于地理位置解析接口依赖于google service,不同手机厂商的效果不同，因此根据经纬度来判断是否定位成功
+                    if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)){
                         locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "timeout");
                     } else {
                         locationInfo = new LocationInfo(latitude, longitude, locationAddress, mLocationCallName, "normal");
@@ -297,6 +298,8 @@ public class JSInterface {
                     msg.obj = locationJson;
                     mHandler.sendMessage(msg);
                     mHasPostLocation = true;
+                    // 定位成功或者超时之后，都取消定位
+                    cancelMonitorLocation();
                 }
             }
 
@@ -1709,6 +1712,48 @@ public class JSInterface {
         AFLog.d(TAG,"开始获取百度云消息推送tag，等待结果...");
         mBaiduPushOperate = null;
         PushManager.listTags(mContext);
+    }
+
+    /**
+     * 功能：设置个推消息推送tag
+     * 参数：tagWithUrl 由标签和跳转页面组成的json字符串
+     * tags 标签，如果有多个，以逗号分隔
+     * jumpUrl 点击消息跳转页面路径
+     * 返回值：无
+     * 使用方式：window.functionTag.setGTPushTagAndJumpUrl(tagWithUrl)
+     */
+    @JavascriptInterface
+    public void setGTPushTagAndJumpUrl(String tagWithUrl){
+
+        String jumpUrl = null;
+        String tags = null;
+        com.alibaba.fastjson.JSONObject tagWithUrlObj = JSON.parseObject(tagWithUrl);
+        if (null != tagWithUrlObj){
+            jumpUrl = tagWithUrlObj.getString("jumpUrl");
+            tags = tagWithUrlObj.getString("tags");
+        }
+
+        //设置历史告警页面查看地址, 将此动作和推送tag关联起来，便于前端使用,其也不必要关注使用哪个key来设置了
+        if (!TextUtils.isEmpty(jumpUrl)){
+            setKeyValue(Constants.PUSH_MESSAGE_JUMP_URL_KEY, jumpUrl);
+        }
+
+        AFLog.d(TAG,"setGTPushTagAndJumpUrl tags="+tags);
+        if (!TextUtils.isEmpty(tags)){
+            String[] tagArr = tags.split(",");
+            Tag[] tagParam = new Tag[tagArr.length];
+            for (int i=0; i<tagArr.length; i++){
+                Tag temp = new Tag();
+                temp.setName(tagArr[i]);
+                tagParam[i] = temp;
+            }
+
+            com.igexin.sdk.PushManager.getInstance().setTag(mContext, tagParam,
+                    String.valueOf(System.currentTimeMillis()));
+
+        }else {
+            AFLog.e(TAG,"setGTPushTagAndJumpUrl tags为空");
+        }
     }
 
 }

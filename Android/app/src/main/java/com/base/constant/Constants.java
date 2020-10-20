@@ -47,8 +47,8 @@ public class Constants {
     public static final String NEED_JPUSH= "need_jpush";
     //是否需要百度云推送的标签
     public static final String NEED_BAIDU_PUSH= "need_baiduPush";
-
-
+    //是否需要个推推送的标签
+    public static final String NEED_GETUI_PUSH= "need_GTPush";
     /**
      * 通知开关的key ，设置字符串开启为on, 关闭为off， 默认开启
      */

@@ -17,19 +17,19 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <!-- 此处com.baidu.push.example要改成应用自己的包名 -->
-    <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}" />
+    <uses-permission android:name="${applicationId}.baidu.push.permission.WRITE_PUSHINFOPROVIDER" />
     <permission
-        android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}"
+        android:name="${applicationId}.baidu.push.permission.WRITE_PUSHINFOPROVIDER"
         android:protectionLevel="signature" />
     <!-- Push service 运行的可选权限 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Push service 运行需要的权限 END -->
 
     <!-- 集成个推推送消息开始， 浮动通知权限 -->
-    <uses-permission android:name="getui.permission.GetuiService.${applicationId}" />
+    <uses-permission android:name="${applicationId}.getui.permission.GetuiService" />
 
     <permission
-        android:name="getui.permission.GetuiService.${applicationId}"
+        android:name="${applicationId}.getui.permission.GetuiService"
         android:protectionLevel="normal" />
     <!-- 集成个推推送消息结束， 浮动通知权限 -->
 
@@ -299,7 +299,7 @@
             android:exported="true"
             android:process=":bdservice_v1"
             android:protectionLevel="signature"
-            android:writePermission="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}" />
+            android:writePermission="${applicationId}.baidu.push.permission.WRITE_PUSHINFOPROVIDER" />
 
         <service
             android:name="com.baidu.android.pushservice.job.PushJobService"

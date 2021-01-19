@@ -28,6 +28,8 @@
 #import "../Utils/UIDevice+TFDevice.h"
 #import "../dsbridge/DWKWebView.h"
 #import "JSInterface.h"
+#import "AFNetworking.h"
+#import <QuickLook/QuickLook.h>
 
 
 //竖屏幕宽高
@@ -43,7 +45,7 @@
 #define STATUSBARHEIGHT     ([[UIApplication sharedApplication] statusBarFrame].size.height)
 #define NAVIGATIONBARHEIGHT (self.navigationController.navigationBar.frame.size.height)
 
-#define LOAD_LOCAL_HTML NO
+#define LOAD_LOCAL_HTML YES
 
 
 //单例模式
@@ -52,6 +54,9 @@ static WebviewController *instance = nil;
 // static变量类内部使用，首页url path配置
 static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 
+
+// 定义下载文件路径
+static NSString *downloadFilePath = @"";
 
 
 #pragma mark 此部分为使用系统自带的执行js方法需要实现的delegate，目前在代码中已经不用。
@@ -89,7 +94,7 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 
 
 
-@interface WebviewController () <WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler>
+@interface WebviewController () <WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, QLPreviewControllerDataSource>
 
 
 //进度条
@@ -184,8 +189,19 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
                      options:NSKeyValueObservingOptionNew
                      context:nil];
     
+    //监听横竖屏变化
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
+//监听到横竖屏变化后，重新布局
+- (void)deviceOrientationDidChange{
+    if([UIDevice currentDevice].orientation == UIDeviceOrientationPortrait ||
+       [UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeLeft ||
+       [UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeRight) {
+        self.webView.frame = CGRectMake(0, STATUSBARHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-STATUSBARHEIGHT);
+        NSLog(@"deviceOrientationDidChange:%ld",(long)[UIDevice currentDevice].orientation);
+    }
+}
 
 
 #pragma mark 进度值以及其他监听对象变化，会调用此方法
@@ -265,7 +281,7 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 - (void)ocToJs{
     
     //OC调用JS
-    [_bridge callHandler:@"changeColor" data:@{ @"zhangsan":@"lisi" }];
+    //[_bridge callHandler:@"changeColor" data:@{ @"zhangsan":@"lisi" }];
     
     //changeColor()是JS方法名，completionHandler是异步回调block
 //    NSString *jsString = [NSString stringWithFormat:@"changeColor('%@')", @"Js参数"];
@@ -290,7 +306,6 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
     // 1.创建webview，并设置大小，"20"为状态栏高度
     CGFloat width = self.view.frame.size.width;
     CGFloat height = self.view.frame.size.height - 20;
-    //UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 20, width, height)];
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 20, width, height)];
     
     webView.allowsBackForwardNavigationGestures = YES;
@@ -594,11 +609,12 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
                 NSLog(@" first time create webview current url is %@", self.currentUrl);
             }
             // 3.创建Request
-            NSURLRequest *request =[NSURLRequest requestWithURL:url];
+            //NSURLRequest *request =[NSURLRequest requestWithURL:url];
+            //修改请求方式为不使用缓存
+            NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
             // 4.加载网页
             [_webView loadRequest:request];
         }
-        
     }
     return _webView;
 }
@@ -692,6 +708,82 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
         [[LocationController shareInstance] locate:self];
     }
 }
+
+//下载并预览文件
+-(void) downloadAndPreviewFile:(NSString *) downloadUrl withName:(NSString *)fileName{
+    
+    // 1.创建一个管理者
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    // 2. 创建请求对象
+    NSURL *url = [NSURL URLWithString:downloadUrl];
+    NSURLRequest *request =[NSURLRequest requestWithURL:url];
+    // 3. 下载文件
+    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        // downloadProgress.completedUnitCount 当前下载大小
+        // downloadProgress.totalUnitCount 总大小
+        NSLog(@"%f", 1.0 * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        // targetPath  临时存储地址
+        NSLog(@"targetPath:%@",targetPath);
+        // 在真机中测试，获取Documents目录路径，存放文件；
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        NSLog(@"=====doc dir is %@", docDir);
+        NSString *filePath;
+        //如果传过来文件名字不为空，则使用传入的名字。
+        if (nil == fileName) {
+           filePath = [docDir stringByAppendingPathComponent:response.suggestedFilename];
+        }else{
+           filePath = [docDir stringByAppendingPathComponent:fileName];
+        }
+        
+        downloadFilePath = filePath;
+        NSURL *url = [NSURL fileURLWithPath:filePath];
+        NSLog(@"path:%@",filePath);
+        // 返回url 我们想要存储的地址
+        // response 响应头
+        return url;
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        // 下载完成之后调用
+        // response 响应头
+        // filePath 下载存储地址
+        NSLog(@"filePath:%@", filePath);
+        if (nil != error) {
+            NSLog(@"error code:%ld", [error code]);
+            NSLog(@"error code:%@", [error domain]);
+            NSLog(@"error code:%@", [error userInfo]);
+        }else{
+            
+            UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] init];
+            //默认为英文back，此处修改返回标题为中文
+            backBtn.title = @"返回";
+            self.navigationItem.backBarButtonItem = backBtn;
+            
+            QLPreviewController *previewController = [[QLPreviewController alloc] init];
+            previewController.view.frame = [[self view] bounds];
+            previewController.dataSource = self;
+            [self.navigationController pushViewController:previewController animated:YES];
+           
+        }
+        //NSLog(@"completionHandler response:%@", response);
+    }];
+    
+    // 需要手动开启
+    [downloadTask resume];
+    
+}
+
+#pragma mark -- QLPreviewControllerDataSource
+
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller{
+    return 1;
+}
+
+- (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index{
+    //需要在线预览的文件的路径
+    NSLog(@"=====previewController downloadFilePath=%@",downloadFilePath);
+    return [NSURL fileURLWithPath:downloadFilePath];
+}
+
 
 #pragma mark -- WKNavigationDelegate
 /*
@@ -797,6 +889,17 @@ static NSString *firstPagePath = @"http://m.electro.xxxxcloud.com";
 //    NSLog(@"didReceiveAuthenticationChallenge");
 //
 //}
+
+
+// 访问https://192.168.65.41:8443 报错问题
+// Code=-1202 "The certificate for this server is invalid
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler {
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        NSURLCredential * card = [[NSURLCredential alloc] initWithTrust:challenge.protectionSpace.serverTrust];
+        completionHandler(NSURLSessionAuthChallengeUseCredential,card);
+    }
+}
+
 
 //进程被终止时调用
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView{

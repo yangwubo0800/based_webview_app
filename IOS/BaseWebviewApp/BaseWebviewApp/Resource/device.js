@@ -300,6 +300,8 @@
         }else if(type == 'IOS'){
             IOSApi.prototype.__proto__ = MobileApi.prototype;
             api = new IOSApi();
+        }else {
+            api = this;
         }
         return api;
     }
@@ -310,6 +312,7 @@
      */
     MobileApi.prototype.scanQRCode = function(type){
     }
+
 
     /**
      * 获取定位方法
@@ -384,14 +387,15 @@
      * @param {String} videoUrl 
      * @param {String} videoTitle 
      */
-    MobileApi.prototype.updateApp = function(videoUrl, videoTitle){
+    MobileApi.prototype.videoPlay = function(videoUrl, videoTitle){
     }
     /**
      * 视频直播
      * @param {String} videoUrl 
+     * @param {String} type 直播类型
      * @param {String} videoTitle 
      */
-    MobileApi.prototype.livePlay = function(liveUrl, liveTitle){
+    MobileApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
     }
     /**
      * 获取缓存大小
@@ -411,6 +415,12 @@
     MobileApi.prototype.openRealHtml = function(url){
     }
     /**
+     * 设置横竖屏
+     * @param {String} orientation 
+     */
+    MobileApi.prototype.setOrientation = function(orientation){
+    }
+    /**
      * 启动消息推送服务
      * @param {String} clientId 
      * @param {String} stationId 
@@ -428,7 +438,53 @@
      */
     MobileApi.prototype.takeFlirPhone = function(){
     }
-    
+
+    /**
+     * 文件下载
+     * @param {String} url 
+     * @param {String} fileName 
+     */
+    MobileApi.prototype.download = function(url, fileName){
+    }
+    // startMapNavigation
+    //跳转第三方导航
+    MobileApi.prototype.startMapNavigation = function(params){
+    }
+    /**
+     * 设置极光推送标签和点击消息页面跳转地址
+     *  params = {
+            "tags":"stationId001",
+            "jumpUrl":"https://www.sina.com.cn/"
+        }
+     */
+    MobileApi.prototype.setJPushTagAndJumpUrl = function(params){
+    }
+    /**
+     * 清除极光推送标签
+     *
+     */
+    MobileApi.prototype.cleanJPushTag = function(){
+    }
+
+    /**
+     * 设置消息推送标签和点击消息页面跳转地址
+     *  params = {
+            "pushPlatform":"jiguang"
+            "tags":"user01",
+            "jumpUrl":"https://www.sina.com.cn/"
+        }
+     参数对应key说明， pushPlatform 为推送平台，jiguang 代表极光， getui 代表个推， baidu 代表百度云；tags 为设置的标签； jumpUrl 为消息跳转页面菜单地址。
+     */
+    MobileApi.prototype.setMsgPushTagAndJumpUrl = function(params){
+    }
+    /**
+     * 清除消息推送标签
+     接口参数传入对应平台，各个平台的字符串名称和设置接口中保持一致。
+     *
+     */
+    MobileApi.prototype.cleanMsgPushTag = function(params){
+    }
+
     return MobileApi;
 });
 
@@ -604,7 +660,7 @@
      * @param {String} videoUrl 
      * @param {String} videoTitle 
      */
-    AndroidApi.prototype.updateApp = function(videoUrl, videoTitle){
+    AndroidApi.prototype.videoPlay = function(videoUrl, videoTitle){
         try {
             window.functionTag.videoPlay(videoUrl, videoTitle)
         } catch (error) {
@@ -615,9 +671,19 @@
      * @param {String} videoUrl 
      * @param {String} videoTitle 
      */
-    AndroidApi.prototype.livePlay = function(liveUrl, liveTitle){
+    AndroidApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
         try {
-            window.functionTag.livePlay('standard', liveUrl, liveTitle)
+            if(type == 'EZ_Video'){
+                window.functionTag.livePlay("standard", liveUrl, liveTitle)
+                if(configUrl){
+                    window.functionTag.setVideoConfigInfoUrl(configUrl, type);
+                }
+            }else if(type == 'HIK_Video'){
+                window.functionTag.startHikVideoPlay(liveUrl, liveTitle)
+                if(configUrl){
+                    window.functionTag.setVideoConfigInfoUrl(configUrl, type);
+                }
+            }
         } catch (error) {
         }
     }
@@ -655,6 +721,17 @@
         } catch (error) {
         }
     }
+     /**
+     * 设置横竖屏
+     * @param {String} orientation 
+     */
+    AndroidApi.prototype.setOrientation = function(orientation){
+        try{
+            window.functionTag.setOrientation(orientation)
+        } catch(error){
+
+        }
+    }
     /**
      * 启动消息推送服务
      * @param {String} clientId 
@@ -690,7 +767,91 @@
         } catch (error) {
         }
     }
-    
+
+    /**
+     * 文件下载
+     * @param {String} url 
+     * @param {String} fileName 
+     */
+    AndroidApi.prototype.download = function(url, fileName){
+        try {
+            window.functionTag.DownloadFileByName(url, fileName)
+        } catch (error) {
+        }
+    }
+    //跳转第三方导航
+    AndroidApi.prototype.startMapNavigation = function(params){
+        try {
+            window.functionTag.startMapNavigation(JSON.stringify(params));
+        } catch (error) {
+        }
+    }
+   /**
+    * 设置极光推送标签和点击消息页面跳转地址
+    *  params = {
+    "tags":"stationId001",
+    "jumpUrl":"https://www.sina.com.cn/"
+    }
+    */
+    AndroidApi.prototype.setJPushTagAndJumpUrl = function(params){
+            try {
+                window.functionTag.setJPushTagAndJumpUrl(JSON.stringify(params));
+            } catch (error) {
+        }
+    }
+    //清除极光推送标签
+    AndroidApi.prototype.cleanJPushTag = function(){
+        try {
+            window.functionTag.cleanJPushTag()
+        } catch (error) {
+        }
+    }
+
+
+
+    /**
+     * 设置消息推送标签和点击消息页面跳转地址
+     *  params = {
+            "pushPlatform":"jiguang"
+            "tags":"user01",
+            "jumpUrl":"https://www.sina.com.cn/"
+        }
+     */
+    AndroidApi.prototype.setMsgPushTagAndJumpUrl = function(params){
+            try {
+                var pushPlatform = params["pushPlatform"]
+                if("jiguang" == pushPlatform){
+                    window.functionTag.setJPushTagAndJumpUrl(JSON.stringify(params));
+                }else if("baidu" == pushPlatform){
+                    window.functionTag.setBaiduPushTagAndJumpUrl(JSON.stringify(params));
+                }else if("getui" == pushPlatform){
+                    window.functionTag.setGTPushTagAndJumpUrl(JSON.stringify(params));
+                }
+
+            } catch (error) {
+        }
+    }
+
+    /**
+     * 清除消息推送标签
+     *
+     */
+    AndroidApi.prototype.cleanMsgPushTag = function(pushPlatform){
+        try {
+
+            if("jiguang" == pushPlatform){
+            alert("jiguang")
+                window.functionTag.cleanJPushTag();
+            }else if("baidu" == pushPlatform){
+                window.functionTag.cleanBaiduPushTag();
+            }else if("getui" == pushPlatform){
+                window.functionTag.cleanGTPushTag();
+            }
+
+        } catch (error) {
+        }
+    }
+
     return AndroidApi;
 });
 
@@ -727,6 +888,15 @@
         })
         _self.on("thermal_image", function(res){
             _self.emit("thermal", res)
+        })
+        _self.on("speechText", function(res){
+            _self.emit("speechTextRs", res)
+        })
+        _self.on("speechBegin", function(res){
+            _self.emit("speechBeginRs", res)
+        })
+        _self.on("speechEnd", function(res){
+            _self.emit("speechEndRs", res)
         })
     }
 
@@ -768,7 +938,8 @@
      */
     IOSApi.prototype.deviceId = function(){
         try {
-            dsBridge.call("ios.getDeviceId ")
+            var deviceId = dsBridge.call("ios.getDeviceId");
+            this.emit("deviceId", JSON.stringify({"deviceId": deviceId}))
         } catch (error) {
             
         }
@@ -800,7 +971,11 @@
     IOSApi.prototype.getItem = function(key){
         var rs = '';
         try {
-            rs = JSON.stringify(dsBridge.call("ios.getValueByKey",  key))
+            rs = dsBridge.call("ios.getValueByKey",  key);
+            var type = Object.prototype.toString.call(rs).slice(8,-1)
+            if(type && type != 'String'){
+                rs = JSON.stringify(rs);
+            }
         } catch (error) {
         }
         return rs;
@@ -863,8 +1038,30 @@
      * @param {String} videoUrl 
      * @param {String} videoTitle 
      */
-    IOSApi.prototype.livePlay = function(liveUrl, liveTitle){
+    IOSApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
         try {
+            if(type == 'EZ_Video'){
+                if(configUrl){
+                    dsBridge.call("ios.ijkLivePlay", liveUrl)
+                    dsBridge.call("ios.setVideoConfigInfoGetUrl", configUrl)
+                }else{
+                    var params = {
+                        "url": liveUrl,
+                        "videoTitle": liveTitle
+                    }
+                    dsBridge.call("ios.ijkLivePlayWithTitle", JSON.stringify(params))
+                }
+            }else if(type == 'HIK_Video'){
+                var params = {
+                    "url": liveUrl,
+                    "videoTitle": liveTitle
+                }
+                dsBridge.call("ios.hikVideoPlay", JSON.stringify(params))
+                if(configUrl){
+                    dsBridge.call("ios.setHikVideoConfigInfoGetUrl", configUrl)
+                }
+            }
+
             dsBridge.call("ios.ijkLivePlay", liveUrl)
         } catch (error) {
         }
@@ -962,6 +1159,76 @@
         }
         return rs;
     }
+
+    IOSApi.prototype.download = function(url, fileName){
+        try {
+        } catch (error) {
+        }
+    }
+    
+
+    //跳转第三方导航
+    IOSApi.prototype.startMapNavigation = function(params){
+        try {
+            dsBridge.call("ios.doNavigation", JSON.stringify(params))
+        } catch (error) {
+        }
+    }
+    //设置极光推送
+    // params = {
+    //     "tags":"stationId001",
+    //     "jumpUrl":"https://www.sina.com.cn/"
+    // } 
+
+    IOSApi.prototype.setJPushTagAndJumpUrl = function(params){
+        try {
+            dsBridge.call("ios.setJPushTagAndJumpUrl", JSON.stringify(params))
+        } catch (error) {
+        }
+    }
+    //清除极光推送
+    IOSApi.prototype.cleanJPushTag = function(){
+        try {
+            dsBridge.call("ios.cleanJPushTag")
+        } catch (error) {
+        }
+    }
+    
+    //极光、百度、个推三个平台统一调用接口
+    /**
+     * 设置消息推送标签和点击消息页面跳转地址
+     *  params = {
+            "pushPlatform":"jiguang"
+            "tags":"user01",
+            "jumpUrl":"https://www.sina.com.cn/"
+        }
+     */
+    IOSApi.prototype.setMsgPushTagAndJumpUrl = function(params){
+        try {
+            var pushPlatform = params["pushPlatform"]
+            if("jiguang" == pushPlatform){
+                dsBridge.call("ios.setJPushTagAndJumpUrl", JSON.stringify(params))
+            }else if("baidu" == pushPlatform){
+                dsBridge.call("ios.setBaiduPushTagAndJumpUrl", JSON.stringify(params))
+            }else if("getui" == pushPlatform){
+                dsBridge.call("ios.setGTPushTagAndJumpUrl", JSON.stringify(params))
+            }
+        } catch (error) {
+        }
+    }
+    //清除极光推送
+    IOSApi.prototype.cleanMsgPushTag = function(pushPlatform){
+        try {
+            if("jiguang" == pushPlatform){
+                dsBridge.call("ios.cleanJPushTag")
+            }else if("baidu" == pushPlatform){
+                dsBridge.call("ios.cleanBaiduPushTag")
+            }else if("getui" == pushPlatform){
+                //个推没有清除接口
+            }
+        } catch (error) {
+        }
+    }
     
     return IOSApi;
 });
@@ -972,14 +1239,15 @@
 
 
 window.MOBILE_TYPE = '';
-var u = navigator.userAgent;
-var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
-var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
-if(isAndroid){
+
+if(window.functionTag){
     window.MOBILE_TYPE = 'Android'
-}else if(isiOS){
+}else if(window.dsBridge && window.dsBridge.hasNativeMethod('ios.platformCheck')){
     window.MOBILE_TYPE = 'IOS'
+}else{
+    window.MOBILE_TYPE = 'Browser'
 }
+
 
 window.MOBILE_API = new MobileApi(MOBILE_TYPE)

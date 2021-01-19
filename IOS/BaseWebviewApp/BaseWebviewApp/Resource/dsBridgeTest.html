@@ -240,7 +240,7 @@
         
         function doNavigation(){
             var params = {
-                "sname":"王朝一中",
+                "sname":"王朝一種",
                 "slat":"28.2293481",
                 "slon":"112.86404595",
                 "dname":"洗心禅寺",
@@ -268,6 +268,85 @@
                       
                       dsBridge.call("ios.doNavigation", JSON.stringify(params))
                       
+                      })
+                      
+                      
+          function setJPushTagAndJumpUrl() {
+              var params = {
+                  "pushPlatform":"jiguang",
+                  "tags":"user01,user02",
+                  "jumpUrl":"https://www.sina.com.cn/"
+              }
+              //登录时先获取站点stationId， 然后调用接口设置极光推送接收TAG
+              //dsBridge.call("ios.setJPushTagAndJumpUrl", JSON.stringify(params))
+              //log("setJPushTagAndJumpUrl")
+              
+              //MOBILE_API.setJPushTagAndJumpUrl(params)
+              MOBILE_API.setMsgPushTagAndJumpUrl(params)
+              log("setJPushTagAndJumpUrl")
+          }
+        
+        function cleanJPushTag() {
+            //dsBridge.call("ios.cleanJPushTag")
+            //MOBILE_API.cleanJPushTag()
+            MOBILE_API.cleanMsgPushTag("jiguang")
+            log("cleanJPushTag")
+        }
+        
+        
+        function setBaiduPushTagAndJumpUrl() {
+            var params = {
+                "tags":"user01,user02",
+                "jumpUrl":"https://www.sina.com.cn/"
+            }
+            
+            MOBILE_API.setBaiduPushTagAndJumpUrl(params)
+            //dsBridge.call("ios.setBaiduPushTagAndJumpUrl", JSON.stringify(params))
+            log("setBaiduPushTagAndJumpUrl")
+        }
+        
+        function cleanBaiduPushTag() {
+            MOBILE_API.cleanBaiduPushTag()
+            //dsBridge.call("ios.cleanBaiduPushTag")
+            log("cleanBaiduPushTag")
+        }
+        
+        function setGTPushTagAndJumpUrl() {
+            var params = {
+                "pushPlatform":"getui",
+                "tags":"user03,user04",
+                "jumpUrl":"https://www.sina.com.cn/"
+            }
+            
+            MOBILE_API.setMsgPushTagAndJumpUrl(params)
+            //dsBridge.call("ios.setGTPushTagAndJumpUrl", JSON.stringify(params))
+            log("setGTPushTagAndJumpUrl")
+        }
+        
+        function IFlyStartRecord() {
+            var params = {
+            "language":"zh_cn",
+            "accent":"changshanese",
+            "vadBos":"50000",
+            "vadEos":"50000",
+            "ptt":"0"
+            }
+            
+            dsBridge.call("ios.IFlyStartRecord", JSON.stringify(params))
+            log("IFlyStartRecord")
+        }
+        
+        // 异步返回语音识别信息并显示
+        MOBILE_API.on("speechTextRs", function(res){
+                      log("识别结果："+res)
+                      })
+        
+        MOBILE_API.on("speechBeginRs", function(res){
+                      log("语音识别开始："+res)
+                      })
+        
+        MOBILE_API.on("speechBeginRs", function(res){
+                      log("语音识别结束："+res)
                       })
         
         </script>
@@ -302,24 +381,32 @@
     
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "checkoutUpdateAppVersion()" > 应用更新检测        </button> </p>
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "doNavigation()" > 开启导航        </button> </p>
-
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setJPushTagAndJumpUrl()" > 设置带有跳转地址的极光        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "cleanJPushTag()" > 清理极光tag        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setBaiduPushTagAndJumpUrl()" > 设置百度云推送tag和跳转地址      </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "cleanBaiduPushTag()" > 清理百度云推送tag        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setGTPushTagAndJumpUrl()" > 设置个推推送tag        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "IFlyStartRecord()" > 开启科大讯飞语音识别        </button> </p>
 <!--     <p>测试A标签下载功能：<p>-->
 <!--     <a href="http://58.20.55.73:38082/repository/npm-local/hz-hydro                                              " download="zip文件">-->
 <!--         <img border="0" src="/i/w3school_logo_white.gif" alt="文件下载">-->
 <!--     </a>-->
 
      <div>
-         <!--拍照 -->
+         <!--拍照, 后置摄像头-->
          <input type="file" accept="image/*" capture="environment" name="takePhoto">
+         <!--拍照，前置摄像头 -->
+         <input type="file" accept="image/*" capture="user" name="takePhoto">
          <!--拍视频 -->
          <input type="file" accept="video/*" capture="environment" name="takevideo">
-         <!--文件选择，无法直接进入相册 -->
-         <input type="file" accept="*/*" name="choose from file system">
+         <!--进入相册或者拍照选择 -->
+         <input type="file" accept="image/*" name="takePhoto">
      </div>
      
         <div id='buttons'></div>
         <div id='log'></div>
         <div id='scanResult'></div>
         <div id='locateResult'></div>
+        <div id='speechText'></div>
     </body>
 </html>

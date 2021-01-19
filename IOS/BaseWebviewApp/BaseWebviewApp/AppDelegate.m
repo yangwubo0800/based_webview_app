@@ -14,11 +14,15 @@
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>
 #endif
+#import "Utils/Constant.h"
+#import "BPush.h"
+#import <GTSDK/GeTuiSdk.h>
+#import "IFlyMSC/IFlyMSC.h"
 
 #define MainScreen_width  [UIScreen mainScreen].bounds.size.width//宽
 #define MainScreen_height [UIScreen mainScreen].bounds.size.height//高
 
-@interface AppDelegate () <JPUSHRegisterDelegate, NSXMLParserDelegate>
+@interface AppDelegate () <JPUSHRegisterDelegate, NSXMLParserDelegate, UNUserNotificationCenterDelegate>
 
 @property (nonatomic, strong) Reachability *reachability;
     
@@ -28,6 +32,14 @@
 //解析存储是否需要引导页
 @property (nonatomic, strong) NSString *needGuild;
 
+//解析存储是否需要极光推送
+@property (nonatomic, strong) NSString *needJPush;
+
+//解析存储是否需要百度云推送
+@property (nonatomic, strong) NSString *needBaiduPush;
+
+//解析存储是否需要个推推送
+@property (nonatomic, strong) NSString *needGTPush;
     
 
 @end
@@ -63,18 +75,25 @@
         [self addUserGuideView];
     }
     
-    // TODO:根据项目是否需要极光消息推送增删此段代码，初始化必须放置在这里，不能由前端灵活调用，前端只能设置tag来过滤消息
-    //极光消息推送初始化
-    [self initJPush:launchOptions];
+    //根据项目是否需要极光消息推送增删此段代码，初始化必须放置在这里，不能由前端灵活调用，前端只能设置tag来过滤
+    if ([self.needJPush isEqualToString:@"YES"]) {
+        [self initJPush:launchOptions];
+    }
+
+    
+    if([self.needBaiduPush isEqualToString:@"YES"]){
+        [self initBaiduPush:launchOptions application:application];
+    }
+    
+    if([self.needGTPush isEqualToString:@"YES"]){
+        [self initGTPush];
+    }
+    
+    //初始化科大讯飞语音识别
+    [self initIFlySpeechRec];
     
     NSLog(@"============basewebview didFinishLaunchingWithOptions launchOptions=%@", launchOptions);
     // TODO: 处理冷启动时通知跳转事件，从通知消息体中获取URL，然后发送本地通知给webview, 此时webview还没有初始化。
-//    NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-//    if (userInfo) {
-//        NSLog(@"remote notification info is %@", userInfo);
-//        [WebviewController shareInstance].currentUrl = [NSURL URLWithString:@"http://www.baidu.com"];
-//        [[WebviewController shareInstance] reloadWebview];
-//    }
     
     // 启动图片延时: 2秒
     [NSThread sleepForTimeInterval:2];
@@ -161,6 +180,70 @@
 }
 
 
+//初始化个推消息推送
+-(void) initGTPush {
+    NSLog(@"[ GTPush ] iOS initGTPush");
+    [GeTuiSdk startSdkWithAppId:kGtAppId appKey:kGtAppKey appSecret:kGtAppSecret delegate:self];
+    
+    float iOSVersion = [[UIDevice currentDevice].systemVersion floatValue];
+    if (iOSVersion >= 10.0) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = self;
+        [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError *_Nullable error) {
+            if (!error && granted) {
+                NSLog(@"[ GTPush ] iOS request authorization succeeded!");
+            }
+        }];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        return;
+    }
+    
+    if (iOSVersion >= 8.0) {
+        UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+}
+
+//初始化百度云消息推送
+-(void)initBaiduPush:(NSDictionary*)launchOptions application:(UIApplication *)application{
+    // iOS10 下需要使用新的 API
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
+    #ifdef NSFoundationVersionNumber_iOS_9_x_Max
+            UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+            //设置代理，让消息走指定的回调
+            [center setDelegate:self];
+            [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert + UNAuthorizationOptionSound + UNAuthorizationOptionBadge)
+                                  completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                                      // Enable or disable features based on authorization.
+                                      if (granted) {
+                                          [application registerForRemoteNotifications];
+                                          NSLog(@"=====registerForRemoteNotifications");
+                                      }
+                                  }];
+    #endif
+        }
+        else if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+            UIUserNotificationType myTypes = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+            
+            UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:myTypes categories:nil];
+            [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        }else {
+            UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeAlert|UIRemoteNotificationTypeSound;
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:myTypes];
+        }
+        #warning 上线 AppStore 时需要修改BPushMode为BPushModeProduction 需要修改Apikey为自己的Apikey
+        // 在 App 启动时注册百度云推送服务，需要提供 Apikey
+    [BPush registerChannel:launchOptions apiKey:BaiduPushApiKey pushMode:BPushModeDevelopment withFirstAction:@"打开" withSecondAction:@"回复" withCategory:@"test" useBehaviorTextInput:YES isDebug:YES];
+        // App 是用户点击推送消息启动
+        NSDictionary *userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        if (userInfo) {
+            NSLog(@"从消息启动:%@",userInfo);
+            [BPush handleNotification:userInfo];
+        }
+}
+
 //初始化极光推送
 -(void)initJPush:(NSDictionary *)launchOptions{
     // 3.0.0及以后版本注册
@@ -185,9 +268,9 @@
     
     //如不需要使用IDFA，advertisingIdentifier 可为nil
     [JPUSHService setupWithOption:launchOptions
-                           appKey:appKey
-                          channel:channel
-                 apsForProduction:isProduction
+                           appKey:JpushAppKey
+                          channel:JpushChannel
+                 apsForProduction:YES
             advertisingIdentifier:nil];
     //2.1.9版本新增获取registration id block接口。
     [JPUSHService registrationIDCompletionHandler:^(int resCode, NSString *registrationID) {
@@ -207,13 +290,27 @@
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"%@", [NSString stringWithFormat:@"Device Token: %@", deviceToken]);
-    [JPUSHService registerDeviceToken:deviceToken];
+    //极光消息推送
+    if ([self.needJPush isEqualToString:@"YES"]) {
+        [JPUSHService registerDeviceToken:deviceToken];
+    }
     
-    // TODO:清空设备TAG,不登录时就收不到之前设置过的TAG消息了
-    //firstly clean tags
-    [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
-        NSLog(@"#########cleanTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
-    } seq:1];
+    //百度云消息推送
+    if ([self.needBaiduPush isEqualToString:@"YES"]) {
+        [BPush registerDeviceToken:deviceToken];
+        [BPush bindChannelWithCompleteHandler:^(id result, NSError *error) {
+               // 网络错误
+               if (error) {
+                   NSLog(@"bindChannelWithCompleteHandler error");
+                   return ;
+               }
+           }];
+    }
+    
+    if ([self.needGTPush isEqualToString:@"YES"]) {
+        // [ GTSDK ]：（新版）向个推服务器注册deviceToken
+        [GeTuiSdk registerDeviceTokenData:deviceToken];
+    }
 }
 
 //实现注册 APNs 失败接口（可选）
@@ -226,8 +323,14 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 - (void)application:(UIApplication *)application
 didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"================didReceiveRemoteNotification userInfo=%@", userInfo);
+    //极光消息推送
     [JPUSHService handleRemoteNotification:userInfo];
     NSLog(@"iOS6及以下系统，收到通知:%@", [self logDic:userInfo]);
+
+    // 百度云消息 APN收到推送的通知
+    [BPush handleNotification:userInfo];
+    NSLog(@"********** ios7.0之前 **********");
+
 }
 
 - (void)application:(UIApplication *)application
@@ -235,44 +338,33 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:
 (void (^)(UIBackgroundFetchResult))completionHandler {
     NSLog(@"================didReceiveRemoteNotification fetchCompletionHandler");
+    //极光消息推送
     [JPUSHService handleRemoteNotification:userInfo];
     NSLog(@"iOS7及以上系统，收到通知:%@", [self logDic:userInfo]);
-    
     if ([[UIDevice currentDevice].systemVersion floatValue]<10.0 || application.applicationState>0) {
         NSLog(@"system version lower than IOS10  ");
     }
+    
+    // 百度云推送由于使用了原生注册的回调，此处逻辑不会运行
+    
     
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (void)application:(UIApplication *)application
 didReceiveLocalNotification:(UILocalNotification *)notification {
+    NSLog(@"=====didReceiveLocalNotification");
+    //极光消息展示
     [JPUSHService showLocalNotificationAtFront:notification identifierKey:nil];
+    
 }
 
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #pragma mark- JPUSHRegisterDelegate
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
-    NSLog(@"=======willPresentNotification");
     NSDictionary * userInfo = notification.request.content.userInfo;
-    NSLog(@"=======willPresentNotification userInfo=%@", userInfo);
+    NSLog(@"=======Jpush willPresentNotification userInfo=%@", userInfo);
     
-//    UNNotificationRequest *request = notification.request; // 收到推送的请求
-//    UNNotificationContent *content = request.content; // 收到推送的消息内容
-//
-//    NSNumber *badge = content.badge;  // 推送消息的角标
-//    NSString *body = content.body;    // 推送消息体
-//    UNNotificationSound *sound = content.sound;  // 推送消息的声音
-//    NSString *subtitle = content.subtitle;  // 推送消息的副标题
-//    NSString *title = content.title;  // 推送消息的标题
-//
-//    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
-//        [JPUSHService handleRemoteNotification:userInfo];
-//        NSLog(@"iOS10 前台收到远程通知:%@", [self logDic:userInfo]);
-//    }else {
-//        // 判断为本地通知
-//        NSLog(@"iOS10 前台收到本地通知:{\nbody:%@，\ntitle:%@,\nsubtitle:%@,\nbadge：%@，\nsound：%@，\nuserInfo：%@\n}",body,title,subtitle,badge,sound,userInfo);
-//    }
     completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert); // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
 }
 
@@ -281,7 +373,7 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     // TODO: 处理冷 热启动时通知跳转事件，从通知消息体中获取URL，然后发送本地通知给webview
     // 冷启动时，webview 还没有初始化，所以此时还是会跳转到登录界面，先不处理这种情况
     // 目前调试阶段为直接跳转百度页面，后续url从通知内容中获取，后台在推送消息时携带跳转页面路径url.
-    NSLog(@"=======didReceiveNotificationResponse");
+    NSLog(@"=======Jpush didReceiveNotificationResponse");
 
     
     NSDictionary * userInfo = response.notification.request.content.userInfo;
@@ -292,7 +384,8 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     NSString *extraUrl = userInfo[@"jumpUrl"];
     NSLog(@" extralUrl=%@", extraUrl);
     //历史告警页面地址改为由前端设置，框架获取来跳转
-    NSString *jumpUrlKey = @"historyAlarmUrl";
+    //NSString *jumpUrlKey = @"historyAlarmUrl";
+    NSString *jumpUrlKey = PUSH_MESSAGE_JUMP_URL_KEY;
     NSString *jumpUrlValue = [[NSUserDefaults standardUserDefaults] objectForKey:jumpUrlKey];
     NSLog(@" jumpUrlValue=%@", jumpUrlValue);
     if (jumpUrlValue) {
@@ -337,6 +430,174 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
 }
 #endif
 
+
+#pragma mark - UNUserNotificationCenterDelegate
+//  iOS10特性。App在前台获取通知
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler  API_AVAILABLE(ios(10.0)){
+
+    NSLog(@"=====原生 willPresentNotification");
+    UIApplication *application = [UIApplication sharedApplication];
+    //百度云推送消息没有badge设置接口，需要自己处理逻辑, 调试结果似乎不行，需要后台那边发送的时候带有badge，百度没有提供接口，作罢。
+//    if (application.applicationState == UIApplicationStateInactive ||
+//        application.applicationState == UIApplicationStateBackground){
+//            NSInteger badgeNumber = [application applicationIconBadgeNumber];
+//            [application setApplicationIconBadgeNumber:badgeNumber+1];
+//         }
+
+    completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert);
+}
+
+//  针对百度云推送，让消息在通知栏显示， iOS10特性。点击通知进入App
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
+    
+    // TODO: 百度云消息推送点击后的动作在这里处理
+    NSDictionary * userInfo = response.notification.request.content.userInfo;
+    UNNotificationRequest *request = response.notification.request; // 收到推送的请求
+    UNNotificationContent *content = request.content; // 收到推送的消息内容
+    //debug code
+    NSLog(@" didReceiveNotificationResponse userInfo=%@ \n content=%@", userInfo, content);
+    NSLog(@"=====原生 didReceiveNotificationResponse");
+    
+    //历史告警页面地址改为由前端设置，框架获取来跳转
+    NSString *jumpUrlKey = PUSH_MESSAGE_JUMP_URL_KEY;
+    NSString *jumpUrlValue = [[NSUserDefaults standardUserDefaults] objectForKey:jumpUrlKey];
+    NSLog(@" jumpUrlValue=%@", jumpUrlValue);
+    if (jumpUrlValue) {
+        [WebviewController shareInstance].currentUrl = [NSURL URLWithString:jumpUrlValue];
+        [[WebviewController shareInstance] reloadWebview];
+    }
+    
+    // [ GTSDK ]：将收到的APNs信息同步给个推统计
+    //[GeTuiSdk handleRemoteNotification:response.notification.request.content.userInfo];
+    
+    completionHandler();
+}
+
+
+#pragma mark - GeTuiSdkDelegate
+/// [ GTSDK回调 ] SDK启动成功返回cid
+- (void)GeTuiSdkDidRegisterClient:(NSString *)clientId {
+    NSLog(@"[ GTPush ] [GTSdk RegisterClient]:%@", clientId);
+}
+
+//创建本地通知
+-(void)createNotificationWithTitle:(NSString*)title body:(NSString*)body{
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    content.title=title;
+    content.body = body;
+    content.sound = UNNotificationSound.defaultSound;
+    UNTimeIntervalNotificationTrigger *triger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:NO];
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"request" content:content trigger:triger];
+    [[UNUserNotificationCenter currentNotificationCenter]addNotificationRequest:request withCompletionHandler:^(NSError *__nullable error){
+        if (error) {
+            NSLog(@"error=%@", error);
+        }else{
+            NSLog(@"local notifcation succeed");
+        }
+        
+    }];
+}
+
+/// [ GTSDK回调 ] SDK收到透传消息回调
+- (void)GeTuiSdkDidReceivePayloadData:(NSData *)payloadData andTaskId:(NSString *)taskId andMsgId:(NSString *)msgId andOffLine:(BOOL)offLine fromGtAppId:(NSString *)appId {
+    // [ GTSDK ]：汇报个推自定义事件(反馈透传消息)
+    [GeTuiSdk sendFeedbackMessage:90001 andTaskId:taskId andMsgId:msgId];
+    NSString *payloadMsg = [[NSString alloc] initWithBytes:payloadData.bytes length:payloadData.length encoding:NSUTF8StringEncoding];
+    NSString *msg = [NSString stringWithFormat:@"Receive Payload: %@, taskId: %@, messageId: %@ %@", payloadMsg, taskId, msgId, offLine ? @"<离线消息>" : @""];
+    NSLog(@"[ GTPush ] [透传消息 GTSdk ReceivePayload]:%@", msg);
+    //解析透传消息json payloadMsg  {"title":"标题7","body":"内容"}
+    @try {
+        NSError *error;
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[payloadMsg dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
+        NSLog(@"GTPush dict=%@", dict);
+        NSArray *keys = [dict allKeys];
+        
+        NSString *title;
+        NSString *body;
+        for(int i=0; i<keys.count; i++){
+            NSString *key = keys[i];
+            if ([@"title" isEqualToString:key]){
+                title = [dict valueForKey:key];
+            }
+            
+            if([@"body" isEqualToString:key]){
+                body = [dict valueForKey:key];
+            }
+        }
+        //由于后台使用透传推送，当应用在前台时，系统不会回调通知，而是回调透传，为了让应用在前台时也显示通知栏，此处需要本地创建通知
+        [self createNotificationWithTitle:title body:body];
+    } @catch (NSException *exception) {
+        NSLog(@"个推收到透传消息后创建本地通知异常");
+    } @finally {
+            
+    }
+    
+}
+
+/// [ GTSDK回调 ] SDK收到sendMessage消息回调
+- (void)GeTuiSdkDidSendMessage:(NSString *)messageId result:(int)result {
+    NSString *msg = [NSString stringWithFormat:@"Received sendmessage:%@ result:%d", messageId, result];
+    NSLog(@"[ GTPush ] [GeTuiSdk DidSendMessage]:%@\n\n",msg);
+}
+
+/// [ GTSDK回调 ] SDK运行状态通知
+- (void)GeTuiSDkDidNotifySdkState:(SdkStatus)aStatus {
+    NSLog(@"[ GTPush ] [GeTuiSdk SdkStatus]:%lu\n\n", (unsigned long)aStatus);
+}
+
+/// [ GTSDK回调 ] SDK设置推送模式回调
+- (void)GeTuiSdkDidSetPushMode:(BOOL)isModeOff error:(NSError *)error {
+    NSLog(@"[ GTPush ] [GeTuiSdk isModeOff]:%@\n", isModeOff);
+}
+
+- (void)GeTuiSdkDidOccurError:(NSError *)error {
+    NSLog(@"[ GTPush ] [GeTuiSdk GeTuiSdkDidOccurError]:%@\n\n",error.localizedDescription);
+}
+
+- (void)GeTuiSdkDidAliasAction:(NSString *)action result:(BOOL)isSuccess sequenceNum:(NSString *)aSn error:(NSError *)aError {
+    /*
+     参数说明
+     isSuccess: YES: 操作成功 NO: 操作失败
+     aError.code:
+     30001：绑定别名失败，频率过快，两次调用的间隔需大于 5s
+     30002：绑定别名失败，参数错误
+     30003：绑定别名请求被过滤
+     30004：绑定别名失败，未知异常
+     30005：绑定别名时，cid 未获取到
+     30006：绑定别名时，发生网络错误
+     30007：别名无效
+     30008：sn 无效 */
+    if([action isEqual:kGtResponseBindType]) {
+        NSLog(@"[ GTPush ] bind alias result sn = %@, code = %@", aSn, @(aError.code));
+    }
+    if([action isEqual:kGtResponseUnBindType]) {
+        NSLog(@"[ GTPush ] unbind alias result sn = %@, code = %@", aSn, @(aError.code));
+    }
+}
+
+- (void)GeTuiSdkDidSetTagsAction:(NSString *)sequenceNum result:(BOOL)isSuccess error:(NSError *)aError {
+    /*
+     参数说明
+     sequenceNum: 请求的序列码
+     isSuccess: 操作成功 YES, 操作失败 NO
+     aError.code:
+     20001：tag 数量过大（单次设置的 tag 数量不超过 100)
+     20002：调用次数超限（默认一天只能成功设置一次）
+     20003：标签重复
+     20004：服务初始化失败
+     20005：setTag 异常
+     20006：tag 为空
+     20007：sn 为空
+     20008：离线，还未登陆成功
+     20009：该 appid 已经在黑名单列表（请联系技术支持处理）
+     20010：已存 tag 数目超限
+     20011：tag 内容格式不正确
+     */
+    NSLog(@"[ GTPush ] GeTuiSdkDidSetTagAction sequenceNum:%@ isSuccess:%@ error: %@", sequenceNum, @(isSuccess), aError);
+}
+
+
+
 // log NSSet with UTF8
 // if not ,log will be \Uxxx
 - (NSString *)logDic:(NSDictionary *)dic {
@@ -371,6 +632,25 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
     [parser parse];
 }
 
+// 初始化科大讯飞语音识别
+-(void) initIFlySpeechRec{
+    //Set log level
+    [IFlySetting setLogFile:LVL_ALL];
+    
+    //Set whether to output log messages in Xcode console
+    [IFlySetting showLogcat:YES];
+
+    //Set the local storage path of SDK
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cachePath = [paths objectAtIndex:0];
+    [IFlySetting setLogFilePath:cachePath];
+    
+    //Set APPID
+    NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
+    
+    //Configure and initialize iflytek services.(This interface must been invoked in application:didFinishLaunchingWithOptions:)
+    [IFlySpeechUtility createUtility:initString];
+}
 /**
  开始解析
  */
@@ -419,6 +699,18 @@ didReceiveLocalNotification:(UILocalNotification *)notification {
         } else if (self.pageCount > 4){
             self.pageCount = 4;
         }
+    }
+    
+    if([self.startTag isEqualToString:@"need_jpush"]){
+        self.needJPush = string;
+    }
+    
+    if([self.startTag isEqualToString:@"need_baiduPush"]){
+        self.needBaiduPush = string;
+    }
+    
+    if([self.startTag isEqualToString:@"need_GTPush"]){
+        self.needGTPush = string;
     }
 }
     

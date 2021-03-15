@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +28,7 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -230,6 +232,12 @@ public class WebViewActivity extends AppCompatActivity {
         }
         webSettings.setDomStorageEnabled(true);
         webSettings.setAppCacheEnabled(true);
+        //在Android5.0以下，默认是采用的MIXED_CONTENT_ALWAYS_ALLOW模式，
+        // 即总是允许WebView同时加载Https和Http；而从Android5.0开始，默认用MIXED_CONTENT_NEVER_ALLOW模式，
+        // 即总是不允许WebView同时加载Https和Http。
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
 
         initWebview();
 
@@ -1013,6 +1021,16 @@ public class WebViewActivity extends AppCompatActivity {
                         + " reason=" + reason);
                 String logLine = "E " + " HttpError statusCode=" + statusCode +" reason=" + reason;
                 sendLogMsg(logLine);
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                //解决无信任证书访问的https I/X509Util: Failed to validate the certificate chain
+                //handler.cancel(); 默认的处理方式，WebView变成空白页
+                //接受证书
+                handler.proceed();
+                super.onReceivedSslError(view, handler, error);
+                AFLog.v(TAG,"onReceivedSslError error=" + error);
             }
 
             @Override

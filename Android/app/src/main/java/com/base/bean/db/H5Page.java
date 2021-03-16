@@ -1,4 +1,4 @@
-package com.hnac.bean.db;
+package com.base.bean.db;
 
 import java.util.Date;
 

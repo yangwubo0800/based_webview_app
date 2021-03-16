@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.base.utils.db.DBHelper;
 import com.base.utils.log.AFLog;
-import com.hnac.bean.db.H5Page;
+import com.base.bean.db.H5Page;
 
 
 

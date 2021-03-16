@@ -61,3 +61,10 @@
 #个推消息推送混淆配置
 -dontwarn com.igexin.**
 -keep class com.igexin.** { *; }
+
+#科大讯飞语音识别
+-keep class com.iflytek.**{*;}
+-keepattributes Signature
+
+#百度语音识别
+-keep class com.baidu.speech.**{ *;}

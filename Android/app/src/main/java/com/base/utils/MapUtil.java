@@ -50,7 +50,7 @@ public class MapUtil {
      */
     public static void openGaoDeNavi(Context context,double slat, double slon, String sname, double dlat, double dlon, String dname){
         String uriString = null;
-        StringBuilder builder = new StringBuilder("amapuri://route/plan?sourceApplication=hnac");
+        StringBuilder builder = new StringBuilder("amapuri://route/plan?sourceApplication=xxxx");
         if (slat != 0) {
             builder.append("&sname=").append(sname)
                     .append("&slat=").append(slat)

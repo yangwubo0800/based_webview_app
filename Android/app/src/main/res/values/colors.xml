@@ -18,6 +18,9 @@
 
     <!--状态栏-->
     <color name="statusBarColor">#3277b3</color>
+    <color name="green">#00ff00</color>
+    <color name="gray_text">#adadad</color>
+    <color name="black">#000000</color>
     <!--标题栏-->
     <color name="titleBG">#3277b3</color>
 

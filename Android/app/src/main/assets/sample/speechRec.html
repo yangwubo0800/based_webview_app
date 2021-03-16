@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="./js/android.js" type="text/javascript"></script>
+    <script src="../js/device.js" type="text/javascript"></script>
+    <title>主页</title>
+
+    <script type="text/javascript">
+
+
+        function iflyStartRecord(){
+            var params = {
+            "language":"zh_cn",
+            "accent":"changshanese",
+            "vadBos":"50000",
+            "vadEos":"50000",
+            "ptt":"1"
+            }
+           //window.functionTag.iflyStartRecord(JSON.stringify(params));
+           //传空
+           var param
+           window.functionTag.iflyStartRecord(param);
+        }
+
+        // 使用device.js 统一接口
+        function iflyStartRecord2(){
+            var params = {
+            "speechPlatform":"ifly",
+            "useDefaultSetting":"0",
+            "language":"zh_cn",
+            "accent":"mandarin",
+            "vadBos":"50000",
+            "vadEos":"50000",
+            "ptt":"1"
+            }
+            MOBILE_API.startSpeechRecognize(params)
+        }
+
+        // 使用device.js 统一接口
+        function iflyStopRecord2(){
+            var params = {
+            "speechPlatform":"ifly"
+            }
+             var platform = "ifly"
+            MOBILE_API.stopSpeechRecognize(platform)
+        }
+
+
+        function iflyStopRecord(){
+            var speechText = window.functionTag.iflyStopRecord();
+            document.getElementById("speechText").innerText= speechText ;
+        }
+
+
+         MOBILE_API.on("speechTextRs", function(res){
+            console.log(res)
+            document.getElementById("speechText").innerText= res ;
+       })
+
+        MOBILE_API.on("speechBeginRs", function(res){
+            //console.log(res)
+            //document.getElementById("speechBegin").innerText= "语音识别开始啦" ;
+            // 清空文本识别内容区域
+            document.getElementById("speechText").innerText= "" ;
+       })
+
+<!--        MOBILE_API.on("speechEndRs", function(res){-->
+<!--            //console.log(res)-->
+<!--            document.getElementById("speechEnd").innerText= "语音识别结束啦" ;-->
+<!--       })-->
+
+
+
+
+         function startBaiduRecord(){
+
+            var params = {
+            "pid":"15372",
+            "vad.endpoint-timeout":"0"
+            }
+           window.functionTag.baiduStartRecord(JSON.stringify(params));
+           //传空
+           //var param
+           //window.functionTag.baiduStartRecord(param);
+        }
+
+         function startBaiduRecord2(){
+            var params = {
+            "speechPlatform":"baidu",
+            "useDefaultSetting":"0",
+            "pid":"15372",
+            "vad.endpoint-timeout":"0"
+            }
+            MOBILE_API.startSpeechRecognize(params)
+        }
+
+        function stopBaiduRecord2(){
+            var params = {
+            "speechPlatform":"baidu"
+            }
+            var platform = "baidu"
+            MOBILE_API.stopSpeechRecognize(platform)
+        }
+
+        function startTencentRecord(){
+            var params = {
+            "language":"16k_zh",
+            "vad":"0",
+            "vadTimeout":"1000",
+            "punc":"2"
+            }
+           window.functionTag.tencentStartRecord(JSON.stringify(params));
+           //传空
+           var param
+           //window.functionTag.tencentStartRecord(JSON.stringify(params));
+        }
+
+
+         function startTencentRecord2(){
+            var params = {
+            "speechPlatform":"tencent",
+            "useDefaultSetting":"0",
+            "language":"16k_zh",
+            "vad":"0",
+            "vadTimeout":"1000",
+            "punc":"2"
+            }
+            MOBILE_API.startSpeechRecognize(params)
+        }
+
+        function stopTencentRecord2(){
+            var params = {
+            "speechPlatform":"tencent"
+            }
+
+            var platform = "tencent"
+            MOBILE_API.stopSpeechRecognize(platform)
+        }
+
+    </script>
+
+    <style type="text/css">
+    	body{
+            margin: 0;
+    		background-color: #fff;
+    	}
+    	header{
+    		background-color: #F7F7F7;
+    		font-size: 40px;
+    		color: #34C0F5;
+    		text-align: center;
+    		line-height: 100px
+    	}
+
+    	.row{
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    	}
+    	.row >div{
+    		flex: 1;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+    	}
+        .row >div:active{
+            background: #e4e4e4;
+        }
+
+        .row img{
+            margin-bottom: 5px;
+        }
+        footer{
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<header>BaseWebview APP</header>
+
+<section class="row">
+
+    <div onclick="iflyStartRecord2()">
+        <img src="../images/photo.png">
+        <label>科大讯飞开始录音</label>
+    </div>
+
+    <div onclick="iflyStopRecord2()">
+        <img src="../images/photo.png">
+        <label>科大讯飞停止录音</label>
+    </div>
+
+    <div onclick="startBaiduRecord2()">
+        <img src="../images/photo.png">
+        <label>百度开始录音</label>
+    </div>
+
+    <div onclick="stopBaiduRecord2()">
+        <img src="../images/photo.png">
+        <label>百度停止录音</label>
+    </div>
+
+    <div onclick="startTencentRecord2()">
+        <img src="../images/photo.png">
+        <label>腾讯开始录音</label>
+    </div>
+
+    <div onclick="stopTencentRecord2()">
+        <img src="../images/photo.png">
+        <label>腾讯停止录音</label>
+    </div>
+
+
+
+</section>
+
+<div id="tips" style="margin:10px;">语音识别转换后的内容如下:</div>
+<div id="speechText" style="margin:10px;"> </div>
+<!--<div id="speechBegin" style="margin:10px;">语音识别开始:</div>-->
+<!--<div id="speechEnd" style="margin:10px;">语音识别结束:</div>-->
+
+
+
+</body>
+</html>

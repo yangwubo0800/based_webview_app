@@ -50,7 +50,7 @@ public class UploadErrorInfoService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         AFLog.d(TAG, "onHandleIntent");
         // TODO: 上传文件和设备信息
-        String uploadApi = "http://hydro.hnaccloud.com/hznet/app/error/submit";
+        String uploadApi = "http://xxxx.com/project/app/error/submit";
         if (TextUtils.isEmpty(URLUtil.getServerIP(this))){
             //使用默认域名
             uploadApi = "http://xxxxxxx/";

@@ -3,7 +3,7 @@ package com.base.utils.db;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.hnac.bean.db.H5Page;
+import com.base.bean.db.H5Page;
 import com.base.dao.db.PageColumns;
 import com.base.utils.GsonHelper;
 import com.base.utils.log.AFLog;

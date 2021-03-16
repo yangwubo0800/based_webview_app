@@ -12,6 +12,7 @@ import com.base.utils.log.AFLog;
 import com.base.bean.User;
 import com.base.receiver.MyNetworkReceiver;
 import com.base.utils.config.ParseConfig;
+import com.iflytek.cloud.SpeechUtility;
 import com.igexin.sdk.IUserLoggerInterface;
 
 import cn.jpush.android.api.JPushInterface;
@@ -116,6 +117,22 @@ public class BaseWebviewApp extends Application {
                     }
                 });
             }
+        }
+
+        // TODO: 初始化科大讯飞
+        // 应用程序入口处调用，避免手机内存过小，杀死后台进程后通过历史intent进入Activity造成SpeechUtility对象为null
+        // 如在Application中调用初始化，需要在Mainifest中注册该Applicaiton
+        // 注意：此接口在非主进程调用会返回null对象，如需在非主进程使用语音功能，请增加参数：SpeechConstant.FORCE_LOGIN+"=true"
+        // 参数间使用半角“,”分隔。
+        // 设置你申请的应用appid,请勿在'='与appid之间添加空格及空转义符
+        // 注意： appid 必须和下载的SDK保持一致，否则会出现10407错误
+        // TODO: 先不更加配置来进行确认是否要初始化了，因为这个不像消息推送，初始化之后会有其他消息主动推过来的可能，只是调用接口来使用功能。
+        if(true){
+            String iflySpeechAppId = GeneralUtils.getMetaValue(mContext, "com.ifly.speech.APP_ID");
+            Log.d(TAG, "iflySpeechAppId="+iflySpeechAppId);
+            SpeechUtility.createUtility(BaseWebviewApp.this, "appid=" + iflySpeechAppId);
+            // 以下语句用于设置日志开关（默认开启），设置成false时关闭语音云SDK日志打印
+            //Setting.setShowLog(false);
         }
 
 

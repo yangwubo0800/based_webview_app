@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.base.app"
-    android:versionCode="3"
-    android:versionName="3.0.0.1" >
+    android:versionCode="4"
+    android:versionName="4.0.0.1" >
 
     <!-- JPUSH Required -->
     <permission
@@ -50,6 +50,11 @@
     <!-- 获取手机状态权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission  android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- 集成语音识别需要的权限- 科大讯飞 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".BaseWebviewApp"
@@ -235,6 +240,17 @@
         <meta-data
             android:name="PUSH_APPSECRET"
             android:value="${GETUI_APP_SECRET}" />
+
+        <meta-data
+            android:name="com.baidu.speech.APP_ID"
+            android:value="${BAIDU_APP_ID}"/>
+
+        <meta-data
+            android:name="com.baidu.speech.API_KEY"
+            android:value="${BAIDU_APP_KEY}"/>
+        <meta-data
+            android:name="com.baidu.speech.SECRET_KEY"
+            android:value="${BAIDU_APP_SECRET}"/>
 
         <!-- User defined.  For test only  用户自定义接收消息器,3.0.7开始支持,目前新tag/alias接口设置结果会在该广播接收器对应的方法中回调-->
         <!--since 3.3.0 接收JPush相关事件-->

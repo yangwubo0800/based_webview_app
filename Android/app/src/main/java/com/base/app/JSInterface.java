@@ -1,5 +1,6 @@
 package com.base.app;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,17 +29,13 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.android.pushservice.PushManager;
+import com.base.app.speechrecognize.baidu.Baidu;
+import com.base.app.speechrecognize.ifly.IFly;
+import com.base.app.speechrecognize.tencent.Tencent;
 import com.base.app.ui.guide.AgreementDetailActivity;
-import com.base.bean.GPS;
-import com.base.utils.DataCleanManager;
-import com.base.utils.DownloadUtil;
-import com.base.utils.GPSConverterUtils;
-import com.base.utils.MapUtil;
-import com.base.utils.SpUtils;
-import com.cpe.ijkplayer.ui.LivePlayActivityNew;
-import com.example.ezrealplayer.ui.EZRealPlayActivity;
-import com.example.ezrealplayer.util.EZUtils;
+import com.base.app.ui.guide.PicassoPhotoViewActivity;
 import com.base.bean.AppInfo;
+import com.base.bean.GPS;
 import com.base.bean.LocationInfo;
 import com.base.bean.User;
 import com.base.bean.video.AccessTokenResp;
@@ -49,27 +46,28 @@ import com.base.constant.Constants;
 import com.base.constant.URLUtil;
 import com.base.service.AlarmNotifyService;
 import com.base.service.MqttService;
+import com.base.utils.BaseAppUtil;
 import com.base.utils.CameraFunctionUtil;
+import com.base.utils.DataCleanManager;
+import com.base.utils.DownloadUtil;
+import com.base.utils.GPSConverterUtils;
 import com.base.utils.GeneralUtils;
 import com.base.utils.GsonHelper;
-import com.base.utils.BaseAppUtil;
+import com.base.utils.MapUtil;
 import com.base.utils.NotificationUtils;
 import com.base.utils.OkGoUpdateHttpUtil;
+import com.base.utils.SpUtils;
 import com.base.utils.ToastUtil;
 import com.base.utils.http.ITRequestResult;
 import com.base.utils.http.OkHttpUtil;
 import com.base.utils.http.Param;
 import com.base.utils.log.AFLog;
 import com.base.utils.log.LogSaveUtils;
-import com.base.app.ui.guide.PicassoPhotoViewActivity;
+import com.cpe.ijkplayer.ui.LivePlayActivityNew;
+import com.igexin.sdk.Tag;
 import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
 import com.vector.update_app.UpdateCallback;
-import com.videogo.constant.IntentConsts;
-import com.videogo.exception.BaseException;
-import com.videogo.openapi.EZOpenSDK;
-import com.videogo.openapi.bean.EZCameraInfo;
-import com.videogo.openapi.bean.EZDeviceInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,9 +88,16 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import com.igexin.sdk.Tag;
 
 import static com.base.app.WebViewActivity.mQrScanCallName;
+
+//import com.example.ezrealplayer.ui.EZRealPlayActivity;
+//import com.example.ezrealplayer.util.EZUtils;
+//import com.videogo.constant.IntentConsts;
+//import com.videogo.exception.BaseException;
+//import com.videogo.openapi.EZOpenSDK;
+//import com.videogo.openapi.bean.EZCameraInfo;
+//import com.videogo.openapi.bean.EZDeviceInfo;
 
 public class JSInterface {
 
@@ -200,6 +205,36 @@ public class JSInterface {
     public static String mBaiduPushOperate;
     //需要设置的百度推送标签
     public static String mBaiduPushTags;
+
+    //语音识别全局参数
+    public static String mSpeechJsonParam;
+    //当前调用的是哪个平台的语音识别，在请求权限成功之后需要决定调用哪个接口
+    public static String mSpeechPlatform;
+    //语音识别调用60秒后超时处理
+    private Handler SpeechRecTimeoutHandler = new Handler();
+    Runnable speechRecStop = new Runnable() {
+        @Override
+        public void run() {
+            AFLog.e(TAG, "speechRecStop  run ");
+            ToastUtil.makeText(mContext, "单次语音识别超过60秒，自动停止识别" );
+            if (!TextUtils.isEmpty(mSpeechJsonParam)){
+                com.alibaba.fastjson.JSONObject param = (com.alibaba.fastjson.JSONObject) JSON.parse(mSpeechJsonParam);
+                String speechPlatform = param.getString("speechPlatform");
+                if (Constants.SPEECH_IFLY.equals(speechPlatform)){
+                    IFly iflySpeech = IFly.getInstance(mContext, mHandler);
+                    iflySpeech.stopRecord();
+                }else if (Constants.SPEECH_BAIDU.equals(speechPlatform)){
+                    Baidu baiduSpeech = Baidu.getInstance(mContext, mHandler);
+                    baiduSpeech.stopRecord();
+                }else if (Constants.SPEECH_TENCENT.equals(speechPlatform)){
+                    Tencent tencentSpeech = Tencent.getInstance(mContext, mHandler);
+                    tencentSpeech.stopRecord();
+                }else {
+                    AFLog.e(TAG, "speechRecStop  run param error");
+                }
+            }
+        }
+    };
 
 
     /**
@@ -918,23 +953,23 @@ public class JSInterface {
      * @param appKey
      */
     private void initSDK(String appKey) {
-        {
-            /**
-             * sdk日志开关，正式发布需要去掉
-             */
-            EZOpenSDK.showSDKLog(true);
-
-            /**
-             * 设置是否支持P2P取流,详见api
-             */
-            EZOpenSDK.enableP2P(false);
-
-            /**
-             * APP_KEY请替换成自己申请的
-             */
-            EZOpenSDK.initLib(BaseWebviewApp.getInstance(),appKey,"");
-//            EZOpenSDK.initLib(this, AppKey, "");
-        }
+//        {
+//            /**
+//             * sdk日志开关，正式发布需要去掉
+//             */
+//            EZOpenSDK.showSDKLog(true);
+//
+//            /**
+//             * 设置是否支持P2P取流,详见api
+//             */
+//            EZOpenSDK.enableP2P(false);
+//
+//            /**
+//             * APP_KEY请替换成自己申请的
+//             */
+//            EZOpenSDK.initLib(BaseWebviewApp.getInstance(),appKey,"");
+////            EZOpenSDK.initLib(this, AppKey, "");
+//        }
     }
 
     /**
@@ -1008,61 +1043,61 @@ public class JSInterface {
      * @param accessToken
      */
     public void setAccessToken(String accessToken) {
-        EZOpenSDK.getInstance().setAccessToken(accessToken);
-        getCameraList();
+//        EZOpenSDK.getInstance().setAccessToken(accessToken);
+//        getCameraList();
     }
 
     // TODO: 如果是前端直接请求等待获取完成的话，此处是否需要做成同步，不适用线程？
     public void getCameraList(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //每次获取前先清理掉全局变量中的内容;
-                    if (null != list) {
-                        list.clear();
-                    }
-                    List<EZDeviceInfo> result = null;
-//                    showLoading();
-                    result = EZOpenSDK.getInstance().getDeviceList(0, 50);
-                    if(result!=null){
-//                        hideLoading();
-                        for (EZDeviceInfo info:result) {
-                            List<EZCameraInfo>  cameraInfos= info.getCameraInfoList();
-                            if(cameraInfos.size()>0){
-                                for (EZCameraInfo cameraInfo:cameraInfos) {
-                                    list.add(new Video(cameraInfo.getDeviceSerial(),cameraInfo.getCameraName(),"", GeneralUtils.getRightNowDateString2(),"01",cameraInfo,info));
-                                }
-                            }else{
-                                list.add(new Video(info.getDeviceSerial(),info.getDeviceName(),"", GeneralUtils.getRightNowDateString2(),"0",info));
-                            }
-//                            list.add(new Video(info.getDeviceSerial(),info.getDeviceName(),"", GeneralUtils.getRightNowDateString2(),"0",info));
-                        }
-                        // TODO: 获取完列表之后，回调前端接口，将转换成gson字符串返回给前端，
-                        AFLog.d(TAG,"getCameraList list size =" + list.size());
-                        Video video = list.get(0);
-                        //Log.d(TAG,"=====video 0 is" + video.toString());
-                        String videoInfo = GsonHelper.toJson(video);
-                        //Log.d(TAG,"=====GsonHelper videoInfo=" + videoInfo);
-                        //发消息到主线程
-                        Message msg = new Message();
-                        msg.what = Constants.MSG_FOR_GET_EZOPEN_VIDEO_LIST;
-                        msg.obj = videoInfo;
-                        mHandler.sendMessage(msg);
-//                        EZOpenPlay(videoInfo);
-                        String videoList = GsonHelper.toJson(list);
-                        //Log.d(TAG,"=====GsonHelper videoList=" + videoList);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    //每次获取前先清理掉全局变量中的内容;
+//                    if (null != list) {
+//                        list.clear();
+//                    }
+//                    List<EZDeviceInfo> result = null;
+////                    showLoading();
+//                    result = EZOpenSDK.getInstance().getDeviceList(0, 50);
+//                    if(result!=null){
+////                        hideLoading();
+//                        for (EZDeviceInfo info:result) {
+//                            List<EZCameraInfo>  cameraInfos= info.getCameraInfoList();
+//                            if(cameraInfos.size()>0){
+//                                for (EZCameraInfo cameraInfo:cameraInfos) {
+//                                    list.add(new Video(cameraInfo.getDeviceSerial(),cameraInfo.getCameraName(),"", GeneralUtils.getRightNowDateString2(),"01",cameraInfo,info));
+//                                }
+//                            }else{
+//                                list.add(new Video(info.getDeviceSerial(),info.getDeviceName(),"", GeneralUtils.getRightNowDateString2(),"0",info));
+//                            }
+////                            list.add(new Video(info.getDeviceSerial(),info.getDeviceName(),"", GeneralUtils.getRightNowDateString2(),"0",info));
+//                        }
+//                        // TODO: 获取完列表之后，回调前端接口，将转换成gson字符串返回给前端，
+//                        AFLog.d(TAG,"getCameraList list size =" + list.size());
+//                        Video video = list.get(0);
+//                        //Log.d(TAG,"=====video 0 is" + video.toString());
+//                        String videoInfo = GsonHelper.toJson(video);
+//                        //Log.d(TAG,"=====GsonHelper videoInfo=" + videoInfo);
+//                        //发消息到主线程
 //                        Message msg = new Message();
-//                        msg.what = ESO_FLAG;
-//                        handler.sendMessage(msg);
-                    }
-                } catch (BaseException e) {
-//                    hideLoading();
-                    //videoPresenter.getAccessToken(EZAppKey,EZAppSecret);;
-                    AFLog.e(TAG, "BaseException" );
-                }
-            }
-        }).start();
+//                        msg.what = Constants.MSG_FOR_GET_EZOPEN_VIDEO_LIST;
+//                        msg.obj = videoInfo;
+//                        mHandler.sendMessage(msg);
+////                        EZOpenPlay(videoInfo);
+//                        String videoList = GsonHelper.toJson(list);
+//                        //Log.d(TAG,"=====GsonHelper videoList=" + videoList);
+////                        Message msg = new Message();
+////                        msg.what = ESO_FLAG;
+////                        handler.sendMessage(msg);
+//                    }
+//                } catch (BaseException e) {
+////                    hideLoading();
+//                    //videoPresenter.getAccessToken(EZAppKey,EZAppSecret);;
+//                    AFLog.e(TAG, "BaseException" );
+//                }
+//            }
+//        }).start();
     }
 
 
@@ -1075,54 +1110,54 @@ public class JSInterface {
     @JavascriptInterface
     public void EZOpenPlay(String videoInfo){
         // TODO: 需要将参数变为string，供给前端使用，然后gson化成类，再在安卓层面使用。
-        Video playVideo = GsonHelper.toType(videoInfo, Video.class);
-
-        if(playVideo.getVideoType().equals("0")){
-            // 从gson转换会的video类中先获取对象
-            Object deviceObj = playVideo.getObject();
-            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
-            //异常，可能是直接获取的对象不符合gson格式
-            String deviceStr = GsonHelper.toJson(deviceObj);
-            //将gson格式后的object转换为具体类对象
-            EZDeviceInfo  deviceInfo = GsonHelper.toType(deviceStr, EZDeviceInfo.class);
-
-            EZCameraInfo  cameraInfo = EZUtils.getCameraInfoFromDevice(deviceInfo, 0);
-            if (cameraInfo == null) {
-                return;
-            }
-            Intent intent = new Intent(mContext, EZRealPlayActivity.class);
-            intent.putExtra(IntentConsts.EXTRA_CAMERA_INFO, cameraInfo);
-            intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, deviceInfo);
-            mContext.startActivity(intent);
-
-        }else if(playVideo.getVideoType().equals("01")){
-            //EZCameraInfo  cameraInfo = (EZCameraInfo)playVideo.getObject();
-            // 从gson转换会的video类中先获取对象
-            Object cameraObj = playVideo.getObject();
-            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
-            //异常，可能是直接获取的对象不符合gson格式
-            String cameraStr = GsonHelper.toJson(cameraObj);
-            //将gson格式后的object转换为具体类对象
-            EZCameraInfo  cameraInfo = GsonHelper.toType(cameraStr, EZCameraInfo.class);
-            if (cameraInfo == null) {
-                return;
-            }
-
-            // 从gson转换会的video类中先获取对象
-            Object deviceObj = playVideo.getObject2();
-            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
-            //异常，可能是直接获取的对象不符合gson格式
-            String deviceStr = GsonHelper.toJson(deviceObj);
-            //将gson格式后的object转换为具体类对象
-            EZDeviceInfo  deviceInfo = GsonHelper.toType(deviceStr, EZDeviceInfo.class);
-
-            Intent intent = new Intent(mContext, EZRealPlayActivity.class);
-            intent.putExtra(IntentConsts.EXTRA_CAMERA_INFO, cameraInfo);
-            //intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, (EZDeviceInfo)playVideo.getObject2());
-            intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, deviceInfo);
-            mContext.startActivity(intent);
-
-        }
+//        Video playVideo = GsonHelper.toType(videoInfo, Video.class);
+//
+//        if(playVideo.getVideoType().equals("0")){
+//            // 从gson转换会的video类中先获取对象
+//            Object deviceObj = playVideo.getObject();
+//            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
+//            //异常，可能是直接获取的对象不符合gson格式
+//            String deviceStr = GsonHelper.toJson(deviceObj);
+//            //将gson格式后的object转换为具体类对象
+//            EZDeviceInfo  deviceInfo = GsonHelper.toType(deviceStr, EZDeviceInfo.class);
+//
+//            EZCameraInfo  cameraInfo = EZUtils.getCameraInfoFromDevice(deviceInfo, 0);
+//            if (cameraInfo == null) {
+//                return;
+//            }
+//            Intent intent = new Intent(mContext, EZRealPlayActivity.class);
+//            intent.putExtra(IntentConsts.EXTRA_CAMERA_INFO, cameraInfo);
+//            intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, deviceInfo);
+//            mContext.startActivity(intent);
+//
+//        }else if(playVideo.getVideoType().equals("01")){
+//            //EZCameraInfo  cameraInfo = (EZCameraInfo)playVideo.getObject();
+//            // 从gson转换会的video类中先获取对象
+//            Object cameraObj = playVideo.getObject();
+//            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
+//            //异常，可能是直接获取的对象不符合gson格式
+//            String cameraStr = GsonHelper.toJson(cameraObj);
+//            //将gson格式后的object转换为具体类对象
+//            EZCameraInfo  cameraInfo = GsonHelper.toType(cameraStr, EZCameraInfo.class);
+//            if (cameraInfo == null) {
+//                return;
+//            }
+//
+//            // 从gson转换会的video类中先获取对象
+//            Object deviceObj = playVideo.getObject2();
+//            //将对象在此json化，否则后面转成类时会报 MalformedJsonException: Unterminated object at line
+//            //异常，可能是直接获取的对象不符合gson格式
+//            String deviceStr = GsonHelper.toJson(deviceObj);
+//            //将gson格式后的object转换为具体类对象
+//            EZDeviceInfo  deviceInfo = GsonHelper.toType(deviceStr, EZDeviceInfo.class);
+//
+//            Intent intent = new Intent(mContext, EZRealPlayActivity.class);
+//            intent.putExtra(IntentConsts.EXTRA_CAMERA_INFO, cameraInfo);
+//            //intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, (EZDeviceInfo)playVideo.getObject2());
+//            intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, deviceInfo);
+//            mContext.startActivity(intent);
+//
+//        }
     }
 
     /**
@@ -1303,7 +1338,7 @@ public class JSInterface {
 
     /**
      * 功能：设置消息订阅的主题
-     * 参数：topics，订阅的主题，可以设置多个，多个主题之间以逗号分隔，例如"HZNet/ST/0001,HZNet/ST/0002"
+     * 参数：topics，订阅的主题，可以设置多个，多个主题之间以逗号分隔，例如"Project/ST/0001,Project/ST/0002"
      * 返回值：无
      * 使用方式：window.functionTag.setTopics(topics)
      */
@@ -1753,6 +1788,211 @@ public class JSInterface {
 
         }else {
             AFLog.e(TAG,"setGTPushTagAndJumpUrl tags为空");
+        }
+    }
+
+
+    /**
+     * 功能：科大讯飞开始录音识别
+     * 参数：jsonParam 语音识别参数 json字符串
+     *             "language":"zh_cn",
+     *             "accent":"changshanese",
+     *             "vadBos":"50000",
+     *             "vadEos":"50000",
+     *             "ptt":"1"
+     * 返回值：无
+     * 使用方式：window.functionTag.iflyStartRecord(jsonParam)
+     */
+    @JavascriptInterface
+    public void  iflyStartRecord(String jsonParam){
+        mSpeechJsonParam = jsonParam;
+        AFLog.d(TAG, "iflyStartRecord jsonParam="+jsonParam);
+        if (BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.RECORD_AUDIO)) {
+            IFly iflySpeech = IFly.getInstance(mContext, mHandler);
+            iflySpeech.startRecord(jsonParam);
+        } else {
+            mSpeechPlatform = Constants.SPEECH_IFLY;
+            ActivityCompat.requestPermissions(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            android.Manifest.permission.RECORD_AUDIO},
+                    Constants.PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE);
+        }
+    }
+
+    /**
+     * 功能：科大讯飞停止语音识别
+     * 参数： 无
+     * 返回值：无
+     * 使用方式：window.functionTag.iflyStopRecord()
+     */
+    @JavascriptInterface
+    public void   iflyStopRecord(){
+        IFly iflySpeech = IFly.getInstance(mContext, mHandler);
+        iflySpeech.stopRecord();
+    }
+
+
+    /**
+     * 功能：百度开始录音识别
+     * 参数：jsonParam 语音识别参数 json字符串
+     *             "pid":"15372",  语言参数 https://ai.baidu.com/ai-doc/SPEECH/5khq3i39w
+     *             "vad.endpoint-timeout":"0"  设置为0为长语音，此时开启和结束识别需要调用接口自己控制，否则默认为短语音识别，两句话之间超过800ms则会中断。
+     * 返回值：无
+     * 使用方式：window.functionTag.baiduStartRecord(jsonParam)
+     */
+    @JavascriptInterface
+    public void  baiduStartRecord(String jsonParam){
+        mSpeechJsonParam = jsonParam;
+        AFLog.d(TAG, "baiduStartRecord jsonParam="+jsonParam);
+        if (BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.RECORD_AUDIO)) {
+            Baidu baiduSpeech = Baidu.getInstance(mContext, mHandler);
+            baiduSpeech.startRecord(jsonParam);
+        } else {
+            // TODO： 授予权限之后要调用对应的接口开启语音识别
+            mSpeechPlatform = Constants.SPEECH_BAIDU;
+            ActivityCompat.requestPermissions(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            android.Manifest.permission.RECORD_AUDIO},
+                    Constants.PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE);
+        }
+    }
+
+    /**
+     *  结束百度语音识别
+     * 参数： 无
+     * 返回值：无
+     * 使用方式：window.functionTag.baiduStopRecord()
+     */
+    @JavascriptInterface
+    public void  baiduStopRecord(){
+        AFLog.d(TAG, "baiduStopRecord ");
+        Baidu baiduSpeech = Baidu.getInstance(mContext, mHandler);
+        baiduSpeech.stopRecord();
+    }
+
+
+    /**
+     * 功能：腾讯开始录音识别
+     * 参数：jsonParam 语音识别参数 json字符串
+     * *https://cloud.tencent.com/document/product/1093/35799
+     * language  语言引擎
+     * vad 是否开启静音检测
+     * vadTimeoout 静音检测超时时间
+     * punc 识别内容中是否需要标点符号
+     * 返回值：无
+     * 使用方式：window.functionTag.tencentStartRecord(jsonParam)
+     */
+    @JavascriptInterface
+    public void  tencentStartRecord(String jsonParam){
+        mSpeechJsonParam = jsonParam;
+        AFLog.d(TAG, "tencentStartRecord jsonParam="+jsonParam);
+        if (BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.RECORD_AUDIO)) {
+            Tencent tencentSpeech = Tencent.getInstance(mContext, mHandler);
+            tencentSpeech.startRecord(jsonParam);
+        } else {
+            // TODO： 授予权限之后要调用对应的接口开启语音识别
+            mSpeechPlatform = Constants.SPEECH_TENCENT;
+            ActivityCompat.requestPermissions(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            android.Manifest.permission.RECORD_AUDIO},
+                    Constants.PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE);
+        }
+    }
+
+
+    /**
+     * 结束腾讯语音识别
+     * 参数： 无
+     * 返回值：无
+     * 使用方式：window.functionTag.tencentStopRecord()
+     */
+    @JavascriptInterface
+    public void  tencentStopRecord(){
+        AFLog.d(TAG, "tencentStopRecord ");
+        Tencent tencentSpeech = Tencent.getInstance(mContext, mHandler);
+        tencentSpeech.stopRecord();
+    }
+
+
+    /**
+     * 对外统一接口，调用开启语音识别，并且60秒超时后自动结束本地识别
+     * 参数   识别平台 ifly baidu tencent ，
+     * 例如 params = {
+     *             "speechPlatform":"tencent"
+     *             }
+     * 返回值  无
+     * @param jsonParam
+     */
+    @JavascriptInterface
+    public void  speechRecStartTimeout60S(String jsonParam){
+        mSpeechJsonParam = jsonParam;
+        AFLog.d(TAG, "speechRecStartTimeout60S jsonParam="+jsonParam);
+        if (TextUtils.isEmpty(jsonParam)){
+            AFLog.e(TAG,"speechRecStartTimeout60S param error");
+            return;
+        }else {
+            // 先移除掉之前的超时回调
+            SpeechRecTimeoutHandler.removeCallbacks(speechRecStop);
+            com.alibaba.fastjson.JSONObject param = (com.alibaba.fastjson.JSONObject) JSON.parse(jsonParam);
+            String speechPlatform = param.getString("speechPlatform");
+            // TODO: 先都暂时使用默认配置，后续如果有定制需求，可以通过前端增加此参数来设置
+            boolean useDefaultSetting = param.getBoolean("useDefaultSetting");
+
+            if (BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                    BaseAppUtil.selfPermissionGranted(mContext, android.Manifest.permission.RECORD_AUDIO)) {
+                if (Constants.SPEECH_IFLY.equals(speechPlatform)){
+                    IFly iflySpeech = IFly.getInstance(mContext, mHandler);
+                    iflySpeech.startRecord(null);
+                }else if (Constants.SPEECH_BAIDU.equals(speechPlatform)){
+                    Baidu baiduSpeech = Baidu.getInstance(mContext, mHandler);
+                    baiduSpeech.startRecord(null);
+                }else if (Constants.SPEECH_TENCENT.equals(speechPlatform)){
+                    Tencent tencentSpeech = Tencent.getInstance(mContext, mHandler);
+                    tencentSpeech.startRecord(null);
+                }else {
+                    AFLog.e(TAG, "speechRecStartTimeout60S param error");
+                }
+            } else {
+                // TODO： 授予权限之后要调用对应的接口开启语音识别
+                mSpeechPlatform = speechPlatform;
+                ActivityCompat.requestPermissions(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.RECORD_AUDIO},
+                        Constants.PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE);
+            }
+            // 调用超时时间后自动结束
+            SpeechRecTimeoutHandler.postDelayed(speechRecStop, 60000);
+        }
+    }
+
+
+    /**
+     * 关闭语音识别统一接口，同时移除超时60秒自动关闭识别功能
+     * 参数 识别平台 ifly baidu tencent ，直接传参数字符串即可，不用json格式
+     * 返回值  无
+     * @param speechPlatform
+     */
+    @JavascriptInterface
+    public void  speechRecStopTimeout60S(String speechPlatform){
+        AFLog.d(TAG, "speechRecStopTimeout60S speechPlatform="+speechPlatform);
+        if (TextUtils.isEmpty(speechPlatform)){
+            AFLog.e(TAG,"speechRecStopTimeout60S speechPlatform error");
+            return;
+        }else {
+            if (Constants.SPEECH_IFLY.equals(speechPlatform)){
+                // TODO: 鉴于科大讯飞是有在识别过程中是有反馈校正机制的，此处前端调用结束是否需要延迟处理
+                IFly iflySpeech = IFly.getInstance(mContext, mHandler);
+                iflySpeech.stopRecord();
+            }else if (Constants.SPEECH_BAIDU.equals(speechPlatform)){
+                Baidu baiduSpeech = Baidu.getInstance(mContext, mHandler);
+                baiduSpeech.stopRecord();
+            }else if (Constants.SPEECH_TENCENT.equals(speechPlatform)){
+                Tencent tencentSpeech = Tencent.getInstance(mContext, mHandler);
+                tencentSpeech.stopRecord();
+            }else {
+                AFLog.e(TAG, "speechRecStopTimeout60S param error");
+            }
+            // 移动超时后自动结束回调事件， 只需要remove即可，不关心run 里面执行的具体接口
+            SpeechRecTimeoutHandler.removeCallbacks(speechRecStop);
         }
     }
 

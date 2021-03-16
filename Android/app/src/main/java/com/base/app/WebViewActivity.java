@@ -13,19 +13,17 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
@@ -41,13 +39,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.base.app.speechrecognize.baidu.Baidu;
+import com.base.app.speechrecognize.ifly.IFly;
+import com.base.app.speechrecognize.tencent.Tencent;
 import com.base.bean.DeviceIdInfo;
 import com.base.bean.ScanInfo;
 import com.base.constant.Constants;
+import com.base.utils.BaseAppUtil;
 import com.base.utils.CameraFunctionUtil;
 import com.base.utils.GsonHelper;
-import com.base.utils.BaseAppUtil;
-
+import com.base.utils.NotificationUtils;
 import com.base.utils.SpUtils;
 import com.base.utils.ToastUtil;
 import com.base.utils.UriUtils;
@@ -64,8 +65,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import wendu.dsbridge.CompletionHandler;
 import wendu.dsbridge.DWebView;
@@ -164,6 +163,29 @@ public class WebViewActivity extends AppCompatActivity {
                     url = "javascript:Android.emit('"+ emitName + "','" + scanInfo+"')";
                     mWebviewPage.loadUrl(url);
                     AFLog.d(TAG,"MSG_FOR_GET_SCAN_INFO scanInfo=" + scanInfo);
+                    break;
+                case Constants.MSG_FOR_SPEECH_TEXT:
+                    String speechText = (String)msg.obj;
+                    emitName = "speechText";
+                    url = "javascript:MOBILE_API.emit('"+ emitName + "','" + speechText+"')";
+                    mWebviewPage.loadUrl(url);
+                    AFLog.d(TAG,"MSG_FOR_SPEECH_TEXT speechText=" + speechText);
+                    break;
+                case Constants.MSG_FOR_SHOW_TOAST:
+                    String toast = (String)msg.obj;
+                    ToastUtil.makeText(WebViewActivity.this, toast);
+                    break;
+                case Constants.MSG_FOR_SPEECH_BEGIN:
+                    emitName = "speechBegin";
+                    url = "javascript:MOBILE_API.emit('"+ emitName +"')";
+                    mWebviewPage.loadUrl(url);
+                    AFLog.d(TAG,"MSG_FOR_SPEECH_BEGIN " );
+                    break;
+                case Constants.MSG_FOR_SPEECH_END:
+                    emitName = "speechEnd";
+                    url = "javascript:MOBILE_API.emit('"+ emitName +"')";
+                    mWebviewPage.loadUrl(url);
+                    AFLog.d(TAG,"MSG_FOR_SPEECH_END " );
                     break;
                 default:
                     break;
@@ -362,8 +384,14 @@ public class WebViewActivity extends AppCompatActivity {
 //        mWebviewPage.clearHistory();
 //
 //        //其实还是无法回收内存
-//        mWebviewPage.removeAllViews();
-//        mWebviewPage.destroy();
+        mWebviewPage.removeAllViews();
+        mWebviewPage.destroy();
+
+        // TODO; 释放单例对象
+        Baidu.releaseInstance();
+        NotificationUtils.releaseInstance();
+        IFly.releaseInstance();
+        Tencent.releaseInstance();
 
         //自杀退出
         //android.os.Process.killProcess(android.os.Process.myPid());
@@ -815,6 +843,31 @@ public class WebViewActivity extends AppCompatActivity {
                 } else {
                     AFLog.d(TAG,"PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS no grant result");
                     ToastUtil.makeText(mContext, "请打开摄像头和文件存储权限");
+                }
+                break;
+            case Constants.PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE:
+                if (null != grantResults && grantResults.length > 0) {
+                    if (BaseAppUtil.permissionGrantedCheck(grantResults)){
+                        // TODO: 根据当前配置调用的是哪个平台的语音识别接口来调用
+                        if (!TextUtils.isEmpty(JSInterface.mSpeechPlatform)){
+                            if (Constants.SPEECH_IFLY.equals(JSInterface.mSpeechPlatform)){
+                                new JSInterface(mContext, WebViewActivity.this, mHandler).iflyStartRecord(JSInterface.mSpeechJsonParam);
+                            }else if (Constants.SPEECH_BAIDU.equals(JSInterface.mSpeechPlatform)){
+                                new JSInterface(mContext, WebViewActivity.this, mHandler).baiduStartRecord(JSInterface.mSpeechJsonParam);
+                            }else if (Constants.SPEECH_TENCENT.equals(JSInterface.mSpeechPlatform)){
+                                new JSInterface(mContext, WebViewActivity.this, mHandler).tencentStartRecord(JSInterface.mSpeechJsonParam);
+                            }else {
+                                Log.e(TAG, "不支持的平台 mSpeechPlatform="+JSInterface.mSpeechPlatform);
+                            }
+                        }else {
+                            Log.e(TAG, "非语音识别请求语音权限，不响应");
+                        }
+                    } else {
+                        ToastUtil.makeText(mContext, "请打开麦克风和文件存储权限");
+                    }
+                } else {
+                    AFLog.d(TAG,"PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE no grant result");
+                    ToastUtil.makeText(mContext, "请打开麦克风和文件存储权限");
                 }
                 break;
             default:

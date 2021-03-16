@@ -59,6 +59,19 @@ public class Constants {
      */
     public static final String PUSH_MESSAGE_JUMP_URL_KEY="historyAlarmUrl";
 
+    /**
+     * 语音识别调用接口 科大讯飞
+     */
+    public static final String SPEECH_IFLY = "ifly";
+    /**
+     * 语音识别调用接口 百度
+     */
+    public static final String SPEECH_BAIDU = "baidu";
+    /**
+     * 语音识别调用接口 腾讯
+     */
+    public static final String SPEECH_TENCENT = "tencent";
+
     //定义activity里面请求码
     //界面跳转请求
     public static final int TAKE_PHOTO_REQUEST = 2;
@@ -81,6 +94,7 @@ public class Constants {
     public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_RECORD_VIDEO = 109;
     public static final int PERMISSION_REQUEST_FOR_SAVE_LOG = 110;
     public static final int PERMISSION_REQUEST_FOR_INPUT_TAG_TAKE_PHOTO_COMPRESS = 111;
+    public static final int PERMISSION_REQUEST_FOR_SPEECH_RECOGNIZE = 112;
 
     //更新位置信息消息
     public static final int MSG_FOR_LOCATION = 10001;
@@ -92,4 +106,12 @@ public class Constants {
     public static final int MSG_FOR_GET_MD5_IMEI= 10004;
     //获取扫码字符串信息
     public static final int MSG_FOR_GET_SCAN_INFO= 10005;
+    //返回语音识别信息
+    public static final int MSG_FOR_SPEECH_TEXT= 10006;
+    //子线程中需要显示toast
+    public static final int MSG_FOR_SHOW_TOAST= 10007;
+    //语音识别信息开始
+    public static final int MSG_FOR_SPEECH_BEGIN= 10008;
+    //语音识别信息结束
+    public static final int MSG_FOR_SPEECH_END= 10009;
 }

@@ -983,4 +983,33 @@ public final class GeneralUtils {
         return apiKey;
     }
 
+
+    /**
+     * 根据mainifest.xml中的 metakey获取int数据
+     * @param context
+     * @param metaKey
+     * @return
+     */
+    public static Integer getMetaIntValue(Context context, String metaKey) {
+        Bundle metaData = null;
+        Integer apiKey = null;
+        if (context == null || metaKey == null) {
+            return null;
+        }
+        try {
+            ApplicationInfo ai = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(),
+                            PackageManager.GET_META_DATA);
+            if (null != ai) {
+                metaData = ai.metaData;
+            }
+            if (null != metaData) {
+                apiKey = metaData.getInt(metaKey);
+            }
+        } catch (NameNotFoundException e) {
+            Log.e(TAG, "error " + e.getMessage());
+        }
+        return apiKey;
+    }
+
 }

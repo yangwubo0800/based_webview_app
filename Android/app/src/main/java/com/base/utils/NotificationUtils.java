@@ -81,6 +81,13 @@ public class NotificationUtils {
         return mInstance;
     }
 
+    // 释放单例对象
+    public static void releaseInstance(){
+        if (null != mInstance){
+            mInstance = null;
+        }
+    }
+
     /**
      * 提供外部使用发送通知
      */

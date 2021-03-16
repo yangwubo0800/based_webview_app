@@ -12,9 +12,10 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.base.app"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
         manifestPlaceholders = [
                 JPUSH_APPKEY : "xxxxx",//值来自开发者平台取得的AppKey
                 JPUSH_CHANNEL: "company channel",
@@ -23,13 +24,25 @@ android {
                 GETUI_APP_ID : "xxxx",//个推消息推送apikey
                 GETUI_APP_KEY : "xxxx",
                 GETUI_APP_SECRET : "xxxx",
+                GETUI_APP_KEY : "xxxx",
+                GETUI_APP_SECRET : "xxxx",
+
+                BAIDU_APP_ID : "xxxx", // 百度语音识别
+                BAIDU_APP_KEY : "xxxx",
+                BAIDU_APP_SECRET : "xxxx",
+
+                IFLY_SPEECH_APPID : "xxxx", //科大讯飞语音识别
+
+                TENCENT_SPEECH_APPID : "xxxx", //腾讯语音识别
+                TENCENT_SPEECH_SECRETID : "xxxx",
+                TENCENT_SPEECH_SECRETKEY : "xxxx",
         ]
     }
     buildTypes {
 
-        debug {
-            applicationIdSuffix "debug"
-        }
+//        debug {
+//            applicationIdSuffix "debug"
+//        }
 
         release {
             minifyEnabled false
@@ -38,6 +51,10 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     //TODO：只保留ABI为:'armeabi-v7a'的so, 'armeabi'已经不支持，'armeabi'的so通常可以直接置于'armeabi-v7a'
     // 海康视频，此配置用来分割apk,减小大小，会导致生成文件带有abi名字
     // 极光推送提供了所有平台的so，但是市面上大部分机型为armv7 https://www.jianshu.com/p/918149d3ef34
@@ -57,7 +74,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation 'com.android.support:support-annotations:27.0.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     testImplementation 'junit:junit:4.12'
@@ -66,19 +84,23 @@ dependencies {
     implementation project(':ijkplayer')
     implementation project(':zxing')
     implementation project(':update-app')
-    implementation project(':ezrealplayer')
+    //implementation project(':ezrealplayer')
+    implementation project(':fastjson')
     //配合更新库使用的okgo
     implementation 'com.lzy.net:okgo:3.0.4'
     //告警service需要访问后台，使用okhttp
     //implementation files('libs/okhttp-2.7.0.jar')
+    //如果想要换成本地jar包的话会有多个依赖要下载
     implementation 'com.squareup.okhttp3:okhttp:3.3.0'
     implementation 'com.google.code.gson:gson:2.2.4'
     //消息推送集成mqtt
     implementation 'org.eclipse.paho:mqtt-client:0.4.0'
     //图片预览框架photoview
-   // implementation  'com.github.chrisbanes:PhotoView:2.0.0'
+    // implementation  'com.github.chrisbanes:PhotoView:2.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     //在web查看手机端sqlite 数据库框架
     implementation 'io.github.skyhacker2:sqliteonweb:1.0.2'
-    implementation project(':fastjson')
+    //腾讯语音识别需要
+    implementation 'org.slf4j:slf4j-android:1.7.25'
+
 }

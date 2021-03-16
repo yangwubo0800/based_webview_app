@@ -12,6 +12,9 @@
 static NSString *appKey = @"xxxxxxxxxxx";
 static NSString *channel = @"Publish channel";
 static BOOL isProduction = YES;
+//
+////baidu push param
+//static NSString *BaiduPushApiKey = @"xxxxxxxxxxx";
 
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "../WebViewJavascriptBridge/WebViewJavascriptBridge.h"
 #import "../dsbridge/DWKWebView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WebviewController : UIViewController
 
 // 开源框架https://github.com/marcuswestin/WebViewJavascriptBridge
-@property WebViewJavascriptBridge* bridge;
+//@property WebViewJavascriptBridge* bridge;
 
 
 // 单例模式，提供给某些类需要使用桥来回调JS方法
@@ -30,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 视频播放功能
 - (void)ijkVideoPlay:(NSString*)videoPath;
+
+//下载并预览文件
+-(void) downloadAndPreviewFile:(NSString *)downloadUrl withName:(NSString*)fileName;
 
 //记录当前加载的URL
 @property(nonatomic, strong) NSURL *currentUrl;

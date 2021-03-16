@@ -308,7 +308,7 @@
 
     /**
      * 扫描二维码
-     * @param {String} type 
+     * @param {String} type
      */
     MobileApi.prototype.scanQRCode = function(type){
     }
@@ -316,7 +316,7 @@
 
     /**
      * 获取定位方法
-     * @param {String} type 
+     * @param {String} type
      */
     MobileApi.prototype.location = function(type){
     }
@@ -335,7 +335,7 @@
 
     /**
      * 告警消息服务
-     * @param {Object} options 
+     * @param {Object} options
      */
     MobileApi.prototype.alarm = function(options){
     }
@@ -343,63 +343,63 @@
     /**
      * 设置变量存储
      * @param {String} key
-     * @param {String} value 
+     * @param {String} value
      */
     MobileApi.prototype.setItem = function(key, value){
     }
 
     /**
      * 获取存储值
-     * @param {String} key 
+     * @param {String} key
      */
     MobileApi.prototype.getItem = function(key){
     }
 
     /**
      * 获取App的版本信息
-     * @param {String} type 
+     * @param {String} type
      */
     MobileApi.prototype.getAppInfo = function(type){
     }
 
     /**
      * 打电话
-     * @param {String} number 
+     * @param {String} number
      */
     MobileApi.prototype.callNumber = function(number){
     }
 
     /**
      * 更新app
-     * @param {String} address 
+     * @param {String} address
      */
     MobileApi.prototype.updateApp = function(address){
     }
     
     /**
      * 图片预览
-     * @param {String} url 
+     * @param {String} url
      */
     MobileApi.prototype.previewPhoto = function(url){
     }
     /**
      * 视频播放
-     * @param {String} videoUrl 
-     * @param {String} videoTitle 
+     * @param {String} videoUrl
+     * @param {String} videoTitle
      */
     MobileApi.prototype.videoPlay = function(videoUrl, videoTitle){
     }
     /**
      * 视频直播
-     * @param {String} videoUrl 
+     * @param {String} videoUrl
      * @param {String} type 直播类型
-     * @param {String} videoTitle 
+     * @param {String} videoTitle
      */
     MobileApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
     }
     /**
      * 获取缓存大小
-     * @param {String} address 
+     * @param {String} address
      */
     MobileApi.prototype.getAppCacheSize = function(){
     }
@@ -410,21 +410,21 @@
     }
     /**
      * 打开h5实时画面
-     * @param {String} url 
+     * @param {String} url
      */
     MobileApi.prototype.openRealHtml = function(url){
     }
     /**
      * 设置横竖屏
-     * @param {String} orientation 
+     * @param {String} orientation
      */
     MobileApi.prototype.setOrientation = function(orientation){
     }
     /**
      * 启动消息推送服务
-     * @param {String} clientId 
-     * @param {String} stationId 
-     * @param {String} topics 
+     * @param {String} clientId
+     * @param {String} stationId
+     * @param {String} topics
      */
     MobileApi.prototype.startMessageSevice = function(clientId, stationId, topics){
     }
@@ -441,8 +441,8 @@
 
     /**
      * 文件下载
-     * @param {String} url 
-     * @param {String} fileName 
+     * @param {String} url
+     * @param {String} fileName
      */
     MobileApi.prototype.download = function(url, fileName){
     }
@@ -485,6 +485,30 @@
     MobileApi.prototype.cleanMsgPushTag = function(params){
     }
 
+
+    /**
+     * 开启语音识别
+     *  params = {
+            "speechPlatform":"ifly"，
+            "useDefaultSetting":"1"
+        }
+      传递参数为json格式字符串，speechPlatform 为识别平台，支持科大讯飞ifly， 百度baidu, 腾讯tencent,
+      useDefaultSetting  是否使用默认设置，1 为使用默认设置，则接口中会用默认设置进行， 0 为不适用默认设置，可以根据具体平台的参数进行设置
+      关于各个平台的具体参数支持请查看使用说明
+     */
+    MobileApi.prototype.startSpeechRecognize = function(params){
+    }
+
+    /**
+     * 关闭语音识别
+     *  params = {
+            "speechPlatform":"ifly"
+        }
+      传递参数为json格式字符串，speechPlatform 为识别平台，支持科大讯飞ifly， 百度baidu, 腾讯tencent
+     */
+    MobileApi.prototype.stopSpeechRecognize = function(params){
+    }
+
     return MobileApi;
 });
 
@@ -517,11 +541,20 @@
         _self.on("thermal_image", function(res){
             _self.emit("thermal", res)
         })
+        _self.on("speechText", function(res){
+            _self.emit("speechTextRs", res)
+        })
+        _self.on("speechBegin", function(res){
+            _self.emit("speechBeginRs", res)
+        })
+        _self.on("speechEnd", function(res){
+            _self.emit("speechEndRs", res)
+        })
     }
 
     /**
      * 扫描二维码
-     * @param {String} type 
+     * @param {String} type
      */
     AndroidApi.prototype.scanQRCode = function(type){
         try {
@@ -533,7 +566,7 @@
 
     /**
      * 获取定位方法
-     * @param {String} type 
+     * @param {String} type
      */
     AndroidApi.prototype.location = function(type){
         try {
@@ -567,7 +600,7 @@
 
     /**
      * 告警消息服务
-     * @param {Object} options 
+     * @param {Object} options
      */
     AndroidApi.prototype.alarm = function(options){
         //设置服务器地址
@@ -587,7 +620,7 @@
     /**
      * 设置变量存储
      * @param {String} key
-     * @param {String} value 
+     * @param {String} value
      */
     AndroidApi.prototype.setItem = function(key, value){
         try {
@@ -598,7 +631,7 @@
 
     /**
      * 获取存储值
-     * @param {String} key 
+     * @param {String} key
      */
     AndroidApi.prototype.getItem = function(key){
         var rs = '';
@@ -611,7 +644,7 @@
 
     /**
      * 获取App的版本信息
-     * @param {String} type 
+     * @param {String} type
      */
     AndroidApi.prototype.getAppInfo = function(){
         var rs = {};
@@ -624,7 +657,7 @@
 
     /**
      * 打电话
-     * @param {String} number 
+     * @param {String} number
      */
     AndroidApi.prototype.callNumber = function(number){
         try {
@@ -635,7 +668,7 @@
 
     /**
      * 更新app
-     * @param {String} address 
+     * @param {String} address
      */
     AndroidApi.prototype.updateApp = function(address){
         var address = address || '';
@@ -647,7 +680,7 @@
     
     /**
      * 图片预览
-     * @param {String} url 
+     * @param {String} url
      */
     AndroidApi.prototype.previewPhoto = function(url){
         try {
@@ -657,8 +690,8 @@
     }
     /**
      * 视频播放
-     * @param {String} videoUrl 
-     * @param {String} videoTitle 
+     * @param {String} videoUrl
+     * @param {String} videoTitle
      */
     AndroidApi.prototype.videoPlay = function(videoUrl, videoTitle){
         try {
@@ -668,8 +701,8 @@
     }
     /**
      * 视频直播
-     * @param {String} videoUrl 
-     * @param {String} videoTitle 
+     * @param {String} videoUrl
+     * @param {String} videoTitle
      */
     AndroidApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
         try {
@@ -689,11 +722,11 @@
     }
     /**
      * 获取缓存大小
-     * @param {String} address 
+     * @param {String} address
      */
     AndroidApi.prototype.getAppCacheSize = function(){
         var rs = 0;
-    	try {
+        try {
             rs = window.functionTag.getAppCacheSize();
         } catch (error) {
         }
@@ -713,7 +746,7 @@
 
     /**
      * 打开h5实时画面
-     * @param {String} url 
+     * @param {String} url
      */
     AndroidApi.prototype.openRealHtml = function(url){
         try {
@@ -723,7 +756,7 @@
     }
      /**
      * 设置横竖屏
-     * @param {String} orientation 
+     * @param {String} orientation
      */
     AndroidApi.prototype.setOrientation = function(orientation){
         try{
@@ -734,9 +767,9 @@
     }
     /**
      * 启动消息推送服务
-     * @param {String} clientId 
-     * @param {String} stationId 
-     * @param {String} topics 
+     * @param {String} clientId
+     * @param {String} stationId
+     * @param {String} topics
      */
     AndroidApi.prototype.startMessageSevice = function(clientId, stationId, topics){
         try {
@@ -770,8 +803,8 @@
 
     /**
      * 文件下载
-     * @param {String} url 
-     * @param {String} fileName 
+     * @param {String} url
+     * @param {String} fileName
      */
     AndroidApi.prototype.download = function(url, fileName){
         try {
@@ -852,6 +885,68 @@
         }
     }
 
+      /**
+       * 开启语音识别
+       *  params = {
+              "speechPlatform":"ifly"，
+              "useDefaultSetting":"1"
+          }
+        传递参数为json格式字符串，speechPlatform 为识别平台，支持科大讯飞ifly， 百度baidu, 腾讯tencent,
+        useDefaultSetting  是否使用默认设置，1 为使用默认设置，则接口中会用默认设置进行， 0 为不适用默认设置，可以根据具体平台的参数进行设置
+        关于各个平台的具体参数支持请查看使用说明
+       */
+     AndroidApi.prototype.startSpeechRecognize = function(params){
+                try {
+                    var speechPlatform = params["speechPlatform"]
+                    var useDefaultSetting = params["useDefaultSetting"]
+                    var emptyParam
+
+//                    if("ifly" == speechPlatform){
+//                        if("1" == useDefaultSetting){
+//                            window.functionTag.iflyStartRecord(emptyParam);
+//                        }else{
+//                            window.functionTag.iflyStartRecord(JSON.stringify(params));
+//                        }
+//                    }else if("baidu" == speechPlatform){
+//                        if("1" == useDefaultSetting){
+//                            window.functionTag.baiduStartRecord(emptyParam);
+//                        }else{
+//                            window.functionTag.baiduStartRecord(JSON.stringify(params));
+//                        }
+//                    }else if("tencent" == speechPlatform){
+//                       if("1" == useDefaultSetting){
+//                           window.functionTag.tencentStartRecord(emptyParam);
+//                       }else{
+//                           window.functionTag.tencentStartRecord(JSON.stringify(params));
+//                       }
+//                    }
+                    window.functionTag.speechRecStartTimeout60S(JSON.stringify(params));
+                } catch (error) {
+            }
+        }
+
+      /**
+       * 关闭语音识别
+       *  params = {
+              "speechPlatform":"ifly"
+          }
+        传递参数为json格式字符串，speechPlatform 为识别平台，支持科大讯飞ifly， 百度baidu, 腾讯tencent
+       */
+      AndroidApi.prototype.stopSpeechRecognize = function(speechPlatform){
+                try {
+//                    if("ifly" == speechPlatform){
+//                        window.functionTag.iflyStopRecord();
+//                    }else if("baidu" == speechPlatform){
+//                        window.functionTag.baiduStopRecord();
+//                    }else if("tencent" == speechPlatform){
+//                        window.functionTag.tencentStopRecord();
+//                    }
+                    window.functionTag.speechRecStopTimeout60S(speechPlatform);
+                } catch (error) {
+            }
+        }
+
+
     return AndroidApi;
 });
 
@@ -902,7 +997,7 @@
 
     /**
      * 扫描二维码
-     * @param {String} type 
+     * @param {String} type
      */
     IOSApi.prototype.scanQRCode = function(type){
         try {
@@ -913,7 +1008,7 @@
 
     /**
      * 获取定位方法
-     * @param {String} type 
+     * @param {String} type
      */
     IOSApi.prototype.location = function(type){
         try {
@@ -947,7 +1042,7 @@
 
     /**
      * 告警消息服务
-     * @param {Object} options 
+     * @param {Object} options
      */
     IOSApi.prototype.alarm = function(options){
     }
@@ -955,7 +1050,7 @@
     /**
      * 设置变量存储
      * @param {String} key
-     * @param {String} value 
+     * @param {String} value
      */
     IOSApi.prototype.setItem = function(key, value){
         try {
@@ -966,7 +1061,7 @@
 
     /**
      * 获取存储值
-     * @param {String} key 
+     * @param {String} key
      */
     IOSApi.prototype.getItem = function(key){
         var rs = '';
@@ -983,7 +1078,7 @@
 
     /**
      * 获取App的版本信息
-     * @param {String} type 
+     * @param {String} type
      */
     IOSApi.prototype.getAppInfo = function(){
         var rs = {};
@@ -996,7 +1091,7 @@
 
     /**
      * 打电话
-     * @param {String} number 
+     * @param {String} number
      */
     IOSApi.prototype.callNumber = function(number){
         try {
@@ -1007,14 +1102,14 @@
 
     /**
      * 更新app
-     * @param {String} address 
+     * @param {String} address
      */
     IOSApi.prototype.updateApp = function(address){
     }
     
     /**
      * 图片预览
-     * @param {String} url 
+     * @param {String} url
      */
     IOSApi.prototype.previewPhoto = function(url){
         try {
@@ -1024,8 +1119,8 @@
     }
     /**
      * 视频播放
-     * @param {String} videoUrl 
-     * @param {String} videoTitle 
+     * @param {String} videoUrl
+     * @param {String} videoTitle
      */
     IOSApi.prototype.videoPlay = function(videoUrl, videoTitle){
         try {
@@ -1035,8 +1130,8 @@
     }
     /**
      * 视频直播
-     * @param {String} videoUrl 
-     * @param {String} videoTitle 
+     * @param {String} videoUrl
+     * @param {String} videoTitle
      */
     IOSApi.prototype.livePlay = function(liveUrl, liveTitle, type, configUrl){
         try {
@@ -1068,11 +1163,11 @@
     }
     /**
      * 获取缓存大小
-     * @param {String} address 
+     * @param {String} address
      */
     IOSApi.prototype.getAppCacheSize = function(){
         var rs = 0;
-    	try {
+        try {
             rs = dsBridge.call("ios.getCacheSize");
         } catch (error) {
         }
@@ -1089,7 +1184,7 @@
     }
     /**
      * 打开h5实时画面
-     * @param {String} url 
+     * @param {String} url
      */
     IOSApi.prototype.openRealHtml = function(url){
         try {
@@ -1099,9 +1194,9 @@
     }
     /**
      * 启动消息推送服务
-     * @param {String} clientId 
-     * @param {String} stationId 
-     * @param {String} topics 
+     * @param {String} clientId
+     * @param {String} stationId
+     * @param {String} topics
      */
     IOSApi.prototype.startMessageSevice = function(clientId, stationId, topics){
         try {
@@ -1153,7 +1248,7 @@
      */
     IOSApi.prototype.checkNetwork = function(){
         var rs = 0;
-    	try {
+        try {
             rs = dsBridge.call("ios.checkNetwork");
         } catch (error) {
         }
@@ -1178,7 +1273,7 @@
     // params = {
     //     "tags":"stationId001",
     //     "jumpUrl":"https://www.sina.com.cn/"
-    // } 
+    // }
 
     IOSApi.prototype.setJPushTagAndJumpUrl = function(params){
         try {
@@ -1226,6 +1321,50 @@
             }else if("getui" == pushPlatform){
                 //个推没有清除接口
             }
+        } catch (error) {
+        }
+    }
+    // 开启语音识别
+    IOSApi.prototype.startSpeechRecognize = function(params){
+        try {
+            var speechPlatform = params["speechPlatform"]
+            var useDefaultSetting = params["useDefaultSetting"]
+            var emptyParam
+
+//            if("ifly" == speechPlatform){
+//                if("1" == useDefaultSetting){
+//                    dsBridge.call("ios.IFlyStartRecord")
+//                }else{
+//                    dsBridge.call("ios.IFlyStartRecord", JSON.stringify(params))
+//                }
+//            }else if("baidu" == speechPlatform){
+//                if("1" == useDefaultSetting){
+//                    dsBridge.call("ios.BaiduStartRecord")
+//                }else{
+//                    dsBridge.call("ios.BaiduStartRecord", JSON.stringify(params))
+//                }
+//            }else if("tencent" == speechPlatform){
+//                if("1" == useDefaultSetting){
+//                    dsBridge.call("ios.TencentStartRecord")
+//                }else{
+//                    dsBridge.call("ios.TencentStartRecord", JSON.stringify(params))
+//                }
+//            }
+            dsBridge.call("ios.SpeechRecStartTimeout60S", JSON.stringify(params))
+        } catch (error) {
+        }
+    }
+    //关闭语音识别
+    IOSApi.prototype.stopSpeechRecognize = function(speechPlatform){
+        try {
+//            if("ifly" == speechPlatform){
+//                dsBridge.call("ios.IFlyStopRecord")
+//            }else if("baidu" == speechPlatform){
+//                dsBridge.call("ios.BaiduStopRecord")
+//            }else if("tencent" == speechPlatform){
+//                dsBridge.call("ios.TencentStopRecord")
+//            }
+            dsBridge.call("ios.speechRecStopTimeout60S", speechPlatform)
         } catch (error) {
         }
     }

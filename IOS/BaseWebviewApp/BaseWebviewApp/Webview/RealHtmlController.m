@@ -66,7 +66,8 @@
     self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     //点击导航栏返回按钮的时候调用，所以Push出的控制器最好禁用侧滑手势：
     AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
+    //appDelegate.allowRotation = NO;//关闭横屏仅允许竖屏
+    appDelegate.orientationMode = @"2";
     //切换到竖屏
     [UIDevice switchNewOrientation:UIInterfaceOrientationPortrait];
     //[self.navigationController popViewControllerAnimated:YES];
@@ -82,7 +83,8 @@
     
     AppDelegate * appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     //允许转成横屏
-    appDelegate.allowRotation = YES;
+    //appDelegate.allowRotation = YES;
+    appDelegate.orientationMode = @"1";
     //调用横屏代码
     [UIDevice switchNewOrientation:UIInterfaceOrientationLandscapeRight];
     

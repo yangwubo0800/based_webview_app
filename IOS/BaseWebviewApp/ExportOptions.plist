@@ -9,21 +9,21 @@
 	<key>manifest</key>
 	<dict>
 		<key>appURL</key>
-		<string>https://test.11ka.wang/BaseWebviewApp.ipa</string>
+		<string>https://192.168.65.41:8443/packonline/iosAdHoc/currentTime/install/BaseWebviewApp.ipa</string>
 		<key>displayImageURL</key>
-		<string>https://test.11ka.wang/app_logo.png</string>
+		<string>https://192.168.65.41:8443/packonline/iosAdHoc/currentTime/install/app_logo.png</string>
 		<key>fullSizeImageURL</key>
-		<string>https://test.11ka.wang/app_logo.png</string>
+		<string>https://192.168.65.41:8443/packonline/iosAdHoc/currentTime/install/app_logo.png</string>
 	</dict>
 	<key>method</key>
 	<string>ad-hoc</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>com.org.BaseWebviewApp</key>
-		<string>profile-adHoc-innerTest1021</string>
+		<key>bundleIdetifier</key>
+		<string>profileAdHoc</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>iPhone Distribution</string>
+	<string>72EC5B7C13E13AB50BF680CD31C22C40D0086951</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>

@@ -32,6 +32,8 @@
 #import "BPush.h"
 #import <GTSDK/GeTuiSdk.h>
 #import "IFly.h"
+#import "Baidu.h"
+#import "Tencent.h"
 
 //竖屏幕宽高
 #define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
@@ -45,6 +47,9 @@ static NSString* locationCallerName;
 @property(nonatomic, strong) WHPingTester* pingTester;
 
 @property(nonatomic, strong) NSString* videoCfgInfoUrl;
+
+//定时器， 用来统一语音识别三个厂商，在长语音模式下不超过60秒
+@property (strong, nonatomic) NSTimer *myTimer;
 
 
 @end
@@ -687,9 +692,9 @@ const NSString *appStoreAppID;//AppStore上面对应的APPID，获取方式如�
         gaodeMapDic[@"title"] = @"高德地图";
         NSString *urlString;
         if ([@"0" isEqualToString:slat]) {
-            urlString = [[NSString stringWithFormat:@"iosamap://path?sourceApplication=xxxx&did=&dlat=%@&dlon=%@&dname=%@&dev=0&t=0",   gcj02dLat, gcj02dLon, dname]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            urlString = [[NSString stringWithFormat:@"iosamap://path?sourceApplication=hnac&did=&dlat=%@&dlon=%@&dname=%@&dev=0&t=0",   gcj02dLat, gcj02dLon, dname]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         }else{
-            urlString = [[NSString stringWithFormat:@"iosamap://path?sourceApplication=xxxx&sid=&slat=%@&slon=%@&sname=%@&did=&dlat=%@&dlon=%@&dname=%@&dev=0&t=0",  gcj02sLat, gcj02sLon, sname, gcj02dLat, gcj02dLon, dname]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            urlString = [[NSString stringWithFormat:@"iosamap://path?sourceApplication=hnac&sid=&slat=%@&slon=%@&sname=%@&did=&dlat=%@&dlon=%@&dname=%@&dev=0&t=0",  gcj02sLat, gcj02sLon, sname, gcj02dLat, gcj02dLon, dname]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         }
 
         NSLog(@"高德地图urlString=%@", urlString);
@@ -1050,11 +1055,122 @@ const NSString *appStoreAppID;//AppStore上面对应的APPID，获取方式如�
     return @"setJPushTagAndJumpUrl started";
 }
 
-
+// 开启科大讯飞语音识别
 - (NSString *) IFlyStartRecord:(NSString *) jsonParam{
     
     [[IFly sharedInstance] startRecord:jsonParam];
     return @"IFlyStartRecord";
 }
+
+// 关闭科大讯飞语音识别
+- (NSString *) IFlyStopRecord:(NSString *) jsonParam{
+    
+    [[IFly sharedInstance] stopRecord];
+    return @"IFlyStopRecord";
+}
+
+// 开启百度语音识别
+- (NSString *) BaiduStartRecord:(NSString *) jsonParam{
+    
+    [[Baidu sharedInstance] startRecord:jsonParam];
+    return @"BaiduStartRecord";
+}
+
+// 关闭百度语音识别
+- (NSString *) BaiduStopRecord:(NSString *) jsonParam{
+    
+    [[Baidu sharedInstance] stopRecord];
+    return @"BaiduStopRecord";
+}
+
+// 开启腾讯语音识别
+- (NSString *) TencentStartRecord:(NSString *) jsonParam{
+    
+    [[Tencent sharedInstance] startRecord:jsonParam];
+    return @"TencentStartRecord";
+}
+
+// 关闭腾讯语音识别
+- (NSString *) TencentStopRecord:(NSString *) jsonParam{
+    
+    [[Tencent sharedInstance] stopRecord];
+    return @"TencentStopRecord";
+}
+
+// 开启语音识别统一接口
+- (NSString *) SpeechRecStartTimeout60S:(NSString *) jsonParam{
+    
+    @try {
+        //解析json格式参数
+        NSError *error;
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[jsonParam dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
+        NSLog(@"SpeechRecStartRecord dict=%@", dict);
+        NSArray *keys = [dict allKeys];
+        
+        NSString *speechPlatform;
+        for(int i=0; i<keys.count; i++){
+            NSString *key = keys[i];
+            if ([@"speechPlatform" isEqualToString:key]){
+                speechPlatform = [dict valueForKey:key];
+            }
+        }
+        // 参数都传递空，使用默认参数开启长语音识别
+        if([@"ifly" isEqualToString:speechPlatform]){
+            [[IFly sharedInstance] startRecord:nil];
+        }else if ([@"baidu" isEqualToString:speechPlatform]){
+            [[Baidu sharedInstance] startRecord:nil];
+        }else if ([@"tencent" isEqualToString:speechPlatform]){
+            [[Tencent sharedInstance] startRecord:nil];
+        }else {
+            NSLog(@" SpeechRecStartRecord unsupport speech platform: %@", speechPlatform);
+            return nil;
+        }
+        //TODO: 先移除之前的定时器，然后开启新的定时
+        if (_myTimer) {
+            [_myTimer invalidate];
+            _myTimer = nil;
+        }else{
+            //初始化定时器, 60秒之后自动停止语音识别
+            _myTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(onTimer60S:) userInfo:dict repeats:NO];
+            NSLog(@" nstimer scheduledTimerWithTimeInterval...");
+        }
+    } @catch (NSException *exception) {
+        NSLog(@" exception happened");
+    } @finally {
+         NSLog(@"finally");
+    }
+    return @"SpeechRecStartTimeout60S";
+}
+
+
+// 关闭语音识别统一接口
+- (NSString *) speechRecStopTimeout60S:(NSString *) speechPlatform{
+    NSLog(@"SpeechRecStopTimeout60S speechPlatform:%@", speechPlatform);
+    if([@"ifly" isEqualToString:speechPlatform]){
+        [[IFly sharedInstance] stopRecord];
+    }else if ([@"baidu" isEqualToString:speechPlatform]){
+        [[Baidu sharedInstance] stopRecord];
+    }else if ([@"tencent" isEqualToString:speechPlatform]){
+        [[Tencent sharedInstance] stopRecord];
+    }else {
+        NSLog(@" SpeechRecStartRecord unsupport speech platform: %@", speechPlatform);
+        return nil;
+    }
+    // 解除定时器任务
+    if (_myTimer) {
+        [_myTimer invalidate];
+        _myTimer = nil;
+    }
+    return @"SpeechRecStopTimeout60S";
+}
+
+// 定时到之后根据平台关闭语音识别
+-(void)onTimer60S:(NSTimer *)timer{
+    NSString *speechPlatform = [[timer userInfo] objectForKey:@"speechPlatform"];
+    [self speechRecStopTimeout60S:speechPlatform];
+    NSLog(@"onTimer60S speechPlatform:%@", speechPlatform);
+}
+
+
 
 @end

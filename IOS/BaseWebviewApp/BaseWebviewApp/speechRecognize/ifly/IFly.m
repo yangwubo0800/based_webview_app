@@ -62,8 +62,8 @@
         // TODO: 解析json参数，如果为空，则使用默认值，如果不为空，则使用参数传递值
         NSString* language = @"zh_cn";
         NSString* accent = @"mandarin";
-        NSString* vadBos = @"4000";
-        NSString* vadEos = @"2000";
+        NSString* vadBos = @"8000";
+        NSString* vadEos = @"8000";
         NSString* ptt = @"1";
         if (nil != jsonParam) {
             @try {
@@ -212,8 +212,9 @@
 //        NSLog(@"%s,stop recording",__func__);
 //        [_pcmRecorder stop];
 //    }
-    
-    [_iFlySpeechRecognizer stopListening];
+    if (_iFlySpeechRecognizer) {
+        [_iFlySpeechRecognizer stopListening];
+    }
 }
 
 
@@ -265,6 +266,8 @@
     js = [js stringByAppendingString:@"')"];
     NSLog(@" js is :%@", js);
     [[wc webView] evaluateJavaScript:js completionHandler:nil];
+    
+    //TODO：对于识别过程中通过静音检测机制自动停止的，有可能没有移除定时器的关闭接口。在没有再次调用的情况下无影响，再次调用时会重用定时
     
 }
 

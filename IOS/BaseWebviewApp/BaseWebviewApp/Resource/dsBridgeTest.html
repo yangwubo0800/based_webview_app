@@ -332,20 +332,123 @@
             "ptt":"0"
             }
             
-            dsBridge.call("ios.IFlyStartRecord", JSON.stringify(params))
+            dsBridge.call("ios.IFlyStartRecord" )
             log("IFlyStartRecord")
         }
         
+        function IFlyStopRecord() {
+            dsBridge.call("ios.IFlyStopRecord" )
+            log("IFlyStopRecord")
+        }
+        
+        // use device.js
+        function IFlyStartRecord2() {
+            var params = {
+            "speechPlatform":"ifly",
+            "useDefaultSetting":"0",
+            "language":"zh_cn",
+            "accent":"mandarin",
+            "vadBos":"50000",
+            "vadEos":"50000",
+            "ptt":"0"
+            }
+            
+            MOBILE_API.startSpeechRecognize(params)
+            log("IFlyStartRecord2")
+        }
+        
+        function IFlyStopRecord2() {
+            MOBILE_API.stopSpeechRecognize("ifly")
+            log("IFlyStopRecord")
+        }
+        
+        
+        
+        function BaiduStartRecord() {
+            var params = {
+            "pid":"15732",
+            "vad.endpoint-timeout":"0"
+            }
+            
+            dsBridge.call("ios.BaiduStartRecord", JSON.stringify(params))
+            log("BaiduStartRecord")
+        }
+        
+        function BaiduStopRecord() {
+            dsBridge.call("ios.BaiduStopRecord" )
+            log("BaiduStopRecord")
+        }
+        
+        function BaiduStartRecord2() {
+            var params = {
+            "speechPlatform":"baidu",
+            "useDefaultSetting":"0",
+            "pid":"15732",
+            "vad.endpoint-timeout":"0"
+            }
+            
+            MOBILE_API.startSpeechRecognize(params)
+            log("BaiduStartRecord2")
+        }
+        
+        function BaiduStopRecord2() {
+            MOBILE_API.stopSpeechRecognize("baidu")
+            log("BaiduStopRecord2")
+        }
+        
+        
+        
+        function TencentStartRecord() {
+            var params = {
+            "language":"16k_zh",
+            "vad":"1",
+            "vadTimeoout":"3",
+            "punc":"0"
+            }
+            
+            dsBridge.call("ios.TencentStartRecord", JSON.stringify(params))
+            log("TencentStartRecord")
+        }
+        
+        function TencentStopRecord() {
+            dsBridge.call("ios.TencentStopRecord" )
+            log("TencentStopRecord")
+        }
+        
+        
+        function TencentStartRecord2() {
+            var params = {
+            "speechPlatform":"tencent",
+            "useDefaultSetting":"1",
+            "language":"16k_zh",
+            "vad":"1",
+            "vadTimeoout":"3",
+            "punc":"0"
+            }
+            
+            MOBILE_API.startSpeechRecognize(params)
+            log("TencentStartRecord2")
+        }
+        
+        function TencentStopRecord2() {
+            MOBILE_API.stopSpeechRecognize("tencent")
+            log("TencentStopRecord2")
+        }
+        
+        
         // 异步返回语音识别信息并显示
         MOBILE_API.on("speechTextRs", function(res){
+                      alert(res)
                       log("识别结果："+res)
                       })
         
         MOBILE_API.on("speechBeginRs", function(res){
+                      alert("语音识别开始")
                       log("语音识别开始："+res)
                       })
         
-        MOBILE_API.on("speechBeginRs", function(res){
+        MOBILE_API.on("speechEndRs", function(res){
+                      alert("语音识别结束")
                       log("语音识别结束："+res)
                       })
         
@@ -386,7 +489,13 @@
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setBaiduPushTagAndJumpUrl()" > 设置百度云推送tag和跳转地址      </button> </p>
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "cleanBaiduPushTag()" > 清理百度云推送tag        </button> </p>
     <p style="text-align:center"> <button id="btn1" type = "button" onclick = "setGTPushTagAndJumpUrl()" > 设置个推推送tag        </button> </p>
-    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "IFlyStartRecord()" > 开启科大讯飞语音识别        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "IFlyStartRecord2()" > 开启科大讯飞语音识别        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "IFlyStopRecord2()" > 关闭科大讯飞语音识别        </button> </p>
+    
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "BaiduStartRecord2()" > 开启百度语音识别        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "BaiduStopRecord2()" > 关闭百度语音识别        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "TencentStartRecord2()" > 开启腾讯语音识别        </button> </p>
+    <p style="text-align:center"> <button id="btn1" type = "button" onclick = "TencentStopRecord2()" > 关闭腾讯语音识别        </button> </p>
 <!--     <p>测试A标签下载功能：<p>-->
 <!--     <a href="http://58.20.55.73:38082/repository/npm-local/hz-hydro                                              " download="zip文件">-->
 <!--         <img border="0" src="/i/w3school_logo_white.gif" alt="文件下载">-->
@@ -394,13 +503,24 @@
 
      <div>
          <!--拍照, 后置摄像头-->
+         <p>后置摄像头拍照:
          <input type="file" accept="image/*" capture="environment" name="takePhoto">
+         </p>
          <!--拍照，前置摄像头 -->
+         <p>前置摄像头拍照:
          <input type="file" accept="image/*" capture="user" name="takePhoto">
+         </p>
          <!--拍视频 -->
+         <p>拍视频:
          <input type="file" accept="video/*" capture="environment" name="takevideo">
+         </p>
          <!--进入相册或者拍照选择 -->
+         <p>相册或者拍照选择:
          <input type="file" accept="image/*" name="takePhoto">
+         </p>
+         <p>相册或者拍照多个选择:
+         <input type="file" accept="image/*" multiple="multiple" name="takePhoto">
+         </p>
      </div>
      
         <div id='buttons'></div>

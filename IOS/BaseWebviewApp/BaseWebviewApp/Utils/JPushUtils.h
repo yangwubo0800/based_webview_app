@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 // 使用逗号分隔来一次设置多个tag
 +(void)setJPushTags:(NSString *) tags;
 
++(void)cleanJPushTag;
+
 @end
 
 NS_ASSUME_NONNULL_END

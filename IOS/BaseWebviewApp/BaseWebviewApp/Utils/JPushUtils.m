@@ -30,13 +30,26 @@ static NSInteger seq = 0;
 +(void)setJPushTags:(NSString *) tags{
     
     //firstly clean tags and then set tags
-    [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+//    [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+//        NSLog(@"#########cleanTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
+//        //请求需要等前面一个处理完才能继续开始下一个请求
+//        [JPUSHService setTags:[self tagListProcess:tags] completion:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+//            NSLog(@"#########===setTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
+//        } seq:++seq];
+//    } seq:++seq];
+    
+    //单纯的设置tag
+    [JPUSHService setTags:[self tagListProcess:tags] completion:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+        NSLog(@"#########===setTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
+    } seq:2020];
+}
+
+
++(void)cleanJPushTag{
+    //单纯地清理tag
+    [JPUSHService cleanTags:^(NSInteger iResCode, NSSet *iTags, NSInteger seq){
         NSLog(@"#########cleanTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
-        //请求需要等前面一个处理完才能继续开始下一个请求
-        [JPUSHService setTags:[self tagListProcess:tags] completion:^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
-            NSLog(@"#########===setTags iResCode=%ld iTags=%@ seq=%ld", iResCode, iTags, seq);
-        } seq:++seq];
-    } seq:++seq];
+    } seq:2021];
 }
 
 

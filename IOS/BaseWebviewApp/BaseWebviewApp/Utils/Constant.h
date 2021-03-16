@@ -26,14 +26,20 @@ NS_ASSUME_NONNULL_BEGIN
 #define kGtAppKey @"xxxxx"
 #define kGtAppSecret @"xxxxxx"
 
-// 科大讯飞应用ID
-#define IFLY_APPID_VALUE           @"xxxxx"
+// 科大讯飞语音识别应用ID
+#define IFLY_APPID_VALUE           @"xxxxxx"
 //录音超时，单位为毫秒 ，最多一分钟
 #define IFLY_SPEECH_TIMEOUT        @"60000"
-////前端点时间，4秒
-//#define IFLY_VAD_EOS          @"4000"
-////后端点时间，2秒
-//#define IFLY_VAD_BOS        @"2000"
+
+//百度语音识别key配置
+#define BAIDU_SPEECH_APPID   @"xxxxxx"
+#define BAIDU_SPEECH_APPKEY   @"xxxxxx"
+#define BAIDU_SPEECH_SECRETKEY   @"xxxxxx"
+
+//腾讯语音识别
+#define kQDAppId     @"xxxxxx"
+#define kQDSecretId  @"xxxxxx"
+#define kQDSecretKey @"xxxxxx"
 
 //推送消息跳转页面key定义
 static NSString *const PUSH_MESSAGE_JUMP_URL_KEY = @"historyAlarmUrl";
